@@ -1,0 +1,52 @@
+{
+  "name": "ma_conf",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "NODE_ENV=production vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
+  },
+  "dependencies": {
+    "serve": "^12.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@mobileaction/eslint-config": "^2.0.0",
+    "@vue/cli-plugin-babel": "^5.0.0-beta.2",
+    "@vue/cli-plugin-eslint": "^5.0.0-beta.2",
+    "@vue/cli-service": "^5.0.0-beta.2",
+    "autoprefixer": "^10.2.6",
+    "babel-eslint": "^10.1.0",
+    "cache-loader": "^4.1.0",
+    "core-js": "^3.6.5",
+    "eslint": "^7.29.0",
+    "eslint-plugin-vue": "^7.11.1",
+    "google-fonts-webpack-plugin": "^0.4.4",
+    "vue": "^2.6.11",
+    "vue-clipboard2": "^0.3.1",
+    "vue-router": "^3.5.2",
+    "vue-template-compiler": "^2.6.11",
+    "vuex": "^3.6.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  }
+}
