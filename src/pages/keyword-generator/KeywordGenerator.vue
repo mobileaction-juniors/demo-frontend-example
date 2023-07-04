@@ -12,15 +12,19 @@
         <a-select
           v-model="selectedNgram"
           mode="multiple"
-          style="width: 100%"
+          style="width: 200px"
           placeholder="Please select ngrams"
         >
           <a-select-option v-for="n in ngrams" :key="n" :value="n">{{n}}</a-select-option>
         </a-select>
       </div>
-      <div class="ma-generated-keywords">
-        <a-button type="primary" @click="countKeyWords">Count Keywords</a-button>
+      <div class="ma-button">
+        <a-button type="primary" @click="countKeyWords">
+          <font-awesome-icon icon="fa-solid fa-check" />
+          Count Keywords
+        </a-button>
       </div>
+
       <div class="ma-keyword-list">
         <ul>
           <li v-for="keyword in keywords" :key="keyword">{{keyword}}</li>
@@ -95,12 +99,6 @@ export default
   margin-bottom: 15px;
 }
 
-.ma-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 .ma-input {
   display: flex;
@@ -111,20 +109,13 @@ export default
 }
 
 .ma-input textarea {
-  width: 500px;
-  height: 200px;
+  flex: 1;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  resize: none;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  resize: both;
 }
 
-.ma-generated-keywords {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
 
 .ma-keyword-list {
   display: flex;
@@ -143,6 +134,18 @@ export default
   margin-bottom: 5px;
 }
 
+.ma-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
-
+.ma-ngrams {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+}
 </style>
