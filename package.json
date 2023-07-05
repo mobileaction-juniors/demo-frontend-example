@@ -9,7 +9,7 @@
     "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
   },
   "dependencies": {
-    "ant-design-vue": "^3.2.20",
+    "ant-design-vue": "1.7.8",
     "serve": "^12.0.0"
   },
   "devDependencies": {
