@@ -7,7 +7,7 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',
     routes: [
-        { path: '/', component: HomePage },
+        { path: '/', component: HomePage ,redirect:'/keyword-generator'},
         { path: '/keyword-generator', component: KeywordGenerator },
     ],
 });
