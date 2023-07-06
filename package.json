@@ -8,9 +8,21 @@
     "lint": "vue-cli-service lint",
     "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
   "dependencies": {
     "ant-design-vue": "1.7.8",
-    "serve": "^12.0.0"
+    "autoprefixer": "^10.4.14",
+    "postcss-import": "^15.1.0",
+    "postcss-loader": "^7.3.3",
+    "postcss-nested": "^6.0.1",
+    "serve": "^12.0.0",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "3.3.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -24,7 +36,6 @@
     "@vue/cli-plugin-babel": "^5.0.0-beta.2",
     "@vue/cli-plugin-eslint": "^5.0.0-beta.2",
     "@vue/cli-service": "^5.0.0-beta.2",
-    "autoprefixer": "^10.2.6",
     "babel-eslint": "^10.1.0",
     "cache-loader": "^4.1.0",
     "core-js": "^3.6.5",
