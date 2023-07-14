@@ -104,6 +104,7 @@ export default {
         .filter((word) => !filterArr.includes(word))
         .join(" ");
 
+        
       this.selectedKeywords = this.selectedNGrams.map((n) =>
         this.getNGramKeywords(n, filteredText)
       );

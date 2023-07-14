@@ -76,7 +76,7 @@ export default {
   @apply text-gray-500;
 }
 .ma-bottom-items {
-  @apply flex justify-around;
+  @apply flex justify-between;
 }
 
 .ma-text-area {
