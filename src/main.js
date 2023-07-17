@@ -1,20 +1,19 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
-import router from './router';
-import VueClipboard from 'vue-clipboard2';
-import TheHeader from './components/TheHeader.vue';
-import TheNav from './components/TheNav.vue';
-import FontAwesomeIcon from './fontAwesome';
+import HomePage from './pages/index.vue';
+import KeywordGenerator from './pages/keyword-generator/KeywordGenerator.vue'
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.component('the-header', TheHeader);
-Vue.component('the-nav', TheNav);
+const app = createApp(App);
 
-Vue.use(VueClipboard);
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: HomePage },
+        { path: '/keyword-generator', component: KeywordGenerator },
+    ],
+});
 
-Vue.config.productionTip = false;
+app.use(router);
 
-new Vue({
-    render: h => h(App),
-    router,
-}).$mount('#app');
+app.mount('#app');
