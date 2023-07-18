@@ -36,6 +36,7 @@
             <h3>{{ selectedNGrams[index] }}-gram Keywords:</h3>
             <a-tag v-for="keyword in keywords" :key="keyword" class="ma-keyword-tag">
               {{ keyword }}
+              
             </a-tag>
           </div>
         </div>
