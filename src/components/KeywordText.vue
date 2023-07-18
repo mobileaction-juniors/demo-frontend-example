@@ -15,7 +15,7 @@
 </template>
 <script setup>
 import { reactive, defineProps, computed } from "vue";
-import { Button as AButton, Textarea as ATextarea, Form as AForm } from "ant-design-vue";
+import { Button as AButton, Textarea as ATextarea, Form as AForm, FormItem as AFormItem } from "ant-design-vue";
 
 
 const props = defineProps({
