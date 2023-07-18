@@ -1,3 +1,9 @@
+<template>
+  <div class="ma-keyword-density-wrapper">
+    <keyword-text :initialText="keywordText" @update-text="updateKeywordText" />
+    <keyword-table :initialText="keywordText" />
+  </div>
+</template>
 
 <script setup>
 import KeywordText from "../../components/KeywordText.vue";
@@ -13,13 +19,6 @@ const updateKeywordText = (newText) => {
   keywordText.value = newText;
 };
 </script>
-
-<template>
-  <div class="ma-keyword-density-wrapper">
-    <keyword-text :initialText="keywordText" @update-text="updateKeywordText" />
-    <keyword-table :text="keywordText" />
-  </div>
-</template>
 
 <style>
 .ma-keyword-density-wrapper {

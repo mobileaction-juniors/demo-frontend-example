@@ -4,7 +4,12 @@
       <div class="ma-left-side">
         <div class="ma-input">
           <label for="input-text">Input Text:</label>
-          <a-textarea id="input-text" v-model:value="inputText" :rows="5" :placeholder="'Enter your text'"></a-textarea>
+          <a-textarea
+            id="input-text"
+            v-model:value="inputText"
+            :rows="5"
+            :placeholder="'Enter your text'"
+          ></a-textarea>
         </div>
         <a-button type="primary" @click="generateKeywords" class="convertButton">
           <!-- <font-awesome-icon icon="fa-solid fa-check" /> -->
@@ -14,11 +19,20 @@
       <div class="ma-right-side">
         <div class="ma-select">
           <label>Select n-grams to show:</label>
-          <a-select mode="multiple" v-model:value="selectedNGrams" :options="nGramOptions" style="width: 100%"
-            placeholder="Select n-grams"></a-select>
+          <a-select
+            mode="multiple"
+            v-model:value="selectedNGrams"
+            :options="nGramOptions"
+            style="width: 100%"
+            placeholder="Select n-grams"
+          ></a-select>
         </div>
         <div class="ma-keywords">
-          <div v-for="(keywords, index) in selectedKeywords" :key="index" class="ma-keyword-group">
+          <div
+            v-for="(keywords, index) in selectedKeywords"
+            :key="index"
+            class="ma-keyword-group"
+          >
             <h3>{{ selectedNGrams[index] }}-gram Keywords:</h3>
             <a-tag v-for="keyword in keywords" :key="keyword" class="ma-keyword-tag">
               {{ keyword }}
@@ -32,30 +46,35 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { Select as ASelect, Button as AButton, Textarea as ATextarea, Tag as ATag } from "ant-design-vue";
+import {Select as ASelect, Button as AButton, Textarea as ATextarea, Tag as ATag} from "ant-design-vue";
 import { regex, splitRegex, filterArr } from "../../cleanupResources";
 
 const inputText = ref("");
 const selectedNGrams = ref([]);
 const selectedKeywords = ref([]);
-const nGramOptions = ref(Array.from({ length: 10 }, (_, i) => ({
-  label: `${i + 1}-gram`,
-  value: i + 1,
-})));
-
-const cleanedText = computed(() => inputText.value
-  .replace(regex, "")
-  .split(splitRegex)
-  .map((word) => word.trim())
-  .filter((word) => word.length > 0)
-  .join(" ")
-  .toLowerCase()
+const nGramOptions = ref(
+  Array.from({ length: 10 }, (_, i) => ({
+    label: `${i + 1}-gram`,
+    value: i + 1,
+  }))
 );
 
-const filteredText = computed(() => cleanedText.value
-  .split(" ")
-  .filter((word) => !filterArr.includes(word))
-  .join(" "));
+const cleanedText = computed(() =>
+  inputText.value
+    .replace(regex, "")
+    .split(splitRegex)
+    .map((word) => word.trim())
+    .filter((word) => word.length > 0)
+    .join(" ")
+    .toLowerCase()
+);
+
+const filteredText = computed(() =>
+  cleanedText.value
+    .split(" ")
+    .filter((word) => !filterArr.includes(word))
+    .join(" ")
+);
 
 const getNGramKeywords = (n, text) => {
   const words = text.split(/\s+/);

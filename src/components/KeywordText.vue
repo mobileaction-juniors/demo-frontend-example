@@ -2,7 +2,7 @@
   <div class="ma-text-area">
     <a-form :form="form" @submit="submitForm">
       <a-form-item>
-        <a-textarea v-model="userInput" placeholder="Enter text" />
+        <a-textarea v-model:value="userInput" placeholder="Enter text" />
       </a-form-item>
       <div class="ma-bottom-items">
         <a-button type="primary" html-type="submit" class="ma-convert-button"
@@ -13,52 +13,38 @@
     </a-form>
   </div>
 </template>
+<script setup>
+import { ref, watch, onMounted, defineProps } from "vue";
+import { Button as AButton, Textarea as ATextarea, Form as AForm } from "ant-design-vue";
 
-<script>
-import { Form, Input, Button } from "ant-design-vue";
+const form = ref({});
+const userInput = ref("");
+const characterCount = ref(0);
 
-export default {
-  name: "ma-keyword-text",
-  components: {
-    "a-form": Form,
-    "a-form-item": Form.Item,
-    "a-textarea": Input.TextArea,
-    "a-button": Button,
+const props = defineProps({
+  initialText: {
+    type: String,
+    required: true,
   },
-  props: {
-    initialText: {
-      type: String,
-      required: true,
-    },
-  },
+});
 
-  data() {
-    return {
-      form: {},
-      userInput: "",
-      characterCount: 0,
-    };
-  },
-  watch: {
-    userInput: function (newVal) {
-      this.characterCount = newVal.length;
-    },
-  },
-  mounted() {
-    this.userInput = this.initialText;
-  },
-  methods: {
-    submitForm(event) {
-      event.preventDefault();
-      if (this.characterCount > 1) {
-        this.$emit("update-text", this.userInput);
-      } else if (this.characterCount == 1) {
-        alert("Please write a word!");
-      } else {
-        alert("Please write your text! The textbox is empty!");
-      }
-    },
-  },
+watch(userInput, (newVal) => {
+  characterCount.value = newVal.length;
+});
+
+onMounted(() => {
+  userInput.value = props.initialText;
+});
+
+const submitForm = (event) => {
+  event.preventDefault();
+  if (characterCount.value > 1) {
+    context.emit("update-text", userInput.value);
+  } else if (characterCount.value === 1) {
+    alert("Please write a word!");
+  } else {
+    alert("Please write your text! The textbox is empty!");
+  }
 };
 </script>
 
