@@ -1,45 +1,42 @@
 <template>
   <div class="ma-text-area">
     <a-form :form="form" @submit="submitForm">
-      <a-form-item>
-        <a-textarea v-model:value="userInput" placeholder="Enter text" />
+      <a-form-item name="userInput" >
+        <a-textarea v-model:value="form.userInput" placeholder="Enter text" />
       </a-form-item>
       <div class="ma-bottom-items">
         <a-button type="primary" html-type="submit" class="ma-convert-button"
           >Count</a-button
         >
-        <span class="ma-character-counter">Total Characters: {{ userInput.length }}</span>
+        <span class="ma-character-counter">Total Characters: {{ form.userInput.length }}</span>
       </div>
     </a-form>
   </div>
 </template>
 <script setup>
-import { ref, watch, onMounted, defineProps } from "vue";
+import { reactive, defineProps, computed } from "vue";
 import { Button as AButton, Textarea as ATextarea, Form as AForm } from "ant-design-vue";
 
-const form = ref({});
-const userInput = ref("");
-const characterCount = ref(0);
 
 const props = defineProps({
-  initialText: {
+  text: {
     type: String,
     required: true,
   },
 });
 
-watch(userInput, (newVal) => {
-  characterCount.value = newVal.length;
+const emits = defineEmits(["update:text"]);
+
+const form = reactive({
+  userInput: props.text
 });
 
-onMounted(() => {
-  userInput.value = props.initialText;
-});
+const characterCount = computed(() => form.userInput.length);
 
 const submitForm = (event) => {
   event.preventDefault();
   if (characterCount.value > 1) {
-    context.emit("update-text", userInput.value);
+    emits("update:text", form.userInput);
   } else if (characterCount.value === 1) {
     alert("Please write a word!");
   } else {
