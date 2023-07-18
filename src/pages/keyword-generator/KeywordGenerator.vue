@@ -2,37 +2,27 @@
   <div class="ma-keywords-generator">
     <div class="ma-content">
       <div class="ma-left-side">
-        <div class="ma-input" label="Input Text">
-          <Textarea
-            v-model="inputText"
-            :rows="5"
-            :placeholder="'Enter your text'"
-          ></Textarea>
+        <div class="ma-input">
+          <label for="input-text">Input Text:</label>
+          <a-textarea id="input-text" v-model:value="inputText" :rows="5" :placeholder="'Enter your text'"></a-textarea>
         </div>
-        <Button type="primary" @click="generateKeywords" class="convertButton">
+        <a-button type="primary" @click="generateKeywords" class="convertButton">
+          <!-- <font-awesome-icon icon="fa-solid fa-check" /> -->
           Count
-        </Button>
+        </a-button>
       </div>
       <div class="ma-right-side">
-        <div class="ma-select" label="Select n-grams to show">
-          <Select
-            mode="multiple"
-            v-model="selectedNGrams"
-            :options="nGramOptions"
-            style="width: 100%"
-            placeholder="Select n-grams"
-          ></Select>
+        <div class="ma-select">
+          <label>Select n-grams to show:</label>
+          <a-select mode="multiple" v-model:value="selectedNGrams" :options="nGramOptions" style="width: 100%"
+            placeholder="Select n-grams"></a-select>
         </div>
         <div class="ma-keywords">
-          <div
-            v-for="(keywords, index) in selectedKeywords"
-            :key="index"
-            class="ma-keyword-group"
-          >
+          <div v-for="(keywords, index) in selectedKeywords" :key="index" class="ma-keyword-group">
             <h3>{{ selectedNGrams[index] }}-gram Keywords:</h3>
-            <Tag v-for="keyword in keywords" :key="keyword" class="ma-keyword-tag">
+            <a-tag v-for="keyword in keywords" :key="keyword" class="ma-keyword-tag">
               {{ keyword }}
-            </Tag>
+            </a-tag>
           </div>
         </div>
       </div>
@@ -41,34 +31,33 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Button, Select, Tag, Textarea } from "ant-design-vue";
+import { ref, computed } from "vue";
+import { Select as ASelect, Button as AButton, Textarea as ATextarea, Tag as ATag } from "ant-design-vue";
 import { regex, splitRegex, filterArr } from "../../cleanupResources";
 
 const inputText = ref("");
 const selectedNGrams = ref([]);
 const selectedKeywords = ref([]);
-const nGramOptions = Array.from({ length: 10 }, (_, i) => ({
+const nGramOptions = ref(Array.from({ length: 10 }, (_, i) => ({
   label: `${i + 1}-gram`,
   value: i + 1,
-}));
+})));
 
-function cleanedText() {
-  return inputText.value
-    .replace(regex, "")
-    .split(splitRegex)
-    .map((word) => word.trim())
-    .filter((word) => word.length > 0)
-    .join(" ")
-    .toLowerCase();
-}
+const cleanedText = computed(() => inputText.value
+  .replace(regex, "")
+  .split(splitRegex)
+  .map((word) => word.trim())
+  .filter((word) => word.length > 0)
+  .join(" ")
+  .toLowerCase()
+);
 
-function filteredText() {
-  return cleanedText().split(" ").join(" ");
-}
+const filteredText = computed(() => cleanedText.value
+  .split(" ")
+  .filter((word) => !filterArr.includes(word))
+  .join(" "));
 
-function getNGramKeywords(n, text) {
-  //çalışmıyor
+const getNGramKeywords = (n, text) => {
   const words = text.split(/\s+/);
   const nGrams = [];
 
@@ -80,23 +69,13 @@ function getNGramKeywords(n, text) {
   }
 
   return nGrams;
-}
+};
 
-function generateKeywords() {
-  const cleanedTextValue = cleanedText();
-  const filteredTextValue = cleanedTextValue
-    .split(" ")
-    .filter((word) => !filterArr.includes(word))
-    .join(" ");
-
+const generateKeywords = () => {
   selectedKeywords.value = selectedNGrams.value.map((n) =>
-    getNGramKeywords(n, filteredTextValue)
+    getNGramKeywords(n, filteredText.value)
   );
-}
-
-function removeKeyword(groupIndex, keywordIndex) {
-  selectedKeywords.value[groupIndex].splice(keywordIndex, 1);
-}
+};
 </script>
 
 <style scoped>
@@ -128,7 +107,7 @@ function removeKeyword(groupIndex, keywordIndex) {
   @apply block mb-4 text-sm font-extralight text-black;
 }
 
-.ma-input a-textarea {
+.ma-input textarea {
   @apply w-full resize-y bg-white;
 }
 
