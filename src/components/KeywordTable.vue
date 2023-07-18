@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps } from "vue";
+import { ref, watchEffect, onMounted, defineProps } from "vue";
 import { Button as AButton, Table as ATable } from "ant-design-vue";
 import { regex, splitRegex, filterArr } from "../cleanupResources";
 
@@ -43,16 +43,6 @@ const columns = [
 
 const dataSource = ref([]);
 let totalCount = 0;
-
-watch(
-  (text = (newText) => {
-    updateTable(newText);
-  })
-);
-
-onMounted(() => {
-  updateTable(props.text);
-});
 
 const countKeywords = (words) => {
   //this method takes an array as inputs (words) and it stores each keyword in keywordCountMap if the word exist it increments the count of that keyword by one
@@ -158,6 +148,13 @@ const copyToClipboard = () => {
       .join("\n");
   navigator.clipboard.writeText(csvData);
 };
+
+watchEffect(() => {
+  updateTable(props.text);
+});
+onMounted(() => {
+  updateTable(props.text);
+});
 </script>
 
 <style scoped>
