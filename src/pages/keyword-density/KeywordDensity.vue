@@ -1,7 +1,7 @@
 <template>
   <div class="ma-keyword-density-wrapper">
     <keyword-text :initialText="keywordText" @update-text="updateKeywordText" />
-    <keyword-table :initialText="keywordText" />
+    <keyword-table :text="keywordText" />
   </div>
 </template>
 

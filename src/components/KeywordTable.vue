@@ -17,7 +17,7 @@ import { Button as AButton, Table as ATable } from "ant-design-vue";
 import { regex, splitRegex, filterArr } from "../cleanupResources";
 
 const props = defineProps({
-  initialText: {
+  text: {
     type: String,
     required: true,
   },
@@ -40,28 +40,20 @@ const columns = [
     key: "density",
   },
 ];
+
 const dataSource = ref([]);
 let totalCount = 0;
+
 watch(
-  () => props.initialText,
-  (newText) => {
+  text=(newText) => {
     updateTable(newText);
   }
 );
 
 onMounted(() => {
-  updateTable(props.initialText);
+  updateTable(props.text);
 });
-const cleanText = (text) => {
-  return text
-    .toLowerCase()
-    .replace(regex, "")
-    .split(splitRegex)
-    .map((word) => word.trim())
-    .filter((word) => word.length > 0)
-    .filter((word) => !filterArr.includes(word))
-    .join(" ");
-};
+
 const countKeywords = (words) => {
   //this method takes an array as inputs (words) and it stores each keyword in keywordCountMap if the word exist it increments the count of that keyword by one
   const keywordCountMap = {};
@@ -110,6 +102,17 @@ const updateTable = (text) => {
     const keywordData = generateKeywordData(mergedKeywords);
     dataSource.value = keywordData;
   }
+};
+const cleanText = (text) => {
+  //It cleans the regexs and unwanted words
+  return text
+    .toLowerCase()
+    .replace(regex, "")
+    .split(splitRegex)
+    .map((word) => word.trim())
+    .filter((word) => word.length > 0)
+    .filter((word) => !filterArr.includes(word))
+    .join(" ");
 };
 
 const getWords = (cleanedText) => {
