@@ -45,9 +45,9 @@ const dataSource = ref([]);
 let totalCount = 0;
 
 watch(
-  text=(newText) => {
+  (text = (newText) => {
     updateTable(newText);
-  }
+  })
 );
 
 onMounted(() => {
