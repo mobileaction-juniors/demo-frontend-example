@@ -3,6 +3,9 @@
         <router-link to="/keyword-density">
             Keyword Density
         </router-link>
+        <router-link to="/keyword-generator">
+            Keyword Generator
+        </router-link>
     </div>
 </template>
 

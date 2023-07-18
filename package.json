@@ -2,6 +2,9 @@
     "name": "ma_conf",
     "version": "0.1.0",
     "private": true,
+    "browserslist": [
+        "last 2 years"
+    ],
     "scripts": {
         "serve": "vite",
         "build": "vite build",
@@ -9,17 +12,23 @@
         "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder",
         "dev": "vite"
     },
-    "dependencies": {},
+    "dependencies": {
+        "ant-design-vue": "3.2.16"
+    },
     "devDependencies": {
-        "@fortawesome/fontawesome-svg-core": "^1.2.35",
+        "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-brands-svg-icons": "^5.15.3",
         "@fortawesome/free-regular-svg-icons": "^5.15.4",
-        "@fortawesome/free-solid-svg-icons": "^5.15.3",
-        "@fortawesome/vue-fontawesome": "^2.0.2",
+        "@fortawesome/free-solid-svg-icons": "^6.0.0-11",
+        "@fortawesome/vue-fontawesome": "^2.0.0-14",
         "@mobileaction/eslint-config": "^2.0.0",
         "@vitejs/plugin-vue": "4.2.3",
-        "autoprefixer": "^10.2.6",
+        "autoprefixer": "^10.4.14",
         "core-js": "^3.6.5",
+        "postcss": "8.3.6",
+        "postcss-import": "^15.1.0",
+        "postcss-nested": "^6.0.1",
+        "tailwindcss": "3.3.3",
         "vite": "^4.4.4",
         "vue": "^3.3.4",
         "vue-clipboard2": "^0.3.1",
