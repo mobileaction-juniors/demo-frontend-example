@@ -12,8 +12,8 @@
           ></a-textarea>
         </div>
         <a-button type="primary" @click="generateKeywords" class="convertButton">
-          <!-- <font-awesome-icon icon="fa-solid fa-check" /> -->
-          Count
+          <span class="ma-count">Count</span>
+          <font-awesome-icon icon="fa-solid fa-check" />
         </a-button>
       </div>
       <div class="ma-right-side">
@@ -36,7 +36,6 @@
             <h3>{{ selectedNGrams[index] }}-gram Keywords:</h3>
             <a-tag v-for="keyword in keywords" :key="keyword" class="ma-keyword-tag">
               {{ keyword }}
-              
             </a-tag>
           </div>
         </div>
@@ -47,7 +46,12 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import {Select as ASelect, Button as AButton, Textarea as ATextarea, Tag as ATag} from "ant-design-vue";
+import {
+  Select as ASelect,
+  Button as AButton,
+  Textarea as ATextarea,
+  Tag as ATag,
+} from "ant-design-vue";
 import { regex, splitRegex, filterArr } from "../../cleanupResources";
 
 const inputText = ref("");
@@ -133,6 +137,10 @@ const generateKeywords = () => {
 
 .ma-button {
   @apply mt-5;
+}
+
+.ma-count {
+  @apply pr-2;
 }
 
 .convertButton {

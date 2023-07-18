@@ -13,7 +13,7 @@ const app = createApp(App);
 
 app.use(router);
 
-// Register font-awesome-icon component globally
+
 library.add(faCheck);
 app.component('font-awesome-icon', FontAwesomeIcon);
 
