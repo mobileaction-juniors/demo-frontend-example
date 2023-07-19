@@ -11,9 +11,9 @@
             :placeholder="'Enter your text'"
           ></a-textarea>
         </div>
-        <a-button type="primary" @click="generateKeywords" class="convertButton">
+        <a-button @click="generateKeywords" class="convertButton">
           <span class="ma-count">Count</span>
-          <font-awesome-icon icon="fa-solid fa-check" />
+          <font-awesome-icon icon="check" />
         </a-button>
       </div>
       <div class="ma-right-side">
