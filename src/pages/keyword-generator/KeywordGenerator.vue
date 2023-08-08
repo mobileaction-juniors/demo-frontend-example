@@ -1,6 +1,7 @@
 <script setup>
   import { ref } from 'vue'
-  const text = ref("");
+
+  const givenText = ref("");
   const nValue = ref(1);
   let generatedValue = ref("");
   let isAlertVisible = ref(false);
@@ -37,12 +38,12 @@
   // check if text is empty: if it is, give an alert
   // if not, generate keywords
   function printText() {
-    if ( text.value.trim() === "" ){
+    if ( givenText.value.trim() === "" ){
       isAlertVisible.value = true;
       isGeneratedValueVisible.value = false;
     }
     else {
-      let splitArr = text.value.toLowerCase().split(" ");
+      let splitArr = givenText.value.toLowerCase().split(" ");
       generatedValue.value = (generateKeywords(nValue.value, splitArr));
       isAlertVisible.value = false;
       isGeneratedValueVisible.value = true;
@@ -50,7 +51,6 @@
   }
 
   function selectChangeHandler() {
-    console.log("geldi mi buraya?")
     if (generatedValue.value !== "" )
       printText()
   }
@@ -66,7 +66,7 @@
   <div class="ma-keywords-generator">
 
     <div v-if="isAlertVisible" class="ma-custom-alert">
-      Please enter a text first!
+      <p>Please enter a text first!</p>
       <button @click="closeAlert">Close</button>
     </div>
 
@@ -79,9 +79,9 @@
     </div>
 
     <div class="ma-header">
-      <textarea class="ma-textarea" v-model="text" placeholder="Please enter text..."></textarea>
+      <textarea class="ma-text-area" v-model="givenText" placeholder="Please enter text..."></textarea>
       <button class="ma-submit-button" @click="printText">Submit</button>
-      <div class="ma-display-div" v-if="isGeneratedValueVisible">
+      <div class="ma-display-area" v-if="isGeneratedValueVisible">
         {{generatedValue}}
       </div>
     </div>
@@ -96,7 +96,6 @@ export default {
 </script>
 
 <style scoped>
-
 .ma-keywords-generator {
   display: flex;
   flex-direction: column;
@@ -109,11 +108,13 @@ export default {
 .ma-select-holder {
   margin-right: auto;
 }
+
 .ma-select {
   padding: 6px;
   width: 60px;
   font-size: 14px;
 }
+
 .ma-header {
   display: flex;
   flex-direction: column;
@@ -122,7 +123,7 @@ export default {
   width: 100%;
 }
 
-.ma-textarea {
+.ma-text-area {
   width: 100%;
   height: 200px;
   resize: none;
@@ -139,11 +140,9 @@ export default {
   margin-top: auto;
 }
 
-.ma-display-div {
-  border-color: #007bff;
+.ma-display-area {
+  border: 2px solid #007bff;
   border-radius: 6px;
-  border-width: 2px;
-  border-style: solid;
   width: 100%;
   margin-top: 40px;
   padding: 10px;
@@ -157,5 +156,4 @@ export default {
   border-radius: 5px;
   margin-bottom: 20px;
 }
-
 </style>

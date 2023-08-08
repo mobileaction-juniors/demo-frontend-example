@@ -1,20 +1,22 @@
 <template>
     <div>
-        <div style="text-align: center">
+        <div class="ma-elements-holder">
             <MaKeywordGenerator />
         </div>
     </div>
 </template>
 
 <script>
-import MaKeywordGenerator from "@/pages/keyword-generator/KeywordGenerator.vue";
+import MaKeywordGenerator from '@/pages/keyword-generator/KeywordGenerator.vue';
     export default {
         name: 'index',
-      components: {MaKeywordGenerator},
+      components: { MaKeywordGenerator },
     };
 
 </script>
 
 <style scoped>
-
+.ma-elements-holder {
+  text-align: center;
+}
 </style>
