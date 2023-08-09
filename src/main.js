@@ -6,6 +6,8 @@ import TheHeader from './components/TheHeader.vue';
 import TheNav from './components/TheNav.vue';
 import FontAwesomeIcon from './fontAwesome';
 
+
+
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('the-header', TheHeader);
 Vue.component('the-nav', TheNav);
@@ -18,3 +20,5 @@ new Vue({
     render: h => h(App),
     router,
 }).$mount('#app');
+
+
