@@ -21,9 +21,9 @@
   const isGeneratedValueVisible = ref(false);
 
   // this function removes duplicate entries of an array and return a new one
-  const removeDuplicate = (strArr) => {
+  const removeDuplicate = (keywordsArr) => {
     let newArr = [];
-    strArr.forEach(word => {
+    keywordsArr.forEach(word => {
       if ( !(newArr.includes(word)) )
         newArr.push(word);
     })
@@ -33,23 +33,23 @@
   // this function generates keywords according to the selected nValue
   const generateKeywords = (n, strArr) => {
     let newArr = [];
-    let index = 0;
+    let indexOfNewArr = 0;
 
     // iterate until there are still entries
-    while ( index < strArr.length - (parseInt(n, 10)-1)) {
-      newArr[index] = "";
+    while ( indexOfNewArr < strArr.length - (parseInt(n, 10)-1)) {
+      newArr[indexOfNewArr] = "";
       // get the current entry and up to n entries more to generate keywords
-      for ( let i = index; i < index + parseInt(n, 10); i++) {
-        newArr[index] = newArr[index] + " " + strArr[i];
+      for ( let i = indexOfNewArr; i < indexOfNewArr + parseInt(n, 10); i++) {
+        newArr[indexOfNewArr] = newArr[indexOfNewArr] + " " + strArr[i];
       }
-      index++;
+      indexOfNewArr++;
     }
     return removeDuplicate(newArr);
   }
 
   // clean from regex expressions and unwanted words and return words array
-  const cleanArr = (text) => {
-    let newText = text.replace(splitRegex, '');
+  const cleanArr = (inputText) => {
+    let newText = inputText.replace(splitRegex, '');
     newText = newText.replace(regex, '');
     newText = newText.replace(/\s+/g, ' ');
     newText = newText.trim();
@@ -113,7 +113,7 @@
           :autoSize="{ minRows: 6, maxRows: 8}"
       />
       <a-button class="ma-submit-button" @click="printText">
-        <font-awesome-icon icon="fa-solid fa-check" />
+        <font-awesome-icon icon="fa-solid fa-angle-right" />
       </a-button>
       <div class="ma-display-area" v-if="isGeneratedValueVisible">
         <a-tag v-for="(text, index) in generatedValue" :key="index">{{ text }}</a-tag>
@@ -160,7 +160,6 @@ export default {
 
 .ma-submit-button {
   margin-top: 20px;
-  background-color: aqua;
 }
 
 .ma-display-area {
