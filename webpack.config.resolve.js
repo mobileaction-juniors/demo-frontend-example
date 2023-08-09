@@ -1,4 +1,4 @@
-const path = require('path');
+ const path = require('path');
 const GoogleFontsPlugin = require('google-fonts-webpack-plugin');
 function resolve(p = '.') {
     return path.resolve(__dirname, p);
