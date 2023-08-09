@@ -9,15 +9,16 @@
     "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
   },
   "dependencies": {
+    "ant-design-vue": "1.7.8",
     "serve": "^12.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-brands-svg-icons": "^5.15.3",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/vue-fontawesome": "^3.0.3",
     "@mobileaction/eslint-config": "^2.0.0",
     "@vue/cli-plugin-babel": "^5.0.0-beta.2",
     "@vue/cli-plugin-eslint": "^5.0.0-beta.2",
