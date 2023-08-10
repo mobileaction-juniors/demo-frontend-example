@@ -27,6 +27,9 @@
 
 
 <script>
+
+import {filterArr} from "@/cleanupResources";
+
 export default {
 
   data() {
@@ -44,13 +47,29 @@ export default {
   },
 
   methods: {
+    getCleanInput(text){
+      const textAr = text.split(" ");
+      const r = [];
+      for(let i=0;i<textAr.length;i++){
+        let flag=0;
+        for(let j=0;j<filterArr.length;j++){
+          if(textAr[i] === filterArr[j]){
+            flag=1;
+            break;
+          }
+        }
+        if(flag===0) r.push(textAr[i]);
+      }
+      console.log(textAr);
+      console.log(r);
+      return r;
+    },
     createAr(n){
       const r = [];
       for(let i=0;i<n;i++) r.push(i+1);
       return r;
     },
-    computeWords(words, n){
-      const splitWords = words.split(" ");
+    computeWords(splitWords, n){
       const ans = [];
       for(let i=0;i<splitWords.length-n+1;i++){
         const temp = [];
@@ -58,12 +77,17 @@ export default {
         const s = temp.join(' ');
         ans.push(s);
       }
+      //console.log(ans);
+      //console.log(splitWords);
       return ans;
     },
-
     storeText() {
-      this.computedWords = this.computeWords(this.inputText,this.nGramLength);
+      this.computedWords = this.computeWords(this.getCleanInput(this.inputText),this.nGramLength);
     }
   }
 };
+
 </script>
+
+
+
