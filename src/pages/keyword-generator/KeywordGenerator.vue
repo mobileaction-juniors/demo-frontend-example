@@ -1,6 +1,5 @@
 
 
-
 <template>
   <div class="ma-keywords-generator">
     <div class="ma-header">
@@ -24,11 +23,9 @@
     </div>
   </div>
 </template>
-
-
 <script>
 
-import {filterArr} from "@/cleanupResources";
+import {regex, filterArr} from "@/cleanupResources";
 
 export default {
 
@@ -48,7 +45,9 @@ export default {
 
   methods: {
     getCleanInput(text){
-      const textAr = text.split(" ");
+      text = text.replace(regex,''); //remove special characters
+      const textAr2 = text.split(" "); //split
+      const textAr = textAr2.filter(t => t !== ''); //filter blanks
       const r = [];
       for(let i=0;i<textAr.length;i++){
         let flag=0;
@@ -60,8 +59,6 @@ export default {
         }
         if(flag===0) r.push(textAr[i]);
       }
-      console.log(textAr);
-      console.log(r);
       return r;
     },
     createAr(n){
@@ -77,8 +74,7 @@ export default {
         const s = temp.join(' ');
         ans.push(s);
       }
-      //console.log(ans);
-      //console.log(splitWords);
+
       return ans;
     },
     storeText() {

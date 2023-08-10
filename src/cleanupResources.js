@@ -1,3 +1,6 @@
+
+
+
 const regex = /[!•"#$%&'’*+,./:;=?@^`|~]/g;
 const splitRegex = /[.*[({\-_><\].*[({\-_><\]?=.*?[)}\-_><\].*?[)}\-_><\]|[({\-_><\]?<=.*?[({\-_><\].*?[)}\-_><\].*[)}\-_><\].*]/g;
 const filterArr = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself',
@@ -7,3 +10,7 @@ const filterArr = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 
     'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so',
     'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should','now'];
 export { regex, splitRegex, filterArr };
+
+
+
+
