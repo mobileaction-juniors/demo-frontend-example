@@ -24,13 +24,15 @@
         class="keyword-card"
     >
       <h3 class="keyword-title">
-        {{ index+1 }}-Gram Keywords:
+        {{ index + 1 }}-Gram Keywords:
       </h3>
       <div class="keyword-items">
         <ul>
-          <li v-for="keyword in keywords"
-              :key="keyword"
-              class="keyword-item">
+          <li
+          v-for="keyword in keywords"
+          :key="keyword"
+          class="keyword-item"
+          >
             <a-tag>
               {{ keyword.toString() }}
             </a-tag>
