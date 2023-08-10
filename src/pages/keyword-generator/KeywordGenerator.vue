@@ -7,15 +7,11 @@
       <span>Keyword Generator: </span>
 
       <input v-model="inputText" placeholder="Enter text">
-
       <button @click="storeText">Enter</button>
 
+
       <select v-model="nGramLength">
-
-        <option :value="1">1</option>
-        <option :value="2">2</option>
-        <option :value="3">3</option>
-
+        <option :value="num" v-for="num in dropdownAr" :key="num.id">{{num}}</option>
       </select>
 
       <p>
@@ -38,20 +34,27 @@ export default {
       inputText: '',
       storedText: '',
       computedWords: [],
-      nGramLength: 1
+      nGramLength: 1,
+      dropdownAr:[],
     };
   },//vue dev tools
 
+  created(){
+    this.dropdownAr = this.createAr(10);
+  },
+
   methods: {
+    createAr(n){
+      const r = [];
+      for(let i=0;i<n;i++) r.push(i+1);
+      return r;
+    },
     computeWords(words, n){
       const splitWords = words.split(" ");
       const ans = [];
-      console.log(splitWords.length)
       for(let i=0;i<splitWords.length-n+1;i++){
         const temp = [];
-        for(let k=i;k<i+n;k++){
-          temp.push(splitWords[k]);
-        }
+        for(let k=i;k<i+n;k++) temp.push(splitWords[k]);
         const s = temp.join(' ');
         ans.push(s);
       }
