@@ -1,23 +1,36 @@
 <template>
   <div class="container">
-    <a-select v-model="selectedNgram" style="width: 120px"
-              @change="handleChange">
-      <a-select-option v-for="value in ngramOptions"
-                       :key="value" :value="value">
+    <a-select
+        v-model="selectedNgram"
+        style="width: 120px"
+        @change="handleChange"
+    >
+      <a-select-option
+          v-for="value in ngramOptions"
+          :key="value"
+          :value="value"
+      >
         {{ value }}-Gram
       </a-select-option>
     </a-select>
-    <div class="gap-3"></div>
-    <a-input-search v-model="textInput" placeholder="input search text"
-                    enter-button @search="generateNGrams" />
-    <div class="gap-3"></div>
-    <a-card v-for="(keywords, index) in generatedKeywordsArray"
-            :key="index" class="keyword-card">
-      <h3 class="keyword-title">{{ index+1 }}-Gram Keywords:</h3>
+    <a-input-search
+        v-model="textInput"
+        placeholder="input search text"
+        enter-button @search="generateNGrams"
+    />
+    <a-card
+        v-for="(keywords, index) in generatedKeywordsArray"
+        :key="index"
+        class="keyword-card"
+    >
+      <h3 class="keyword-title">
+        {{ index+1 }}-Gram Keywords:
+      </h3>
       <div class="keyword-items">
         <ul>
           <li v-for="keyword in keywords"
-              :key="keyword" class="keyword-item">
+              :key="keyword"
+              class="keyword-item">
             <a-tag>
               {{ keyword.toString() }}
             </a-tag>
@@ -58,8 +71,7 @@
 
   // Split the text into words
   const words = computed(() => {
-    const wordsArray =
-        textInput.value.split(/\s+/).map(word => word.toLowerCase().trim());
+    const wordsArray = textInput.value.split(/\s+/).map(word => word.toLowerCase().trim());
     return [...new Set(wordsArray)];
     // Convert to a Set to remove duplicates and then back to an array
   });
@@ -68,8 +80,7 @@
   function generateNGrams() {
     const _generatedKeywords = {};
     const unwantedWords = ['is', 'a', 'an', 'the'];
-    const filteredWords =
-        words.value.filter((word) => !unwantedWords.includes(word.toLowerCase()));
+    const filteredWords = words.value.filter((word) => !unwantedWords.includes(word.toLowerCase()));
 
     for (let n = 1; n <= selectedNgram.value; n++) {
       const nGramKeywords = [];
@@ -102,6 +113,10 @@ fa{
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.container > * + * {
+  margin-top: 20px;
 }
 
 .keyword-card {
