@@ -9,10 +9,12 @@
     "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
   },
   "dependencies": {
+    "ant-design-vue": "^1.7.8",
     "serve": "^12.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",

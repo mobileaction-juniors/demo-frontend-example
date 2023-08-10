@@ -4,9 +4,19 @@ import router from './router';
 import VueClipboard from 'vue-clipboard2';
 import TheHeader from './components/TheHeader.vue';
 import TheNav from './components/TheNav.vue';
-import FontAwesomeIcon from './fontAwesome';
+import 'ant-design-vue/dist/antd.css';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+// Font Awesome
+
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+
+
+library.add(fas);
+
+
+Vue.component('fa', FontAwesomeIcon);
 Vue.component('the-header', TheHeader);
 Vue.component('the-nav', TheNav);
 
