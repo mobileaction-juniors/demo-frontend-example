@@ -34,7 +34,7 @@
             class="keyword-item"
           >
             <a-tag>
-              {{ keyword.toString() }}
+              {{ keyword }}
             </a-tag>
           </li>
         </ul>
