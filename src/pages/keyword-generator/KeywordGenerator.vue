@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { filterArr, regex, splitRegex } from '@/cleanupResources';
   import {
-    Input as AInput,
+    Textarea as ATextarea,
     Alert as AAlert,
     Select as ASelect,
     Tag as ATag,
@@ -106,14 +106,13 @@
     </div>
 
     <div class="ma-header">
-      <a-input
-          type="textarea"
+      <a-textarea
           v-model="givenText"
           placeholder="Please enter text..."
-          :autoSize="{ minRows: 6, maxRows: 8}"
+          :rows="6"
       />
       <a-button class="ma-submit-button" @click="printText">
-        <font-awesome-icon icon="fa-solid fa-angle-right" />
+        <font-awesome-icon icon="fa-solid angle-right" />
       </a-button>
       <div class="ma-display-area" v-if="isGeneratedValueVisible">
         <a-tag v-for="(text, index) in generatedValue" :key="index">{{ text }}</a-tag>

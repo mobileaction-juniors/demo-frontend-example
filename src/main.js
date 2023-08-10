@@ -1,21 +1,21 @@
-import Vue from 'vue';
-import App from './App.vue';
+import { createApp} from "vue";
+import App from './App.vue'
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import router from './router';
-import VueClipboard from 'vue-clipboard2';
 import TheHeader from './components/TheHeader.vue';
 import TheNav from './components/TheNav.vue';
 import 'ant-design-vue/dist/antd.css';
-import FontAwesomeIcon from './fontAwesome'
+//import './index.css';
+import { FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+const app = createApp(App)
+library.add(faAngleRight)
+app.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.component('the-header', TheHeader);
-Vue.component('the-nav', TheNav);
+app.component('the-header', TheHeader);
+app.component('the-nav', TheNav);
 
-Vue.use(VueClipboard);
-Vue.config.productionTip = false;
-
-new Vue({
-    render: h => h(App),
-    router,
-}).$mount('#app');
+app.config.productionTip = false;
+app.use(router)
+app.mount('#app')

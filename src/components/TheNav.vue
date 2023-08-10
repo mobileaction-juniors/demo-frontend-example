@@ -1,9 +1,9 @@
 <template>
   <div class="ma-navbar">
     <div class="ma-router-item">
-        <router-link to="/keyword-density" class="ma-router-link">
-            Keyword Density
-        </router-link>
+      <router-link to="/keyword-generator" class="ma-router-link">
+        Keyword Generator
+      </router-link>
     </div>
   </div>
 </template>
@@ -28,3 +28,5 @@
    background-color: #4682A9;
  }
 </style>
+<script setup>
+</script>

@@ -1,15 +1,11 @@
-import VueRouter from 'vue-router';
-import Vue from 'vue';
-import KeywordGenerator from './pages/keyword-generator/KeywordGenerator.vue';
+import { createRouter, createWebHistory} from "vue-router";
+import MaKeywordGenerator from "@/pages/keyword-generator/KeywordGenerator.vue";
 import HomePage from './pages/index.vue';
 
-Vue.use(VueRouter);
-const router = new VueRouter({
-    mode: 'history',
+export default createRouter({
+    history: createWebHistory(),
     routes: [
         { path: '/', component: HomePage },
-        { path: '/keyword-generator', component: KeywordGenerator },
+        { path: '/keyword-generator', component: MaKeywordGenerator },
     ],
 });
-
-export default router;
