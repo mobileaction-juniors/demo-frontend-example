@@ -1,21 +1,23 @@
 <template>
   <div class="container">
-
-    <a-select v-model="selectedNgram" style="width: 120px" @change="handleChange">
-      <a-select-option v-for="value in ngramOptions" :key="value" :value="value">
+    <a-select v-model="selectedNgram" style="width: 120px"
+              @change="handleChange">
+      <a-select-option v-for="value in ngramOptions"
+                       :key="value" :value="value">
         {{ value }}-Gram
       </a-select-option>
     </a-select>
-
-    <br /><br />
-    <a-input-search v-model="textInput" placeholder="input search text" enter-button @search="generateNGrams" />
-    <br /><br />
-
-    <a-card v-for="(keywords, index) in Object.values(generatedKeywords)" :key="index" class="keyword-card">
+    <div class="gap-3"></div>
+    <a-input-search v-model="textInput" placeholder="input search text"
+                    enter-button @search="generateNGrams" />
+    <div class="gap-3"></div>
+    <a-card v-for="(keywords, index) in generatedKeywordsArray"
+            :key="index" class="keyword-card">
       <h3 class="keyword-title">{{ index+1 }}-Gram Keywords:</h3>
       <div class="keyword-items">
         <ul>
-          <li v-for="keyword in keywords" :key="keyword" class="keyword-item">
+          <li v-for="keyword in keywords"
+              :key="keyword" class="keyword-item">
             <a-tag>
               {{ keyword.toString() }}
             </a-tag>
@@ -23,12 +25,10 @@
         </ul>
       </div>
     </a-card>
-
   </div>
 </template>
 
 <script setup>
-
   import { ref, computed } from 'vue';
   //Ant Design
   import {
@@ -50,20 +50,26 @@
     selectedNgram.value = value;
   }
 
+  const generatedKeywordsArray =
+      computed(() => Object.values(generatedKeywords.value));
+
   // Generated keywords
   const generatedKeywords = ref({});
 
   // Split the text into words
   const words = computed(() => {
-    const wordsArray = textInput.value.split(/\s+/).map(word => word.toLowerCase().trim());
-    return [...new Set(wordsArray)]; // Convert to a Set to remove duplicates and then back to an array
+    const wordsArray =
+        textInput.value.split(/\s+/).map(word => word.toLowerCase().trim());
+    return [...new Set(wordsArray)];
+    // Convert to a Set to remove duplicates and then back to an array
   });
 
   // Generate n-grams
   function generateNGrams() {
     const _generatedKeywords = {};
-    const unwantedWords = new Set(['is', 'a', 'an', 'the']);
-    const filteredWords = words.value.filter((word) => !unwantedWords.has(word.toLowerCase()));
+    const unwantedWords = ['is', 'a', 'an', 'the'];
+    const filteredWords =
+        words.value.filter((word) => !unwantedWords.includes(word.toLowerCase()));
 
     for (let n = 1; n <= selectedNgram.value; n++) {
       const nGramKeywords = [];
@@ -81,7 +87,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 button{
   margin: 10px;
   padding: 10px;
