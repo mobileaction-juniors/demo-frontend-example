@@ -29,9 +29,9 @@
       <div class="keyword-items">
         <ul>
           <li
-          v-for="keyword in keywords"
-          :key="keyword"
-          class="keyword-item"
+            v-for="keyword in keywords"
+            :key="keyword"
+            class="keyword-item"
           >
             <a-tag>
               {{ keyword.toString() }}
