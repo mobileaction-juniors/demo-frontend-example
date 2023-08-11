@@ -41,11 +41,14 @@
             </a-tag>
       </div>
     </a-card>
+
+    <KeyWordDensity/>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, watch } from 'vue';
+  import KeyWordDensity from "../../components/KeyWordDensity.vue";
   //Ant Design
   import {
     Input as AInput,
