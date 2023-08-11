@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
+    "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder",
+    "browserslist": "last 2 years"
   },
   "dependencies": {
     "ant-design-vue": "^1.7.8",
@@ -24,13 +25,16 @@
     "@vue/cli-plugin-babel": "^5.0.0-beta.2",
     "@vue/cli-plugin-eslint": "^5.0.0-beta.2",
     "@vue/cli-service": "^5.0.0-beta.2",
-    "autoprefixer": "^10.2.6",
+    "autoprefixer": "^10.4.14",
     "babel-eslint": "^10.1.0",
+    "browserslist": "> 1%, last 2 years",
     "cache-loader": "^4.1.0",
     "core-js": "^3.6.5",
     "eslint": "^7.29.0",
     "eslint-plugin-vue": "^7.11.1",
     "google-fonts-webpack-plugin": "^0.4.4",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
     "vue-router": "^3.5.2",
