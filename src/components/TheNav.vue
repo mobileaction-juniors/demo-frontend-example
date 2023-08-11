@@ -1,16 +1,14 @@
 <template>
-    <div class="ma-router-item">
-        <router-link to="/keyword-density">
-            Keyword Density
-        </router-link>
-    </div>
+  <div class="ma-router-item">
+    <router-link to="/keyword-density">
+      <div class="ma-router-item flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold p-4">
+        Keyword Density
+      </div>
+    </router-link>
+  </div>
 </template>
 
 <style>
- .ma-router-item {
-   display: flex;
-   flex-direction: row;
-   justify-content: space-evenly;
-   margin: 15px;
- }
+
 </style>
+

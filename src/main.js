@@ -8,6 +8,7 @@ import 'ant-design-vue/dist/antd.css';
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import './assets/tailwind.css';
 
 library.add(fas);
 

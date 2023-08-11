@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container mx-auto p-4 grid gap-x-8 gap-y-4">
     <a-select
         v-model="selectedNgram"
-        style="width: 120px"
+        class="w-32 mb-4"
         @change="handleChange"
     >
       <a-select-option
@@ -15,36 +15,38 @@
     </a-select>
     <a-input-search
         v-model="textInput"
-        placeholder="input search text"
-        enter-button @search="generateNGrams"
-    />
+        class="mt-6"
+        placeholder="Input search text"
+        @search="generateNGrams"
+    >
+      <font-awesome-icon
+          icon="fa-duotone fa-magnifying-glass"
+          class="text-gray-400 ml-2"
+      />
+    </a-input-search>
     <a-card
         v-for="(keywords, index) in generatedKeywordsArray"
         :key="index"
-        class="keyword-card"
+        class="p-4 my-4 bg-white border rounded shadow-md"
     >
-      <h3 class="keyword-title">
+      <h3 class="text-lg font-semibold mb-2">
         {{ index + 1 }}-Gram Keywords:
       </h3>
-      <div class="keyword-items">
-        <ul>
-          <li
-            v-for="keyword in keywords"
-            :key="keyword"
-            class="keyword-item"
-          >
-            <a-tag>
+      <div class="space-y-2">
+            <a-tag
+                v-for="keyword
+                in keywords"
+                :key="keyword"
+            >
               {{ keyword }}
             </a-tag>
-          </li>
-        </ul>
       </div>
     </a-card>
   </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   //Ant Design
   import {
     Input as AInput,
@@ -60,6 +62,14 @@
   const textInput = ref('');
   const selectedNgram = ref(1);
   const ngramOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  watch(
+      () => selectedNgram.value,
+      () => {
+        if(textInput.value !== '')
+          generateNGrams();
+      }
+  );
 
   function handleChange(value) {
     selectedNgram.value = value;
@@ -99,47 +109,3 @@
     generatedKeywords.value = _generatedKeywords;
   }
 </script>
-
-<style scoped>
-button{
-  margin: 10px;
-  padding: 10px;
-}
-
-fa{
-  margin: 10px;
-  padding: 10px;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.container > * + * {
-  margin-top: 20px;
-}
-
-.keyword-card {
-  margin-top: 20px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
-  background-color: #f8f8f8;
-}
-
-.keyword-title {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.keyword-item {
-  margin-bottom: 5px;
-  padding: 5px 10px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-</style>
