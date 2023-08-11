@@ -34,8 +34,7 @@
       </h3>
       <div class="space-y-2">
             <a-tag
-                v-for="keyword
-                in keywords"
+                v-for="keyword in keywords"
                 :key="keyword"
             >
               {{ keyword }}
@@ -66,7 +65,7 @@
   watch(
       () => selectedNgram.value,
       () => {
-        if(textInput.value !== '')
+        if (textInput.value !== '')
           generateNGrams();
       }
   );
