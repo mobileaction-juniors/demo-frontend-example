@@ -6,7 +6,7 @@ import router from './router';
 import TheHeader from './components/TheHeader.vue';
 import TheNav from './components/TheNav.vue';
 import 'ant-design-vue/dist/antd.css';
-//import './index.css';
+import './index.css';
 import { FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const app = createApp(App)

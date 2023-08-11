@@ -18,14 +18,11 @@
  }
 
  .ma-router-link {
-   color: aliceblue;
+   @apply text-white hover:text-cyan-100;
  }
 
  .ma-navbar {
-   width: 100%;
-   margin-bottom: 40px;
-   margin-top: 0;
-   background-color: #4682A9;
+   @apply w-full mb-10 mt-0 bg-cyan-800;
  }
 </style>
 <script setup>

@@ -3,19 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "NODE_ENV=production vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder"
+    "serve": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext .js,.vue",
+    "start": "NO_UPDATE_CHECK=1 serve dist -s -c ../serve.json # this is relative to dist folder",
+    "dev": "vite"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
     "ant-design-vue": "3.2.16",
-    "postcss": "^8.4.27",
-    "postcss-import": "^15.1.0",
-    "postcss-nested": "^6.0.1",
-    "serve": "^12.0.0",
-    "tailwindcss": "^3.3.3"
+
+    "serve": "^12.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -33,13 +31,16 @@
     "cache-loader": "^4.1.0",
     "core-js": "^3.6.5",
     "eslint": "^7.29.0",
+    "postcss": "^8.4.27",
+    "postcss-import": "^15.1.0",
+    "postcss-nested": "^6.0.1",
     "eslint-plugin-vue": "^7.11.1",
     "google-fonts-webpack-plugin": "^0.4.4",
+    "tailwindcss": "^3.3.3",
     "vite": "^4.4.9",
     "vue": "^3.3.4",
     "vue-clipboard2": "^0.3.1",
     "vue-router": "4.2.4",
-    "vue-template-compiler": "^2.6.11",
     "vuex": "^3.6.2"
   },
   "eslintConfig": {

@@ -1,10 +1,5 @@
 <template>
   <div class="ma-keywords-generator">
-    <div v-if="isAlertVisible" class="ma-custom-alert">
-      <a-alert type="error" message="Please enter a text first" banner />
-      <button @click="closeAlert">Close</button>
-    </div>
-
     <div class="ma-select-holder">
       <a-select
           ref="select"
@@ -24,6 +19,16 @@
       <a-button class="ma-submit-button" @click="printText">
         <font-awesome-icon icon="angle-right" />
       </a-button>
+
+      <a-alert
+          v-if="isAlertVisible"
+          message="Please enter a text first"
+          type="error"
+          closable
+          :after-close="closeAlert"
+          class="ma-custom-alert"
+      />
+
       <div class="ma-display-area" v-if="isGeneratedValueVisible">
         <a-tag v-for="(text, index) in generatedValue" :key="index">{{ text }}</a-tag>
       </div>
@@ -123,51 +128,30 @@
 
 <style scoped>
 .ma-keywords-generator {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  margin: auto;
-  width: 40vw;
+  @apply flex flex-col items-start mx-auto w-4/12;
 }
 
 .ma-select-holder {
-  margin-right: auto;
-  margin-left: 12px;
+  @apply p-0 mr-auto ml-0;
 }
 
 .ma-select {
-  padding: 6px;
-  width: 120px;
-  font-size: 14px;
+  @apply w-28 text-sm mb-4;
 }
 
 .ma-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 20px;
-  width: 100%;
+  @apply flex flex-col items-end p-0 w-full;
 }
 
 .ma-submit-button {
-  margin-top: 20px;
+  @apply mt-6;
 }
 
 .ma-display-area {
-  border: 2px solid #4682A9;
-  border-radius: 6px;
-  width: 100%;
-  margin-top: 40px;
-  padding: 10px;
+  @apply p-2 mt-8 w-full border-2 rounded-md
 }
 
 .ma-custom-alert {
-  width: 100%;
-  background-color: rgb(255,241,240);
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  @apply w-full mb-4 mt-8;
 }
 </style>
