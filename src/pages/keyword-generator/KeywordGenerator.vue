@@ -1,3 +1,37 @@
+<template>
+  <div class="ma-keywords-generator">
+    <div v-if="isAlertVisible" class="ma-custom-alert">
+      <a-alert type="error" message="Please enter a text first" banner />
+      <button @click="closeAlert">Close</button>
+    </div>
+
+    <div class="ma-select-holder">
+      <a-select
+          ref="select"
+          v-model:value="nValue"
+          :options="optionsNumbers"
+          @change="selectChangeHandler"
+          class="ma-select"
+      ></a-select>
+    </div>
+
+    <div class="ma-header">
+      <a-textarea
+          v-model:value="givenText"
+          placeholder="Please enter text..."
+          :rows="6"
+      />
+      <a-button class="ma-submit-button" @click="printText">
+        <font-awesome-icon icon="angle-right" />
+      </a-button>
+      <div class="ma-display-area" v-if="isGeneratedValueVisible">
+        <a-tag v-for="(text, index) in generatedValue" :key="index">{{ text }}</a-tag>
+      </div>
+    </div>
+
+  </div>
+</template>
+
 <script setup>
   import { ref } from 'vue'
   import { filterArr, regex, splitRegex } from '@/cleanupResources';
@@ -15,7 +49,6 @@
     label: `${i + 1} gram`,
     value: i + 1,
   })));
-
   const generatedValue = ref([]);
   const isAlertVisible = ref(false);
   const isGeneratedValueVisible = ref(false);
@@ -86,46 +119,6 @@
   const closeAlert = () => {
     isAlertVisible.value = false;
   }
-</script>
-
-<template>
-  <div class="ma-keywords-generator">
-    <div v-if="isAlertVisible" class="ma-custom-alert">
-      <a-alert type="error" message="Please enter a text first" banner />
-      <button @click="closeAlert">Close</button>
-    </div>
-
-    <div class="ma-select-holder">
-      <a-select
-          class="ma-select"
-          ref="select"
-          v-model="nValue"
-          :options="optionsNumbers"
-          @change="selectChangeHandler">
-      </a-select>
-    </div>
-
-    <div class="ma-header">
-      <a-textarea
-          v-model="givenText"
-          placeholder="Please enter text..."
-          :rows="6"
-      />
-      <a-button class="ma-submit-button" @click="printText">
-        <font-awesome-icon icon="fa-solid angle-right" />
-      </a-button>
-      <div class="ma-display-area" v-if="isGeneratedValueVisible">
-        <a-tag v-for="(text, index) in generatedValue" :key="index">{{ text }}</a-tag>
-      </div>
-    </div>
-
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'ma-keyword-generator',
-};
 </script>
 
 <style scoped>
