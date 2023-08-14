@@ -17,6 +17,7 @@
         </tr>
         </thead>
         <tbody>
+
         <tr v-for="(keywords, count) in groupedKeywordCounts" :key="count">
           <td class="border px-4 py-2">{{ keywords.join(', ') }}</td>
           <td class="border px-4 py-2">{{ count }}</td>
