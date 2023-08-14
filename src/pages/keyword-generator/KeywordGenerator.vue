@@ -6,8 +6,7 @@
           v-model:value="nValue"
           :options="optionsNumbers"
           @change="selectChangeHandler"
-          class="ma-select"
-      ></a-select>
+          class="ma-select"/>
     </div>
 
     <div class="ma-header">
@@ -128,7 +127,7 @@
 
 <style scoped>
 .ma-keywords-generator {
-  @apply flex flex-col items-start mx-auto w-4/12;
+  @apply flex flex-col items-start mx-auto w-2/3 md:w-4/12;
 }
 
 .ma-select-holder {
@@ -148,7 +147,7 @@
 }
 
 .ma-display-area {
-  @apply p-2 mt-8 w-full border-2 rounded-md
+  @apply p-2 mt-8 w-full border-2 rounded-md;
 }
 
 .ma-custom-alert {
