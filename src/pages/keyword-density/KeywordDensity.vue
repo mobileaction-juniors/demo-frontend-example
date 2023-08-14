@@ -19,7 +19,7 @@ const calculateDensity = (givenText) => {
   if ( givenText.trim() === "" )
   {
     showTable.value = false;
-    error();
+    noTextError();
   }
   else {
     keywords.value = givenText;
@@ -28,7 +28,7 @@ const calculateDensity = (givenText) => {
 }
 
 // to show error message
-const error = () => {
+const noTextError = () => {
   message.error('Please enter a text first!',4);
 };
 </script>

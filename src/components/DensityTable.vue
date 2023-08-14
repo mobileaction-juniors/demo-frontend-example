@@ -10,7 +10,7 @@
     </div>
   </template>
   <template v-else>
-    <p>No value to show</p>
+    <p>{{noValueMsg}}</p>
   </template>
 </template>
 
@@ -21,11 +21,12 @@ import {
   Tooltip as ATooltip,
   message
 } from 'ant-design-vue';
-import {ref, watchEffect} from 'vue';
-import {filterArr, regex, splitRegex} from '@/cleanupResources';
+import { ref, watchEffect } from 'vue';
+import { filterArr, regex, splitRegex } from '@/cleanupResources';
 
 const props = defineProps(['keywords'])
 const tableData = ref([]);
+const noValueMsg = ref("No value to show");
 
 const columns = [
   {
@@ -50,48 +51,46 @@ const copyToClipboard = async () => {
   });
   try {
     await navigator.clipboard.writeText(dataToCopy);
-    success();
+    clipboardSuccess();
   } catch (error) {
-    error();
+    clipboardError();
   }
 }
 
 // to show error message for clipboard
-const error = () => {
+const clipboardError = () => {
   message.error('Error Copying to Clipboard',4);
 };
 
 // to show success message for clipboard
-const success = () => {
+const clipboardSuccess = () => {
   message.success('Copied!',4);
 };
 
 // calculate density and display table rows
 const calculateDensity = () => {
+  // Split & clean keywords and add to an array:
   let wordArr = props.keywords.split(" ");
   wordArr.forEach((word, index) => {
-    let newText = word.toLowerCase().replace(splitRegex, '');
-    newText = newText.replace(regex, '');
-    newText = newText.replace(/\s+/g, ' ');
-    newText = newText.trim();
-    wordArr[index] = newText;
+    wordArr[index] = word.toLowerCase().replace(splitRegex, '').replace(regex, '').trim();
   });
+  // calculate word count before removing unwanted words
   let wordCount = wordArr.length;
 
   // remove disliked words:
   wordArr = wordArr.filter(token => !filterArr.includes(token.toLowerCase()));
 
+  // map all words
   const wordStorage = new Map();
   wordArr.forEach(word => {
-    if (word) {
-      if (wordStorage.has(word)) {
-        wordStorage.set(word, wordStorage.get(word) + 1);
-      } else {
-        wordStorage.set(word, 1);
-      }
+    if (word && wordStorage.has(word)) {
+      wordStorage.set(word, wordStorage.get(word) + 1);
+    } else {
+      wordStorage.set(word, 1);
     }
   });
 
+  // map words according to their count
   const groupedByCount = new Map();
   wordStorage.forEach((count, word) => {
     if (!groupedByCount.has(count)) {
@@ -100,6 +99,7 @@ const calculateDensity = () => {
     groupedByCount.get(count).push(word);
   });
 
+  // create table data:
   tableData.value = [];
   let indexOfData = 1;
   groupedByCount.forEach((words, count) => {

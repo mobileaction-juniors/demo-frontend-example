@@ -7,9 +7,9 @@
         class="ma-textarea"
     />
     <div class="ma-count-info">
-      <p>Total Words: {{ wordCount }}</p>
+      <p class="ma-display-count">Total Words: {{ wordCount }}</p>
       <a-tooltip placement="topLeft" title="Calculate Density">
-        <a-button @click="$emit('countDensity', givenText)">
+        <a-button @click="sendGivenText(givenText)" class="ma-count-button">
           <font-awesome-icon icon="angle-right" />
         </a-button>
       </a-tooltip>
@@ -23,10 +23,15 @@ import {
   Button as AButton,
   Tooltip as ATooltip,
 } from 'ant-design-vue';
-import {computed, ref} from 'vue';
+import { computed, ref } from 'vue';
 
+const emit = defineEmits(['countDensity'])
 const givenText = ref("Connect with friends, family and people who share the same interests as you. Communicate privately, watch your favourite content, buy and sell items or just spend time with your community. On Facebook, keeping up with the people who matter most is easy. Discover, enjoy and do more together.\n");
 const wordCount = computed( () => givenText.value.trim() === "" ? 0: givenText.value.trim().split(" ").length)
+
+const sendGivenText = (givenText) => {
+  emit('countDensity', givenText)
+}
 </script>
 
 <style scoped>
@@ -40,11 +45,14 @@ const wordCount = computed( () => givenText.value.trim() === "" ? 0: givenText.v
 
 .ma-count-info {
   @apply flex flex-row w-full justify-between;
-  p {
-    @apply text-neutral-500 mt-4 text-sm;
-  }
-  button {
-    @apply mt-8 mb-6;
-  }
 }
+
+.ma-display-count {
+  @apply text-neutral-500 mt-4 text-sm;
+}
+
+.ma-count-button {
+  @apply mt-8 mb-6;
+}
+
 </style>
