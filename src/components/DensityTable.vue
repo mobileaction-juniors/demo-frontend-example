@@ -46,7 +46,7 @@ const columns = [
 const copyToClipboard = async () => {
   let dataToCopy = '';
   tableData.value.forEach( (value) => {
-        dataToCopy += `key: ${value.key}, keyword: ${value.keyword}, count: ${value.count}, density: ${value.density}\n`
+        dataToCopy += `keywords: "${value.keyword}", count: ${value.count}, density: ${value.density}\n`;
   });
   try {
     await navigator.clipboard.writeText(dataToCopy);
