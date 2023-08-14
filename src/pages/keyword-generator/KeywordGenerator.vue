@@ -41,11 +41,21 @@
             </a-tag>
       </div>
     </a-card>
+
+
+    <div class="generator-section">
+      <h1>Keyword Density Table</h1>
+      <router-link to="/keyword-density">Go to Keyword Density Table</router-link>
+    </div>
+
   </div>
 </template>
 
 <script setup>
   import { ref, computed, watch } from 'vue';
+
+  import { cleanFunc, removeUnwantedWords } from '../../utilities/CleanWords';
+
   //Ant Design
   import {
     Input as AInput,
@@ -53,6 +63,7 @@
     Card as ACard,
     Tag as ATag, // Import the Tag component
   } from 'ant-design-vue';
+
 
   const ASelectOption = ASelect.Option;
   const AInputSearch = AInput.Search;
@@ -62,17 +73,23 @@
   const selectedNgram = ref(1);
   const ngramOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+
   watch(
       () => selectedNgram.value,
       () => {
         if (textInput.value !== '')
           generateNGrams();
+        localStorage.removeItem('savedText');
+        localStorage.setItem('savedText', textInput.value);
       }
+
   );
 
   function handleChange(value) {
     selectedNgram.value = value;
   }
+
+
 
   const generatedKeywordsArray =
       computed(() => Object.values(generatedKeywords.value));
@@ -82,19 +99,21 @@
 
   // Split the text into words
   const words = computed(() => {
-    const wordsArray = textInput.value.split(/\s+/).map(word => word.toLowerCase().trim());
-    return [...new Set(wordsArray)];
+    return cleanFunc(textInput.value);
     // Convert to a Set to remove duplicates and then back to an array
   });
 
   // Generate n-grams
   function generateNGrams() {
     const _generatedKeywords = {};
-    const unwantedWords = ['is', 'a', 'an', 'the'];
-    const filteredWords = words.value.filter((word) => !unwantedWords.includes(word.toLowerCase()));
+
+    localStorage.removeItem('savedText');
+    localStorage.setItem('savedText', textInput.value);
 
     for (let n = 1; n <= selectedNgram.value; n++) {
       const nGramKeywords = [];
+
+      const filteredWords = removeUnwantedWords(words.value);
 
       for (let i = 0; i <= filteredWords.length - n; i++) {
         const nGram = filteredWords.slice(i, i + n).join(' ');
