@@ -1,22 +1,33 @@
 <template>
   <div class="ma-keywords-generator">
-    <div class="ma-header">
-      <span>Keyword Generator</span>
+    <textarea v-model="inputTxt" placeholder="Please enter the text here"></textarea>
+    <div class="n-value-input">
+      <label for="nValue"> Please enter the N value </label>
+      <input id="nValue" v-model.number="nValue" type="number" min="1" max="10" />
+    </div>
+    <button @click="generateKeywords">Generate Keywords</button>
+    <div class="generated-keywords">
+      <div class="ngram-keywords" v-for="(keywords, i) in generatedKeywords" :key="i">
+        <h3>{{i}}-gram Keywords:</h3>
+        <ul>
+          <li v-for="keyword in keywords" :key="keyword">{{keyword}}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+
 import {filterArr} from "@/cleanupResources";
 
 export default {
-  name: 'ma-keyword-generator',
 
   data() {
     return {
       inputTxt: '',
-      selectedN: -1,
-      generatedKeywords: [],
+      nValue: 3,
+      generatedKeywords: {}
     };
   },
 
@@ -24,25 +35,60 @@ export default {
     generateKeywords() {
 
       const allWords = this.inputTxt.split(' ');
-      const cleanedWords = allWords.filter((word) => !filterArr.includes(word.toLowerCase()));
+      const filteredWords = allWords.filter((word) => !filterArr.includes(word.toLowerCase()));
+      const cleanedWords = [...new Set(filteredWords)];
 
-
-      this.generatedKeywords = {
-        '1-gram': cleanedWords,
-        '2-gram': this.generateNGrams(cleanedWords, 2),
-        '3-gram': this.generateNGrams(cleanedWords, 3),
-      };
-
-    },
-
-    generateNGrams(allWords, n) {
-      const resultArr = [];
-      for (let i = 0; i < allWords.length - n + 1; ++i) {
-        resultArr.push(allWords.slice(i, i + n).join(', '));
+      for(let i = 1; i <= this.nValue; ++i){
+        const keywords = [];
+        for(let j = 0; j < cleanedWords.length - i + 1; ++j){
+          keywords.push(cleanedWords.slice(j, j + i).join(' '));
+        }
+        this.$set(this.generatedKeywords, i, keywords);
       }
-      return resultArr;
     },
   }
 
 };
 </script>
+
+<style scoped>
+
+.ma-keywords-generator {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+button {
+  padding: 8px 16px;
+}
+
+.n-value-input {
+  margin-bottom: 8px;
+}
+
+.generated-keywords {
+  margin-top: 16px;
+}
+
+.ngram-keywords {
+  margin-top: 12px;
+}
+
+.ngram-keywords ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ngram-keywords li {
+  margin-bottom: 6px;
+}
+
+</style>
+
+
