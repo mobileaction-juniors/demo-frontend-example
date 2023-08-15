@@ -2,13 +2,13 @@
   <div class="ma-keywords-generator">
     <textarea v-model="inputTxt" placeholder="Please enter the text here"></textarea>
     <div class="n-value-input">
-      <label for="nValue"> Please enter the N value </label>
+      <label for="nValue"> Please enter the N value: </label>
       <input id="nValue" v-model.number="nValue" type="number" min="1" max="10" />
     </div>
     <button @click="generateKeywords">Generate Keywords</button>
     <div class="generated-keywords">
       <div class="ngram-keywords" v-for="(keywords, i) in generatedKeywords" :key="i">
-        <h3>{{i}}-gram Keywords:</h3>
+        <h3>{{i+1}}-gram Keywords:</h3>
         <ul>
           <li v-for="keyword in keywords" :key="keyword">{{keyword}}</li>
         </ul>
@@ -27,7 +27,7 @@ export default {
     return {
       inputTxt: '',
       nValue: 3,
-      generatedKeywords: {}
+      generatedKeywords: []
     };
   },
 
@@ -38,12 +38,14 @@ export default {
       const filteredWords = allWords.filter((word) => !filterArr.includes(word.toLowerCase()));
       const cleanedWords = [...new Set(filteredWords)];
 
+      this.generatedKeywords = [];
+
       for(let i = 1; i <= this.nValue; ++i){
         const keywords = [];
         for(let j = 0; j < cleanedWords.length - i + 1; ++j){
           keywords.push(cleanedWords.slice(j, j + i).join(' '));
         }
-        this.$set(this.generatedKeywords, i, keywords);
+        this.generatedKeywords.push(keywords);
       }
     },
   }
