@@ -1,29 +1,26 @@
 
 
+
 <template>
-  <div class="ma-keywords-generator">
-<!--    <div class="ma-header">-->
-      <span class="ma-title">Keyword Generator </span>
+  <div class="bg-gray-100 min-h-screen justify-center p-10">
+    <div class="ma-keywords-generator mx-auto flex flex-col w-1/2 p-4 bg-white rounded-lg shadow-lg pt-8">
+      <span class="text-teal-500 text-center text-lg font-semibold mb-2">Keyword Generator</span>
 
-      <input v-model="inputText" placeholder="Enter text">
-      <Button type="primary"   @click="storeText">Enter</Button>
+      <input v-model="inputText" class="py-2 px-4 border rounded-lg focus:outline-none focus:ring focus:border-teal-300" placeholder="Enter text">
+      <Button type="primary" class="py-2 px-4 mt-2 border-teal-600 flex items-center justify-center bg-teal-500 text-white rounded-lg hover:bg-orange-500 hover:border-orange-500" @click="storeText">Enter</Button>
 
-      <select v-model="nGramLength">
-        <option :value="num" v-for="num in dropdownAr" :key="num.id">{{num}}</option>
+      <select v-model="nGramLength" class="py-2 px-4 mt-2 border rounded-lg">
+        <option :value="num" v-for="num in dropdownAr" :key="num">{{num}}</option>
       </select>
-      <div class="kutucukDiv">
-
-          <span v-for="(word, index) in computedWords" :key="index"> {{ word }}
-            {{ index !== computedWords.length - 1 ? ', ' : '' }}
-          </span>
-
+      <div class="ma-tinyDiv border border-teal-600 mt-2 py-2 px-4 text-center">
+        <span class="" v-for="(word, index) in computedWords" :key="index">{{ word }}{{ index !== computedWords.length - 1 ? ', ' : '' }}</span>
       </div>
-
     </div>
-<!--  </div>-->
+  </div>
 </template>
-<script>
 
+
+<script>
 import {regex, filterArr} from "@/cleanupResources";
 import {Button} from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.css';
@@ -91,13 +88,15 @@ export default {
     }
   }
 };
-</script>
 
+
+</script>
 
 <style scoped>
 .ma-keywords-generator *{
   margin: 5px;
 }
+
 .ma-keywords-generator{
   margin: auto;
   display: flex;
@@ -105,17 +104,14 @@ export default {
   width: 50%;
 }
 
-.ma-title{
-  text-align: center;
-  color: cornflowerblue;
-}
-
-.kutucukDiv{
+.ma-tinyDiv{
   min-height: 100px;
-  border: 1px solid black;
   text-align: center;
-
 }
 
 </style>
+
+
+
+
 

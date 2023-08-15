@@ -5,8 +5,8 @@ import VueClipboard from 'vue-clipboard2';
 import TheHeader from './components/TheHeader.vue';
 import TheNav from './components/TheNav.vue';
 import FontAwesomeIcon from './fontAwesome';
-
 import 'ant-design-vue/dist/antd.css';
+import './styles/main.css'
 
 
 

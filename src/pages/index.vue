@@ -20,6 +20,9 @@
   };
 </script>
 
-<style scoped>
 
+<style >
+.ma-elements-holder{
+
+}
 </style>
