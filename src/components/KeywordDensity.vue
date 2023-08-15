@@ -1,10 +1,6 @@
 <template>
-  <div
-      class="p-4"
-  >
-    <div
-        class="mb-4"
-    >
+  <div class="p-4">
+    <div class="mb-4">
       <div
           class="mb-2 text-xl font-semibold"
       >
@@ -26,9 +22,7 @@
       >
         Keyword Density Table
       </div>
-      <table
-          class="w-full border"
-      >
+      <table class="w-full border">
         <thead>
         <tr>
           <th
@@ -93,9 +87,7 @@
       <button
           class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
       >
-        <router-link
-            to="/"
-        >
+        <router-link to="/">
           Go back to Home Page
         </router-link>
       </button>
