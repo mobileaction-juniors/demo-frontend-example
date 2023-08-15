@@ -32,7 +32,8 @@
       <h3 class="text-lg font-semibold mb-2">
         {{ index + 1 }}-Gram Keywords:
       </h3>
-      <div class="space-y-2">
+      <div
+          class="space-y-2">
             <a-tag
                 v-for="keyword in keywords"
                 :key="keyword"
@@ -43,9 +44,22 @@
     </a-card>
 
 
-    <div class="generator-section">
-      <h1>Keyword Density Table</h1>
-      <router-link to="/keyword-density">Go to Keyword Density Table</router-link>
+    <div
+        class="generator-section"
+    >
+      <h1>
+        Keyword Density Table
+      </h1>
+      <AButton
+          type="primary"
+          shape="round"
+          class="bg-blue-500 my-2"
+      >
+        <router-link
+            to="/keyword-density">
+          Go to Keyword Density Table
+        </router-link>
+      </AButton>
     </div>
 
   </div>
@@ -58,6 +72,7 @@
 
   //Ant Design
   import {
+    Button as AButton,
     Input as AInput,
     Select as ASelect,
     Card as ACard,
@@ -67,6 +82,7 @@
 
   const ASelectOption = ASelect.Option;
   const AInputSearch = AInput.Search;
+
 
   // N-gram selection
   const textInput = ref('');
