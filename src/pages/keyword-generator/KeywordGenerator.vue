@@ -2,8 +2,9 @@
   <div class="ma-keywords-generator">
     <textarea v-model="inputText" placeholder="Please enter the text here"></textarea>
     <div class="n-value-input">
-      <label for="nValue"> Please enter the N value:</label>
-      <input id="nValue" v-model.number="nValue" type="number" min="1" max="10" />
+      <select v-model="nValue">
+        <option v-for="n in nValues" :key="n" :value="n">{{ n }}-gram</option>
+      </select>
     </div>
       <div class="center-button">
         <a-button @click="generateNGrams">
@@ -26,6 +27,7 @@ import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {filterArr} from "@/cleanupResources";
 const inputText = ref('');
 const nValue =  ref(3);
+const nValues = ref([1,2,3,4,5,6,7,8,9,10]);
 const nGrams = ref([]);
 
 const generateNGrams = () => {
