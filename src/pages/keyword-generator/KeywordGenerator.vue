@@ -49,51 +49,36 @@ const generateNGrams = () => {
 
 <style scoped>
 .ma-keywords-generator {
-  max-width: 500px;
-  margin: 0 auto;
+  @apply max-w-md mx-auto;
 }
 textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 8px;
+  @apply w-full px-2 py-1 mb-2;
 }
 .center-button {
-  margin-top: 16px;
-  padding: 8px 16px;
-  color: black;
-  display: flex;
-  justify-content: center;
+  @apply mt-4 py-2 px-4 bg-white text-black flex justify-center;
 }
-button{
-  color: white;
-  background-color: black;
+button {
+  @apply text-white bg-black;
 }
-label{
-  color: black;
-  text-align: center;
-  margin-right: 8px;
+label {
+  @apply text-black text-center mr-2;
 }
-input{
-  color: white;
-  background-color: black;
+input {
+  @apply text-white bg-black;
 }
 .generated-keywords {
-  margin-top: 16px;
+  @apply mt-4;
 }
 .n-value-input {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-
+  @apply mx-auto flex justify-center;
 }
 .ngram-keywords {
-  margin-top: 16px;
+  @apply mt-4;
 }
 .ngram-keywords ul {
-  list-style: none;
-  padding: 0;
+  @apply list-none p-0;
 }
 .ngram-keywords li {
-  margin-bottom: 6px;
+  @apply mb-2;
 }
 </style>
