@@ -1,10 +1,16 @@
+
+
 <template>
     <div class="ma-router-item">
-        <router-link to="/keyword-density">
+      <router-link class="rounded-lg hover:bg-teal-500" to="/keyword-generator">
+        Keyword Generator
+      </router-link>
+        <router-link class="rounded-lg hover:bg-teal-500" to="/keyword-density">
             Keyword Density
         </router-link>
     </div>
 </template>
+
 
 <style>
  .ma-router-item {
@@ -14,3 +20,7 @@
    margin: 15px;
  }
 </style>
+
+
+
+
