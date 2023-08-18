@@ -1,12 +1,14 @@
+
+
 <template>
-    <div>
-        <the-header/>
         <div>
+<!--          <the-header/>-->
             <div>
+
                 <router-view/>
+
             </div>
         </div>
-    </div>
 </template>
 
 
