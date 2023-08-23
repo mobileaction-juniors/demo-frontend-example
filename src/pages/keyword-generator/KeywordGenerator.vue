@@ -1,6 +1,6 @@
 <template>
   <div class="ma-keywords-generator">
-    <textarea v-model="inputText" placeholder="Please enter the text here"></textarea>
+    <a-text-area v-model="inputText" placeholder="Please enter the text here" @change="setStorage"></a-text-area>
     <div class="n-value-input">
       <a-select v-model="nValue">
         <a-select-option v-for="n in nValues" :key="n" :value="n">{{ n }}-gram</a-select-option>
@@ -22,7 +22,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Button as AButton, Tag as ATag, Select as ASelect} from 'ant-design-vue';
+import { Button as AButton, Tag as ATag, Select as ASelect, Input} from 'ant-design-vue';
 import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {filterArr} from "@/cleanupResources";
 const inputText = ref('');
@@ -30,6 +30,10 @@ const nValue =  ref(3);
 const nValues = ref([1,2,3,4,5,6,7,8,9,10]);
 const nGrams = ref([]);
 const ASelectOption = ASelect.Option;
+const ATextArea = Input.TextArea;
+const setStorage = (e) => {
+  sessionStorage.setItem("initialText", e.target.value);
+}
 const generateNGrams = () => {
   const allWords = inputText.value.split(' ');
   const filteredWords = allWords.filter((word) => !filterArr.includes(word.toLowerCase()));
