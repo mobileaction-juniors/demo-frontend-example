@@ -1,9 +1,20 @@
 <template>
   <div class="ma-keywords-generator">
-    <a-text-area v-model="inputText" placeholder="Please enter the text here" @change="setStorage"></a-text-area>
+    <a-text-area
+        v-model="inputText"
+        placeholder="Please enter the text here"
+        @change="setStorage"
+    />
     <div class="n-value-input">
       <a-select v-model="nValue">
         <a-select-option v-for="n in nValues" :key="n" :value="n">{{ n }}-gram</a-select-option>
+        <a-select-option
+            v-for="n in nValues"
+            :key="n"
+            :value="n"
+        >
+          {{ n }}-gram
+        </a-select-option>
       </a-select>
     </div>
       <div class="center-button">

@@ -1,7 +1,7 @@
 <script setup>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import { Button as AButton, Table as ATable, Input} from 'ant-design-vue';
-import {filterArr} from "@/cleanupResources";
+import { filterArr } from "@/cleanupResources";
 const keywordData = ref([]);
 const userInput = ref('');
 const characterCount = ref(0);
@@ -46,13 +46,20 @@ onMounted(()=> {
   <div class="keyword-density">
     <div>
       <div class="text-input">
-        <a-text-area v-model="userInput" placeholder="Please enter the text here"></a-text-area>
+        <a-text-area
+            v-model="userInput"
+            placeholder="Please enter the text here"
+        />
       </div>
         <a-button type="primary" @click="countAndFindDensity">Count</a-button>
       <div class="character-count">Total characters: {{characterCount}}</div>
     </div>
     <div class="result-table" v-if="showTable">
-      <a-table :columns="columns" :dataSource="keywordData" :pagination="false"></a-table>
+      <a-table
+          :columns="columns"
+          :dataSource="keywordData"
+          :pagination="false"
+      />
     </div>
   </div>
 </template>
