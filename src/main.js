@@ -1,19 +1,9 @@
-import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
-import App from './App.vue';
-import HomePage from './pages/index.vue';
-import KeywordGenerator from './pages/keyword-generator/KeywordGenerator.vue'
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
 
-const app = createApp(App);
+const app = createApp(App)
 
-const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: '/', component: HomePage },
-        { path: '/keyword-generator', component: KeywordGenerator },
-    ],
-});
+app.use(router)
 
-app.use(router);
-
-app.mount('#app');
+app.mount('#app')

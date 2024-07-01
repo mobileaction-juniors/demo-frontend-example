@@ -1,3 +1,5 @@
+<script setup>
+</script>
 <template>
     <div class="ma-keywords-generator">
         <div class="ma-header">
@@ -5,9 +7,3 @@
         </div>
     </div>
 </template>
-
-<script>
-    export default {
-        name: 'ma-keyword-generator',
-    };
-</script>
