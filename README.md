@@ -1,27 +1,32 @@
-# ma_conf
+# demo-frontend-example
 
-[![Github Actions](https://github.com/mobileaction/demo-frontend-example/actions/workflows/main.yaml/badge.svg)](https://github.com/mobileaction/demo-frontend-example/actions/workflows/main.yaml)
+This template should help get you started developing with Vue 3 in Vite.
 
 
-## Project setup
-```
-npm install
-```
+## Customize configuration
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-### Compiles and minifies for production
-```
-npm run build
+## Project Setup
+
+```sh
+yarn install
 ```
 
-### Lints and fixes files
-```
-npm run lint
+### Compile and Hot-Reload for Development
+
+```sh
+yarn dev
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Compile and Minify for Production
+
+```sh
+yarn build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+yarn lint
+```

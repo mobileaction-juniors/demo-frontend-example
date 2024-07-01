@@ -1,20 +1,9 @@
-import Vue from 'vue';
-import App from './App.vue';
-import router from './router';
-import VueClipboard from 'vue-clipboard2';
-import TheHeader from './components/TheHeader.vue';
-import TheNav from './components/TheNav.vue';
-import FontAwesomeIcon from './fontAwesome';
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.component('the-header', TheHeader);
-Vue.component('the-nav', TheNav);
+const app = createApp(App)
 
-Vue.use(VueClipboard);
+app.use(router)
 
-Vue.config.productionTip = false;
-
-new Vue({
-    render: h => h(App),
-    router,
-}).$mount('#app');
+app.mount('#app')
