@@ -2,22 +2,21 @@
 import { ref, computed} from 'vue';
 
 const message = ref('');
-const generatedKeywords = ref([]);
 const oneGrams = ref([]);
 const twoGrams = ref([]);
 const threeGrams = ref([]);
 
 const ngramGenerate = (keywords, n) => {
-  const res = [];
+  const res = new Set();
 
   //Finds all possible n-gram words
   for(let i = 0; i <= keywords.length - n; i++) {
-      res.push(keywords.slice(i, i+n).join(" "));
+      res.add(keywords.slice(i, i+n).join(" "));
   }
-  return res;
+  return Array.from(res);
 };
 
-const generateKeywords = () => {
+const generatedKeywords = computed(() => {
     const inputText = message.value;
 
     // Replaces non-alphanumeric characters and multiple spaces with a single space
@@ -33,11 +32,7 @@ const generateKeywords = () => {
 
     let resKeywords = [...oneGrams.value, ...twoGrams.value, ...threeGrams.value];
     return resKeywords;
-}
-
-const displayKeywords = () => {
-  generatedKeywords.value = generateKeywords();
-};
+});
 
 const showKeywords = computed(() => {
     return generatedKeywords.value.length > 1;
@@ -50,8 +45,7 @@ const showKeywords = computed(() => {
           <span>Keyword Generator</span>
       </div>
       <textarea v-model="message" id="keywordgen" name="keywordgen" rows="10" cols="50"
-              placeholder="Type your keywords here...">{{ message }}</textarea>
-      <button @click="displayKeywords" class="generate-button">Generate Keywords</button> 
+              placeholder="Type your description here...">{{ message }}</textarea>
   </div>
   <div v-if="showKeywords">
     <div class="ma-header">
