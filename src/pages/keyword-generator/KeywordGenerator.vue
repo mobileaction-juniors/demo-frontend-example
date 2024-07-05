@@ -9,26 +9,26 @@ const words = computed(() => {
 })
 
 function createNGrams(words, n) {
-  const ngrams = []
+  const ngrams = new Set()
   for (let i = 0; i <= words.length - n; i++) {
     let ngram = ""
     for (let j = 0; j < n; j++) {
       ngram += words[i + j] + " "
     }
-    ngrams.push(ngram.trim())
+    ngrams.add(ngram.trim())
   }
   return ngrams
 }
 
-const onegrams = computed(() => {
+const monograms = computed(() => {
   return createNGrams(words.value, 1)
 })
 
-const twograms = computed(() => {
+const bigrams = computed(() => {
   return createNGrams(words.value, 2)
 })
 
-const threegrams = computed(() => {
+const trigrams = computed(() => {
   return createNGrams(words.value, 3)
 })
 </script>
@@ -37,32 +37,32 @@ const threegrams = computed(() => {
     <div class="ma-header">
       <span>Keyword Generator</span>
     </div>
-    <div class="ma-keywords-text-wrapper">
-      <textarea v-model="keywordText" placeholder="enter the text to generate keywords from" class="ma-keywords-textarea"></textarea>
+    <div class="ma-keyword-text-wrapper">
+      <textarea v-model="keywordText" placeholder="enter the text to generate keywords from" class="ma-keyword-textarea"></textarea>
     </div>
     <div class="ma-ngrams-wrapper">
-      <div class="column">
-        <div class="column-title">
+      <div class="ma-ngrams-column">
+        <div class="ma-ngrams-column-title">
           1-grams
         </div>
-        <div v-for="ngram in onegrams" v-bind:key="ngram" class="ngram">
-          {{ ngram }}
+        <div v-for="monogram in monograms" v-bind:key="monogram" class="ma-ngrams-ngram">
+          {{ monogram }}
         </div>
       </div>
-      <div class="column">
-        <div class="column-title">
+      <div class="ma-ngrams-column">
+        <div class="ma-ngrams-column-title">
           2-grams
         </div>
-        <div v-for="ngram in twograms" v-bind:key="ngram" class="ngram">
-          {{ ngram }}
+        <div v-for="bigram in bigrams" v-bind:key="bigram" class="ma-ngrams-ngram">
+          {{ bigram }}
         </div>
       </div>
-      <div class="column">
-        <div class="column-title">
+      <div class="ma-ngrams-column">
+        <div class="ma-ngrams-column-title">
           3-grams
         </div>
-        <div v-for="ngram in threegrams" v-bind:key="ngram" class="ngram">
-          {{ ngram }}
+        <div v-for="trigram in trigrams" v-bind:key="trigram" class="ma-ngrams-ngram">
+          {{ trigram }}
         </div>
       </div>
     </div>
@@ -76,10 +76,10 @@ const threegrams = computed(() => {
   font-size: 36px;
   font-weight: bold;
 }
-.ma-keywords-text-wrapper {
+.ma-keyword-text-wrapper {
   text-align: center;
 }
-.ma-keywords-textarea {
+.ma-keyword-textarea {
   width: 50%;
   height: 300px;
 }
@@ -87,15 +87,15 @@ const threegrams = computed(() => {
   width: 50%;
   margin: 0 auto;
 }
-.ngram {
+.ma-ngrams-ngram {
   margin: 10px;
 }
-.column {
+.ma-ngrams-column {
   width: 33.3%;
   text-align: center;
   float: left;
 }
-.column-title {
+.ma-ngrams-column-title {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
