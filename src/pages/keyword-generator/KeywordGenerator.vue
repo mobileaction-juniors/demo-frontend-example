@@ -35,8 +35,9 @@ export default {
                     const combination = words.slice(i, i + n).join(' ')
                     uniqueCombinations.add(combination)
                 }
-
-                this.combinations.push(Array.from(uniqueCombinations).join(", "))
+                
+                if(uniqueCombinations.size != 0)
+                    this.combinations.push(Array.from(uniqueCombinations).join(", "))
             }
         }
     }
