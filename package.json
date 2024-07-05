@@ -10,6 +10,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@mobileaction/action-kit": "^1.29.0",
+    "bootstrap-select": "^1.13.18",
+    "mdb-ui-kit": "^7.3.2",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.0.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
