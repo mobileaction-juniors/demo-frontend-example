@@ -12,7 +12,11 @@ const ngramGenerate = (keywords, n) => {
 
   //Finds all possible n-gram words
   for(let i = 0; i <= keywords.length - n; i++) {
-      res.add(keywords.slice(i, i+n).join(" "));
+    const ngram = keywords.slice(i, i+n).join(" ");
+    // Add keyword to the list if it is not an empty string
+    if(ngram.trim().length > 0) {
+      res.add(ngram);
+    }
   }
   return Array.from(res);
 };
@@ -59,28 +63,12 @@ const handleCheckboxChange = (event) => {
   }
 };
 
-const handleOnegramButton = (event) => {
-  selectedNgrams.value = ['1'];
+const handleNgramButton = (n) => {
+  selectedNgrams.value = [n.toString()];
 
-  // Uncheck all checkboxes and check only the 1-Gram checkbox
+  // Uncheck all checkboxes and check only the specified n-Gram checkbox
   document.querySelectorAll('.dropdown-menu input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = checkbox.value === '1';
-  });
-};
-
-const handleTwogramButton = (event) => {
-  selectedNgrams.value = ['2'];
-
-    document.querySelectorAll('.dropdown-menu input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = checkbox.value === '2';
-  });
-};
-
-const handleThreegramButton = (event) => {
-  selectedNgrams.value = ['3'];
-
-  document.querySelectorAll('.dropdown-menu input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = checkbox.value === '3';
+    checkbox.checked = checkbox.value === n.toString();
   });
 };
 </script>
@@ -101,9 +89,9 @@ const handleThreegramButton = (event) => {
       </ul>
     </div>
     <div class="buttons-container">
-      <ma-button type="primary" variant="danger" size="middle" @click="handleOnegramButton">1-Gram</ma-button>
-      <ma-button type="primary" variant="danger" size="middle" @click="handleTwogramButton">2-Gram</ma-button>
-      <ma-button type="primary" variant="danger" size="middle" @click="handleThreegramButton">3-Gram</ma-button>
+      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(1)">1-Gram</ma-button>
+      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(2)">2-Gram</ma-button>
+      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(3)">3-Gram</ma-button>
     </div>
     <textarea v-model="message" id="keywordgen" name="keywordgen" rows="10" cols="50"
               placeholder="Type your description here...">
@@ -115,12 +103,17 @@ const handleThreegramButton = (event) => {
     </div>
     <div class="keywords-container">
       <template v-for="(item, index) in computedNgrams" :key="index">
-        <div class="column">
-          <div class="column-header">{{ item.n }}-Grams</div>
-          <ul>
-            <li v-for="keyword in item.list" :key="keyword" class="keyword-item">{{ keyword }}</li>
-          </ul>
-        </div>
+          <div class="column">
+            <div class="column-header">{{ item.n }}-Grams</div>
+            <div v-if="item.list.length > 0">
+              <ul>
+              <li v-for="keyword in item.list" :key="keyword" class="keyword-item">{{ keyword }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <label>Can't generate any {{ item.n }}-Gram keywords. </label>
+            </div>
+          </div>
       </template>
     </div>
   </div>
@@ -208,6 +201,7 @@ const handleThreegramButton = (event) => {
 .column-header {
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  background-color: #f0f0f0;
 }
 
 .dropdown-menu {

@@ -7,7 +7,6 @@ export function cleanDescription(description) {
 export function filterUnwantedWords(words) {
         // Create a set for fast lookup
         const filterSet = new Set(filterArr);
-
         // Filter out words that are not in filterSet
         const filteredWords = words.filter(word => !filterSet.has(word.toLowerCase()));
     
