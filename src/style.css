@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ma-keywords-generator, .ma-header {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+}
+.input-area {
+    height: 200px; 
+    resize: none; 
+    border-color: cornflowerblue; 
+    border-radius: 10px; 
+    border-width: 10px;
+    margin: 5px;
+}
+.preview {
+    box-sizing: border-box;
+    border: 1px dotted #ccc;
+    padding: 10px 20px;
+    margin: 5px;
+}
