@@ -1,14 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref,computed } from 'vue';
 
 const text = ref('');
-const onegrams = ref([]);
-const twograms = ref([]);
-const threegrams = ref([]);
 const keywords = ref([]);
-const showWords = ref(false);
+const maxNGrams = ref(10);
 
-const generate = (keywords, n) => {
+const generateWordArray = (keywords, n) => {
   const result = new Set();
   const words = keywords.split(" ");
   for (let i = 0; i <= words.length - n; i++) {
@@ -18,62 +15,45 @@ const generate = (keywords, n) => {
   return Array.from(result);
 }
 
-const run = () => {
-  if (text.value.trim() === '') {
-    showWords.value = false;
-    keywords.value = [];
-  } else {
-    onegrams.value = generate(text.value, 1);
-    twograms.value = generate(text.value, 2);
-    threegrams.value = generate(text.value, 3);
-    keywords.value = [...onegrams.value, ...twograms.value, ...threegrams.value];
-    showWords.value = true;
+const generateNGrams = () => {
+  keywords.value = [];
+  if (text.value.trim() !== '') {
+    for(let i = 1;i <= maxNGrams.value; i++) {
+      keywords.value.push({i,keywords: generateWordArray(text.value, i)});
+    }
   }
 }
+const validNGrams = computed(()=> {
+  return keywords.value.filter(nGram=>nGram.keywords.length > 0);
+});
 </script>
 
 <template>
   <div class="ma-keywords-generator">
-
     <div class="ma-header">
       <h3>Keyword Generator</h3>
     </div>
 
     <div class="ma-body">
-      <textarea v-model="text" placeholder="Enter a text here..."></textarea>
-      <button @click="run">Generate</button>
+      <div class="text-input">
+        <textarea v-model="text" placeholder="Enter a text here..."></textarea>
+      </div>
+      <button @click="generateNGrams">Generate</button>
     </div>
-    <div class="display" v-if="showWords">
+
+    <div class="display">
       <h3> Generated Keywords </h3>
-      <div v-if="onegrams.length > 0">
-        <h4>One-gram keywords:</h4>
+      <div v-for="nGram in validNGrams" :key="nGram.i">
+        <h4>{{ nGram.i }}-gram keywords:</h4>
         <ul>
-          <li v-for="(keyword, index) in onegrams" :key="'onegram-' + index">{{ keyword }}</li>
+          <li v-for="(keyword,index) in nGram.keywords" :key="nGram.i + index">{{keyword}}</li>
         </ul>
-      </div>
-      <div v-if="twograms.length > 0">
-        <h4>Two-gram keywords:</h4>
-        <ul>
-          <li v-for="(keyword, index) in twograms" :key="'twogram-' + index">{{ keyword }}</li>
-        </ul>
-      </div>
-      <div v-if="threegrams.length > 0">
-        <h4>Three-gram keywords:</h4>
-        <ul>
-          <li v-for="(keyword, index) in threegrams" :key="' threegram-' + index">{{ keyword }}</li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>Nothing entered</p>
       </div>
     </div>
 
   </div>
 </template>
 <style scoped>
-.ma-keywords-generator {
-  /* Add your styles here */
-}
 
 .ma-header {
   font-family: Arial;
@@ -97,7 +77,7 @@ const run = () => {
   margin-top: 10px;
 }
 
-textarea {
+.text-input textarea {
   font-family: Arial;
   background-color: #cae3ff;
   width: 100%;
