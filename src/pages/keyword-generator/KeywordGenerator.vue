@@ -1,42 +1,30 @@
+<script setup>
+import { ref } from 'vue'
 
-<script>
+const sentence = ref('')
+const maxN = ref(3)
+const combinations = ref([])
 
-export default {
-    name: 'KeywordGenerator',
-    
-    components: {
-    },
+const handle = (event) => {
+  event.preventDefault()
 
-    data() {
-        return {
-            sentence: '',
-            maxN: 3, // default value, you can change it as needed
-            combinations: []
-        }
-    },
+  // Reset combinations
+  combinations.value = []
 
-    methods: {
-        handle(event) {
-            event.preventDefault()
+  const words = sentence.value.split(/\s+/)
 
-            // Reset combinations
-            this.combinations = []
+  for (let n = 1; n <= maxN.value; n++) {
+    const uniqueCombinations = new Set()
 
-            const words = this.sentence.split(/\s+/)
-
-            for (let n = 1; n <= this.maxN; n++) {
-                const uniqueCombinations = new Set()
-
-                for (let i = 0; i <= words.length - n; i++) {
-                    const combination = words.slice(i, i + n).join(' ')
-                    uniqueCombinations.add(combination)
-                }
-                
-                if(uniqueCombinations.size != 0)
-                    this.combinations.push(Array.from(uniqueCombinations).join(", "))
-            }
-        }
+    for (let i = 0; i <= words.length - n; i++) {
+      const combination = words.slice(i, i + n).join(' ')
+      uniqueCombinations.add(combination)
     }
+
+    if (uniqueCombinations.size != 0) {
+      combinations.value.push(Array.from(uniqueCombinations).join(", "))
+    }
+  }
 }
 </script>
 
