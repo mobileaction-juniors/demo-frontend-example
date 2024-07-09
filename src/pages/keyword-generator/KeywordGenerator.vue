@@ -10,14 +10,13 @@ const MAX_VALUE_OF_NGRAM_SIZE = 10;
 const filterSet = new Set(filterArr);
 
 const keywordText = ref('')
-const selectedNgramSizes = ref(new Array(MAX_VALUE_OF_NGRAM_SIZE).fill(false));
+const selectedNgramSizes = ref(Array(MAX_VALUE_OF_NGRAM_SIZE));
 
-const toggleNgramCheckbox = function (ngramSize) {
+const toggleNgramCheckbox = (ngramSize) => {
   selectedNgramSizes.value[ngramSize - 1] = !selectedNgramSizes.value[ngramSize - 1];
-  console.log(ngramSizes.value)
 }
 
-const createNGrams = function (words, n) {
+const createNGrams = (words, n) => {
   const ngrams = new Set()
   for (let i = 0; i <= words.length - n; i++) {
     let ngram = ""
@@ -59,7 +58,7 @@ const ngramsList = computed(() => {
       <span>Keyword Generator</span>
     </div>
     <div class="ma-keyword-text-input-wrapper">
-      <MaInput
+      <ma-input
           type="textarea"
           placeholder="Enter the text to generate keywords from"
           rows=5
@@ -67,7 +66,7 @@ const ngramsList = computed(() => {
           class="ma-keyword-textarea"
           v-model:value="keywordText"
       >
-      </MaInput>
+      </ma-input>
     </div>
     <div class="ma-keyword-ngram-size-selector-wrapper">
       <div class="text-center">
@@ -86,12 +85,12 @@ const ngramsList = computed(() => {
           {{ ngramData.size }}-grams
         </div>
         <div v-for="ngram in ngramData.grams.value" v-bind:key="ngram" class="ma-ngrams-ngram">
-          <MaBadge v-for="ngramWord in ngram.split(' ')" v-bind:key="ngramWord" variant="dark" size="large"
+          <ma-badge v-for="ngramWord in ngram.split(' ')" v-bind:key="ngramWord" variant="dark" size="large"
                    type="primary" class="ma-ngrams-badge">
             <div class="ma-ngrams-ngram-text">
               {{ ngramWord }}
             </div>
-          </MaBadge>
+          </ma-badge>
         </div>
       </div>
     </div>
