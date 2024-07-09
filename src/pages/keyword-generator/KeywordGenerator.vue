@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { MaButton } from "@mobileaction/action-kit"
+import { MaButton, MaSelect } from "@mobileaction/action-kit"
 import "@mobileaction/action-kit/dist/style.css"
 import { cleanDescription, filterUnwantedWords } from '../../utils/CleanDescription.js';
 
 const message = ref('');
-const selectedNgrams = ref([]);
+const selectedNgram = ref(1);
 
 const ngramGenerate = (keywords, n) => {
   const res = new Set();
@@ -35,187 +35,49 @@ const singleWords = computed(() => {
     return filteredKeywords;
 });
 
-// Computed property to generate n-grams based on selected n values
+// Computed property to generate n-grams based on selected n value
 const computedNgrams = computed(() => {
-  const sortedNgrams = selectedNgrams.value
-    .map(n => parseInt(n))
-    .sort((a, b) => a - b); // Sort selected n-grams in ascending order
-
-  const ngrams = sortedNgrams.map(n => {
-    const ngramList = ngramGenerate(singleWords.value, n);
-    return { n: n.toString(), list: ngramList };
-  });
-  return ngrams;
+  return ngramGenerate(singleWords.value, Number(selectedNgram.value));
 });
-
-const showKeywords = computed(() => {
-    return computedNgrams.value.length > 0;
-});
-
-// Handler for checkbox changes
-const handleCheckboxChange = (event) => {
-  const { value, checked } = event.target;
-
-  if (checked) {
-    selectedNgrams.value.push(value);
-  } else {
-    selectedNgrams.value = selectedNgrams.value.filter(item => item !== value);
-  }
-};
-
-const handleNgramButton = (n) => {
-  selectedNgrams.value = [n.toString()];
-
-  // Uncheck all checkboxes and check only the specified n-Gram checkbox
-  document.querySelectorAll('.dropdown-menu input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = checkbox.value === n.toString();
-  });
-};
 </script>
 
 <template>
-  <div class="ma-keywords-generator">
-    <div class="ma-header">
-      <span>Keyword Generator</span>
+  <div class="flex bg-gray-100 justify-center">
+    <div class="flex flex-col ml-2 mr-4">
+      <div class="justify-center">
+        <h1 class="text-4xl font-bold text-center text-indigo-600 mt-6">Keyword Generator</h1>
+      </div>
+      <div class="flex justify-end mb-1">
+        <ma-select
+          :options='[
+            {"value":1,"label":"1-Gram"}, 
+            {"value":2,"label":"2-Gram"}, 
+            {"value":3,"label":"3-Gram"}, 
+            {"value":4,"label":"4-Gram"}, 
+            {"value":5,"label":"5-Gram"}, 
+            {"value":6,"label":"6-Gram"}, 
+            {"value":7,"label":"7-Gram"}, 
+            {"value":8,"label":"8-Gram"}, 
+            {"value":9,"label":"9-Gram"}, 
+            {"value":10,"label":"10-Gram"}
+          ]'
+          size="small" v-model:value="selectedNgram" option-filter-prop="label" dropdown-match-select-width defaultActiveFirstOption>
+        </ma-select>
+      </div>
+      <textarea class="borderborder-gray-300 rounded-md p-2 mb-4" v-model="message" id="keywordgen" name="keywordgen" rows="12" cols="80" placeholder="Type your description here..."></textarea>
     </div>
-    <div class="dropdown">
-      <ul class="dropdown-menu" aria-labelledby="multiSelectDropdown">
-        <li v-for="n in 10" :key="n" class="menu-item">
-          <label>
-            <input type="checkbox" :value="n.toString()" @change="handleCheckboxChange">
-            {{ n }}-Gram
-          </label>
-        </li>
+  </div>
+  <div v-if="computedNgrams.length > 0" class="mt-4">
+    <div class="flex text-3xl justify-center bg-indigo-100 font-bold p-1">Generated {{ selectedNgram }}-Gram Keywords</div>
+    <div class="mb-5 text-center border-gray-300 rounded-md p-4 break-words w-full">
+      <ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2">
+        <li v-for="ngram in computedNgrams" :key="ngram" class="border rounded-md mt-1 p-1 bg-indigo-100">{{ ngram }}</li>
       </ul>
     </div>
-    <div class="buttons-container">
-      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(1)">1-Gram</ma-button>
-      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(2)">2-Gram</ma-button>
-      <ma-button type="primary" variant="danger" size="middle" @click="handleNgramButton(3)">3-Gram</ma-button>
-    </div>
-    <textarea v-model="message" id="keywordgen" name="keywordgen" rows="10" cols="50"
-              placeholder="Type your description here...">
-    </textarea>
   </div>
-  <div v-if="showKeywords">
-    <div class="ma-header">
-      <span>Generated Keywords</span>
-    </div>
-    <div class="keywords-container">
-      <template v-for="(item, index) in computedNgrams" :key="index">
-          <div class="column">
-            <div class="column-header">{{ item.n }}-Grams</div>
-            <div v-if="item.list.length > 0">
-              <ul>
-              <li v-for="keyword in item.list" :key="keyword" class="keyword-item">{{ keyword }}</li>
-              </ul>
-            </div>
-            <div v-else>
-              <label>Can't generate any {{ item.n }}-Gram keywords. </label>
-            </div>
-          </div>
-      </template>
+  <div v-else-if="selectedNgram !== '' && message != ''">
+    <div class="flex text-lg justify-center text-red-500 mb-4 p-1">
+      <span>Can't generate any {{ selectedNgram }}-Gram keywords. The word count you entered is not enough. Enter more words!</span>
     </div>
   </div>
 </template>
-
-  <style scoped>
-  .ma-keywords-generator {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 40vh;
-  }
-  
-  .ma-header {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    margin-top: 2rem;
-  }
-  
-  textarea {
-    width: 100%;
-    max-width: 600px;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-  }
-
-.generate-button {
-  margin-top: 1rem;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.generate-button:hover {
-  background-color: #0056b3;
-}
-
-.keywords-container {
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  padding-bottom: 20px;
-}
-
-.buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding-bottom: 20px;
-}
-
-.keywords-container ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.keywords-container li {
-  margin-bottom: 5px;
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 -10px;
-}
-
-.column {
-  margin-bottom: 20px;
-  text-align: center;
-  border: 1px solid #ccc;
-  min-width: 100px;
-  word-wrap: break-word;
-}
-
-.column-header {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  background-color: #f0f0f0;
-}
-
-.dropdown-menu {
-  display: flex;
-  list-style-type: none;
-  padding: 0;
-}
-
-.menu-item {
-  margin-right: 10px;
-}
-
-.keyword-item {
-  border: 1px solid #ccc;
-  padding: 5px;
-}
-</style>
