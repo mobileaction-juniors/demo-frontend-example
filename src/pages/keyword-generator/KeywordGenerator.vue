@@ -12,6 +12,12 @@ const filterSet = new Set(filterArr);
 const keywordText = ref('')
 const selectedNgramSizes = ref(Array(MAX_VALUE_OF_NGRAM_SIZE));
 
+const uncheckInvisibleCheckboxes = () => {
+  for ( let i = cleanKeywords.value.length; i < MAX_VALUE_OF_NGRAM_SIZE; i++ ) {
+    selectedNgramSizes.value[i] = false;
+  }
+}
+
 const toggleNgramCheckbox = (ngramSize) => {
   selectedNgramSizes.value[ngramSize - 1] = !selectedNgramSizes.value[ngramSize - 1];
 }
@@ -35,7 +41,7 @@ const cleanKeywords = computed(() => {
 const ngramSizes = computed(() => {
   const sizes = [];
   for (let i = 0; i < MAX_VALUE_OF_NGRAM_SIZE; i++) {
-    if (selectedNgramSizes.value[i]) {
+    if (selectedNgramSizes.value[i] && i+1 <= cleanKeywords.value.length) {
       sizes.push(i + 1)
     }
   }
@@ -65,14 +71,12 @@ const ngramsList = computed(() => {
           size="large"
           class="ma-keyword-textarea"
           v-model:value="keywordText"
+          @change="uncheckInvisibleCheckboxes()"
       >
       </ma-input>
     </div>
     <div class="ma-keyword-ngram-size-selector-wrapper">
-      <div class="text-center">
-        Generate:
-      </div>
-      <div v-for="ngramSize in MAX_VALUE_OF_NGRAM_SIZE" v-bind:key="ngramSize" class="ma-keyword-ngram-size-selector"
+      <div v-for="ngramSize in Math.min(MAX_VALUE_OF_NGRAM_SIZE, cleanKeywords.length)" v-bind:key="ngramSize" class="ma-keyword-ngram-size-selector"
            @click="toggleNgramCheckbox(ngramSize)">
         <input type="checkbox" :id="`ngram-${ngramSize}`" :value="ngramSize" v-model="selectedNgramSizes[ngramSize-1]"
                @click="toggleNgramCheckbox(ngramSize)"/>
