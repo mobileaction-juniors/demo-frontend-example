@@ -79,8 +79,8 @@ const ngramsList = computed(() => {
       <div v-for="ngramSize in Math.min(MAX_VALUE_OF_NGRAM_SIZE, cleanKeywords.length)" v-bind:key="ngramSize" class="ma-keyword-ngram-size-selector"
            @click="toggleNgramCheckbox(ngramSize)">
         <input type="checkbox" :id="`ngram-${ngramSize}`" :value="ngramSize" v-model="selectedNgramSizes[ngramSize-1]"
-               @click="toggleNgramCheckbox(ngramSize)"/>
-        <label :for="`ngram-${ngramSize}`">{{ ngramSize }}-gram</label>
+               @click.stop/>
+        <label :for="`ngram-${ngramSize}`" @click="toggleNgramCheckbox(ngramSize)">{{ ngramSize }}-gram</label>
       </div>
     </div>
     <div class="ma-ngrams-wrapper">
