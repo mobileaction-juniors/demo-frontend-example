@@ -3,16 +3,15 @@
 import { ref } from 'vue'
 
 const sentence = ref('')
-const N = ref(3)
-const combinations = ref([])
+const nGramLength = ref(3)
+const nGrams = ref([])
 
-const generateKeywords = () => {
-  // Reset combinations
-  combinations.value = []
+const generateNGrams = () => {
+   nGrams.value = []
 
   const words = sentence.value.split(/\s+/)
 
-  for (let i = 1; i <= N.value; i++) {
+  for (let i = 1; i <= nGramLength.value; i++) {
     const uniqueCombinations = new Set()
 
     for (let j = 0; j <= words.length - i; j++) {
@@ -21,7 +20,7 @@ const generateKeywords = () => {
     }
 
     if (uniqueCombinations.size) {
-      combinations.value.push(Array.from(uniqueCombinations).join(', '))
+        nGrams.value.push(Array.from(uniqueCombinations).join(', '))
     }
   }
 };
@@ -32,39 +31,57 @@ const generateKeywords = () => {
     <div class="ma-keywords-generator">
 
         <div class="ma-header">
-            <label class="text-black-500 text-3xl" for="allwords">Keyword Generator</label>
+            <label for="allwords">Keyword Generator</label>
         </div>
-        <div>
-            <textarea class="input-area" id="allwords" v-model="sentence"></textarea>
+
+        <textarea class="input-area" id="allwords" v-model="sentence"></textarea>
+
+        <button style="margin-top: 10px;" @click="generateNGrams">Submit</button>
+
+        
+        <div v-for="(keyword, index) in nGrams" :key="index" class="preview">
+            <strong>{{ index + 1 + "-gram:" }}</strong>
+            {{ keyword }}
         </div>
-        <div>
-            <button style="margin-top: 10px;" @click="generateKeywords">Submit</button>
-            <div v-for="(keyword, index) in combinations" :key="index" class="preview">
-                {{ keyword }}
-            </div>
-        </div>
+        
 
     </div>
 </template>
-
+  
 <style scoped>
-.ma-keywords-generator, .ma-header {
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    margin: 5px;
+.ma-keywords-generator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+  width: 100%;
 }
+
+.ma-header {
+  margin-bottom: 10px;
+  width: 50%; 
+  text-align: center;
+}
+
 .input-area {
-    height: 200px; 
-    resize: none; 
-    border: 10px solid cornflowerblue;
-    border-radius: 10px; 
-    margin: 5px;
+  height: 100px;
+  resize: none;
+  border: 10px solid cornflowerblue;
+  border-radius: 10px;
+  margin: 5px;
+  width: 50%;
 }
+
+button {
+  width: 50%;
+  margin-top: 10px;
+}
+
 .preview {
-    box-sizing: border-box;
-    border: 1px dotted #ccc;
-    padding: 10px 20px;
-    margin: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  margin: 5px 0;
+  width: 50%;
 }
 </style>
