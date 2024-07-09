@@ -1,9 +1,8 @@
 <script setup>
-import { ref,computed } from 'vue';
+import { ref, computed } from 'vue';
 
 const text = ref('');
 const keywords = ref([]);
-const maxNGrams = ref(10);
 
 const generateWordArray = (keywords, n) => {
   const result = new Set();
@@ -17,14 +16,13 @@ const generateWordArray = (keywords, n) => {
 
 const generateNGrams = () => {
   keywords.value = [];
-  if (text.value.trim() !== '') {
-    for(let i = 1;i <= maxNGrams.value; i++) {
-      keywords.value.push({i,keywords: generateWordArray(text.value, i)});
-    }
+  if (!text.value.trim()) { return; }
+  for(let i = 1;i <= 3; i++) {
+    keywords.value.push({i,keywords: generateWordArray(text.value, i)});
   }
 }
 const validNGrams = computed(()=> {
-  return keywords.value.filter(nGram=>nGram.keywords.length > 0);
+  return keywords.value.filter(nGram => nGram.keywords.length);
 });
 </script>
 
@@ -35,9 +33,7 @@ const validNGrams = computed(()=> {
     </div>
 
     <div class="ma-body">
-      <div class="text-input">
-        <textarea v-model="text" placeholder="Enter a text here..."></textarea>
-      </div>
+      <textarea v-model="text" placeholder="Enter a text here..." class="text-input"></textarea>
       <button @click="generateNGrams">Generate</button>
     </div>
 
@@ -46,7 +42,7 @@ const validNGrams = computed(()=> {
       <div v-for="nGram in validNGrams" :key="nGram.i">
         <h4>{{ nGram.i }}-gram keywords:</h4>
         <ul>
-          <li v-for="(keyword,index) in nGram.keywords" :key="nGram.i + index">{{keyword}}</li>
+          <li v-for="keyword in nGram.keywords" :key="nGram.i + index">{{keyword}}</li>
         </ul>
       </div>
     </div>
@@ -77,7 +73,7 @@ const validNGrams = computed(()=> {
   margin-top: 10px;
 }
 
-.text-input textarea {
+.text-input {
   font-family: Arial;
   background-color: #cae3ff;
   width: 100%;
