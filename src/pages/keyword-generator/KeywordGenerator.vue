@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 const sentence = ref('')
 const MAX_N_GRAM_COUNT = 3
+const MAX_N_GRAM_COUNT = 3
 const nGrams = ref([])
 
 const generateNGrams = () => {
@@ -10,6 +11,7 @@ const generateNGrams = () => {
 
   const words = sentence.value.split(/\s+/)
 
+  for (let i = 1; i <= MAX_N_GRAM_COUNT; i++) {
   for (let i = 1; i <= MAX_N_GRAM_COUNT; i++) {
     const uniqueCombinations = new Set()
 
@@ -26,12 +28,15 @@ const generateNGrams = () => {
 </script>
 
 <template>
+    <div class = "ma-keywords-generator">
+        <div class = "ma-header">
+            <label for = "allwords">Keyword Generator</label>
     <div class="ma-keywords-generator">
         <div class="ma-header">
             <label for="allwords">Keyword Generator</label>
         </div>
 
-        <textarea class="input-area" id="allwords" v-model="sentence"></textarea>
+        <textarea class = "input-area" id="allwords" v-model = "sentence"></textarea>
 
         <button style="margin-top: 10px;" @click="generateNGrams">Submit</button>
 
