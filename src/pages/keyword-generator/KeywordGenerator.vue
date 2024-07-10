@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { MaInput } from "@mobileaction/action-kit"
 import { MaBadge } from "@mobileaction/action-kit"
 
@@ -7,19 +7,20 @@ const checkedNumbers = ref([])
 const excludeWords = ref('is, a, an, the') // default words to exclude
 const sentence = ref('')
 const nGrams = ref([])
+const words = computed( () => {
+    const excludeWordsArray = excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase())
+    return sentence.value.split(/\s+/).filter(word => !excludeWordsArray.includes(word.toLowerCase()));
+})
 
 const generateNGrams = () => {
     nGrams.value = []
     checkedNumbers.value.sort((a, b) => a - b)
-    
-    const excludeWordsArray = excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase())
-    const words = sentence.value.split(/\s+/).filter(word => !excludeWordsArray.includes(word.toLowerCase()))
 
     checkedNumbers.value.forEach(n => {
         const uniqueCombinations = new Set()
 
-        for (let j = 0; j <= words.length - n; j++) {
-            const combination = words.slice(j, j + n).join(' ')
+        for (let j = 0; j <= words.value.length - n; j++) {
+            const combination = words.value.slice(j, j + n).join(' ')
             uniqueCombinations.add(combination)
         }
 
@@ -38,7 +39,7 @@ const generateNGrams = () => {
         <MaInput id="allwords" v-model:value = "sentence" type="textarea" hint-text="Please select how you want to see n-grams and dont forget to use ',' for different exluded words." style="height: 100px; resize: none; border-radius: 10px; margin: 5px; width: 100%;"> </MaInput>
         <div style="margin: 10px">Checked N-Grams: {{ checkedNumbers }}</div>
         <div style="display: flex; margin: 10px">
-            <div v-for="index in 10" :key="index" >
+            <div v-for="index in Math.min(words.length, 10)" :key="index" >
                 <input type="checkbox" :id="'n' + index" :value="index" v-model="checkedNumbers" />
                 <label :for="'n' + index">{{ index }}</label>
             </div>
