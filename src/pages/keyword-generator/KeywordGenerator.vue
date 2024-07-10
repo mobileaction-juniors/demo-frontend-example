@@ -30,12 +30,9 @@ const generateNGrams = () => {
         <div class="ma-header">
             <label for="allwords">Keyword Generator</label>
         </div>
-
         <textarea class = "input-area" id="allwords" v-model = "sentence"></textarea>
-
-        <button style="margin-top: 10px;" @click="generateNGrams">Submit</button>
-
-        <div v-for ="(keyword, index) in nGrams" :key="index" class="preview">
+        <button class="submit-button" style="margin-top: 10px;" @click="generateNGrams">Submit</button>
+        <div class="preview" v-for ="(keyword, index) in nGrams" :key="index" >
             <strong>{{ index + 1 + "-gram:" }}</strong>
             {{ keyword }}
         </div>
@@ -66,7 +63,7 @@ const generateNGrams = () => {
   width: 50%;
 }
 
-button {
+.submit-button {
   width: 50%;
   margin-top: 10px;
 }
