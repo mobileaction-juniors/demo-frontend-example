@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+
 const nGrams = ref([]);
 const text = ref('');
+const maxNValue = 3;
 
 const generateNGram = (keywords, n) => {
   const result = new Set();
@@ -16,7 +18,7 @@ const generateNGram = (keywords, n) => {
 const generateNGrams = () => {
   nGrams.value = [];
   if (!text.value.trim()) { return; }
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= maxNValue; i++) {
     const nGramList = generateNGram(text.value, i);
     if (nGramList.length) {
       nGrams.value.push({ i, keywords: nGramList });
@@ -30,33 +32,29 @@ const generateNGrams = () => {
     <div class="ma-header">
       <h3>Keyword Generator</h3>
     </div>
-
     <div class="ma-body">
       <textarea v-model="text" placeholder="Enter a text here..." class="text-input"></textarea>
       <button class="generate-button" @click="generateNGrams">Generate</button>
     </div>
-
     <div class="display">
-      <h3> Generated Keywords </h3>
+      <h3>Generated Keywords</h3>
       <div v-for="nGram in nGrams" :key="nGram.i">
-        <h4>{{ nGram.i }}-gram keywords:</h4>
+        <h4> {{ nGram.i }}-gram keywords:</h4>
         <ul>
-          <li v-for="keyword in nGram.keywords" :key="nGram.i + index">{{keyword}}</li>
+          <li v-for="(keyword, index) in nGram.keywords" :key="nGram.i+index">{{keyword}}</li>
         </ul>
       </div>
     </div>
-
   </div>
 </template>
-<style scoped>
 
+<style scoped>
 .ma-header {
   font-family: Arial;
   font-size: medium;
 }
 
 .display {
-
   font-family: Arial;
   background-color: #cae3ff;
   margin-top: 10px;
@@ -92,8 +90,7 @@ const generateNGrams = () => {
   cursor: pointer;
 }
 
-button:hover {
+.generate-button:hover {
   background-color: #0056b3;
 }
-
 </style>
