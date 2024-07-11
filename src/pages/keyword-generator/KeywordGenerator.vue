@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { MaButton } from "@mobileaction/action-kit";
 import { MaInput } from "@mobileaction/action-kit";
 import { MaSelect } from "@mobileaction/action-kit";
+
 const nGrams = ref([]);
 const text = ref('');
 const selectedNgrams = ref([]);
@@ -18,7 +19,7 @@ const options = [
   { label: '9-gram', value: 9 },
   { label: '10-gram', value: 10 },
 ];
-const generateNGramKeywords = (text, n) => {
+const generateKeywordsForNValue = (text, n) => {
   const result = new Set();
   const words = text.split(" ");
   for (let i = 0; i <= words.length - n; i++) {
@@ -27,17 +28,20 @@ const generateNGramKeywords = (text, n) => {
   }
   return Array.from(result);
 };
-const generateNGrams = (removeUnwanted) => {
-  if (!text.value.trim()) { return; }
-  const filteredText = removeUnwanted ? removeUnwantedWords() : text.value;
-  nGrams.value = selectedNgrams.value.map(n => ({ n, keywords: generateNGramKeywords(filteredText, n) }));
-  nGrams.value = nGrams.value.filter(nGram => nGram.keywords.length);
-};
-const removeUnwantedWords = () => {
-  const unwantedWords = new Set(['a', 'an', 'the', 'is']);
-  const words = text.value.split(' ');
-  const filteredWords = words.filter(word => !unwantedWords.has(word.toLowerCase()));
-  return filteredWords.join(' ');
+
+const generateAllNGrams = (shouldRemoveCommonWords) => {
+  const removeUnwantedWords = (inputText) => {
+    const unwantedWords = new Set(['a', 'an', 'the', 'is']);
+    return inputText.split(' ').filter(word => !unwantedWords.has(word.toLowerCase())).join(' ');
+  };
+
+  const inputText = text.value.trim();
+  if (!inputText) return;
+  const filteredText = shouldRemoveCommonWords ? removeUnwantedWords(inputText) : inputText;
+  const generatedNGrams = selectedNgrams.value.map(n => ({
+    n, keywords: generateKeywordsForNValue(filteredText, n) }))
+      .filter(nGram => nGram.keywords.length);
+  nGrams.value = generatedNGrams;
 };
 </script>
 
@@ -65,8 +69,8 @@ const removeUnwantedWords = () => {
             dropdown-match-select-width>
           <template #prefixIcon>"N"</template>
         </MaSelect>
-        <MaButton class="ma-generate" @click="generateNGrams(false)" icon="brain">Generate</MaButton>
-        <MaButton class="ma-filter" @click="generateNGrams(true)" icon="brain">Generate Without 'Is, A, An, The'</MaButton>
+        <MaButton class="ma-generate" @click="generateAllNGrams(false)" icon="brain">Generate</MaButton>
+        <MaButton class="ma-filter" @click="generateAllNGrams(true)" icon="brain">Generate Without 'Is, A, An, The'</MaButton>
       </div>
     </div>
     <div class="ma-display">
