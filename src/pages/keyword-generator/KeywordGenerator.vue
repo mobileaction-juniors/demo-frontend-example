@@ -16,10 +16,6 @@ const ngramsList = ref([]);
 const ngramSelectorOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({'value': i, 'label': `${i}-gram`}))
 const colorSelectorOptions = ["Dark", "Pink"].map(op => ({"value": op, "label": op}))
 
-const toggleNgramCheckbox = (ngramSize) => {
-  selectedNgramSizes.value[ngramSize - 1] = !selectedNgramSizes.value[ngramSize - 1];
-}
-
 const createNGrams = (words, n) => {
   const ngrams = new Set()
   for (let i = 0; i <= words.length - n; i++) {
@@ -39,7 +35,6 @@ const generateNGrams = () => {
 const cleanKeywords = computed(() => {
   return cleanDescription(keywordText.value).split(' ').filter(word => word.length > 0 && !filterSet.has(word));
 })
-
 </script>
 
 <template>
@@ -92,7 +87,6 @@ const cleanKeywords = computed(() => {
 </template>
 
 <style lang="postcss">
-
 .kg-color-switch {
   @apply ml-auto m-3
 }
@@ -140,5 +134,4 @@ const cleanKeywords = computed(() => {
 .kg-ngrams-ngram-word-pink {
   @apply bg-pink-200 text-pink-700 border-pink-700;
 }
-
 </style>
