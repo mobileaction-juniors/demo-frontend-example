@@ -4,7 +4,6 @@ export default {
     './src/**/*.{html,js,vue}',
   ],
   theme: {
-
   },
   plugins: [],
 }
