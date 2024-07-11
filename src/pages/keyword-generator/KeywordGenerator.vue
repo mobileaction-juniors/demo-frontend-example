@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { MaButton } from "@mobileaction/action-kit";
 import { MaInput } from "@mobileaction/action-kit";
 import { MaSelect } from "@mobileaction/action-kit";
+import { MaBadge } from "@mobileaction/action-kit";
+
 const nGrams = ref([]);
 const text = ref('');
 const selectedNgrams = ref([]);
@@ -18,6 +20,7 @@ const options = [
   { label: '9-gram', value: 9 },
   { label: '10-gram', value: 10 },
 ];
+
 const generateKeywordsForNValue = (text, n) => {
   const result = new Set();
   const words = text.split(" ");
@@ -27,10 +30,12 @@ const generateKeywordsForNValue = (text, n) => {
   }
   return Array.from(result);
 };
+
 const removeUnwantedWords = (inputText) => {
   const unwantedWords = new Set(['a', 'an', 'the', 'is']);
   return inputText.split(' ').filter(word => !unwantedWords.has(word.toLowerCase())).join(' ');
 };
+
 const generateAllNGrams = (shouldRemoveCommonWords) => {
   const inputText = text.value.trim();
   if (!inputText) return;
@@ -41,18 +46,17 @@ const generateAllNGrams = (shouldRemoveCommonWords) => {
   nGrams.value = generatedNGrams;
 };
 </script>
+
 <template>
   <div class="ma-keywords-generator">
-    <div class="ma-header">
-      <h3>Keyword Generator</h3>
-    </div>
+    <h3 class="text-xl m-2">Keyword Generator</h3>
     <div class="ma-body">
       <MaInput
           v-model:value="text"
           type="textarea"
           placeholder="Enter a text to generate associated keywords."
       ></MaInput>
-      <div class="ma-container">
+      <div class="flex justify-between m-1">
         <MaSelect
             v-model:value="selectedNgrams"
             class="ma-select"
@@ -65,58 +69,24 @@ const generateAllNGrams = (shouldRemoveCommonWords) => {
             dropdown-match-select-width>
           <template #prefixIcon>"N"</template>
         </MaSelect>
-        <MaButton class="ma-generate" @click="generateAllNGrams(false)" icon="brain">Generate</MaButton>
-        <MaButton class="ma-filter" @click="generateAllNGrams(true)" icon="brain">Generate Without 'Is, A, An, The'</MaButton>
+        <MaButton class="flex-1 justify-center m-1" @click="generateAllNGrams(false)" icon="brain">Generate</MaButton>
+        <MaButton class="flex-1 justify-center m-1" @click="generateAllNGrams(true)" icon="brain">Generate Without 'Is, A, An, The'</MaButton>
       </div>
     </div>
-    <div class="ma-display">
-      <h3>Generated Keywords</h3>
+    <div class="font-sans bg-[#cae3ff] mt-4 border border-black border-solid p-4 text-sm pl-2 rounded-md">
+      <h3 class="text-xl">Generated Keywords</h3>
       <div v-for="nGram in nGrams" :key="nGram.n">
-        <h4>{{ nGram.n }}-gram keywords:</h4>
-        <ul>
-          <li v-for="(keyword, index) in nGram.keywords" :key="index">{{ keyword }}</li>
-        </ul>
+        <h4 class = "text-lg">{{ nGram.n }}-gram keywords:</h4>
+        <div class="flex gap-2">
+          <MaBadge
+              v-for="keyword in nGram.keywords"
+              :key="index"
+              :variant="'dark'"
+              :size="'large'"
+              :type="'primary'"
+          >{{ keyword }}</MaBadge>
+        </div>
       </div>
     </div>
   </div>
 </template>
-<style scoped>
-.ma-header {
-  font-family: Arial;
-  font-size: medium;
-}
-.ma-body {
-  margin-top: 10px;
-}
-.ma-container {
-  display: flex;
-  justify-content: space-between;
-  margin: 5px;
-}
-.ma-select {
-  flex: 1;
-  justify-content: center;
-  margin: 5px;
-}
-.ma-generate {
-  flex: 1;
-  justify-content: center;
-  margin: 5px;
-}
-.ma-filter {
-  flex: 1;
-  justify-content: center;
-  margin: 5px;
-}
-.ma-display {
-  font-family: Arial;
-  background-color: #cae3ff;
-  margin-top: 10px;
-  border-style: groove;
-  border-color: #000000;
-  border-width: thin;
-  font-size: small;
-  padding-left: 10px;
-  border-radius: 4px;
-}
-</style>

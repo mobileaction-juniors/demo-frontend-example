@@ -1,14 +1,16 @@
-/* eslint-env node */
 module.exports = {
-  root: true,
-  'extends': [
-    'plugin:vue/vue3-essential',
-    'eslint:recommended'
+  env: {
+    node: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/vue3-recommended'
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
+    ecmaVersion: 2020,
+    sourceType: 'module',
   },
   rules: {
-    'vue/multi-word-component-names': 'off',
-  }
-}
+    // your custom rules
+  },
+};
