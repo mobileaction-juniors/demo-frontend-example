@@ -124,11 +124,11 @@ const cleanKeywords = computed(() => {
 }
 
 .kg-ngrams-ngram {
-  @apply my-1.5 p-1 flex flex-row flex-wrap justify-center
+  @apply my-0.5 p-1 flex flex-row flex-wrap justify-center
 }
 
 .kg-ngrams-ngram-word {
-  @apply text-center mr-0.5 px-3 mx-2 text-base transition;
+  @apply text-center mr-0.5 my-0.5 px-3 mx-2 text-base transition;
 }
 
 .kg-ngrams-ngram-word-pink {
