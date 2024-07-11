@@ -4,6 +4,8 @@ import router from './router'
 
 import "@mobileaction/action-kit/dist/style.css"
 
+import './index.css'
+
 const app = createApp(App)
 
 app.use(router)
