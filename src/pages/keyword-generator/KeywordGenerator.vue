@@ -3,29 +3,35 @@ import { computed, ref } from 'vue'
 import { MaInput } from "@mobileaction/action-kit"
 import { MaBadge } from "@mobileaction/action-kit"
 
-const checkedNumbers = ref([])
+const selectedNGrams = ref([])
 const excludeWords = ref('is, a, an, the') // default words to exclude
-const sentence = ref('')
+const inputText = ref('')
 const nGrams = ref([])
-const words = computed( () => {
-    const excludeWordsArray = excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase())
-    return sentence.value.split(/\s+/).filter(word => !excludeWordsArray.includes(word.toLowerCase()));
-})
+
+const excludedWordsArray = computed(() => {
+  return excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase());
+});
+
+const filteredWords = computed(() => {
+  return inputText.value.split(/\s+/).filter(word => !excludedWordsArray.value.includes(word.toLowerCase()));
+});
 
 const generateNGrams = () => {
     nGrams.value = []
-    checkedNumbers.value.sort((a, b) => a - b)
+    selectedNGrams.value.sort((a, b) => a - b)
 
-    checkedNumbers.value.forEach(n => {
-        const uniqueCombinations = new Set()
+    const currentWords = filteredWords.value
 
-        for (let j = 0; j <= words.value.length - n; j++) {
-            const combination = words.value.slice(j, j + n).join(' ')
-            uniqueCombinations.add(combination)
+    selectedNGrams.value.forEach(n => {
+        const nGramSet = new Set()
+
+        for (let j = 0; j <= currentWords.length - n; j++) {
+            const nGramCombination = currentWords.slice(j, j + n).join(' ')
+            nGramSet.add(nGramCombination)
         }
 
-        if (uniqueCombinations.size) {
-            nGrams.value.push({ n, combinations: Array.from(uniqueCombinations) })
+        if (nGramSet.size) {
+            nGrams.value.push({ n, combinations: Array.from(nGramSet) })
         }
     })
 };
@@ -36,11 +42,11 @@ const generateNGrams = () => {
         <div class="ma-header">
             <label for="allwords">Keyword Generator</label>
         </div>
-        <MaInput id="allwords" v-model:value = "sentence" type="textarea" hint-text="Please select how you want to see n-grams and dont forget to use ',' for different exluded words." style="height: 100px; resize: none; border-radius: 10px; margin: 5px; width: 100%;"> </MaInput>
-        <div style="margin: 10px">Checked N-Grams: {{ checkedNumbers }}</div>
+        <MaInput id="allwords" v-model:value = "inputText" type="textarea" hint-text="Please select how you want to see n-grams and dont forget to use ',' for different exluded words." style="height: 100px; resize: none; border-radius: 10px; margin: 5px; width: 100%;"> </MaInput>
+        <div style="margin: 10px">Checked N-Grams: {{ selectedNGrams }}</div>
         <div style="display: flex; margin: 10px">
-            <div v-for="index in Math.min(words.length, 10)" :key="index" >
-                <input type="checkbox" :id="'n' + index" :value="index" v-model="checkedNumbers" />
+            <div v-for="index in Math.min(filteredWords.length, 10)" :key="index" >
+                <input type="checkbox" :id="'n' + index" :value="index" v-model="selectedNGrams" />
                 <label :for="'n' + index">{{ index }}</label>
             </div>
         </div>
