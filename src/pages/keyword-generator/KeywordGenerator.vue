@@ -1,24 +1,20 @@
 <script setup>
 import {computed, ref} from "vue"
 
-import {MaBadge, MaButton, MaCheckbox, MaInput} from "@mobileaction/action-kit";
+import {MaBadge, MaButton, MaInput, MaSelect, MaSwitch} from "@mobileaction/action-kit";
 
 import {cleanDescription} from "@/utils/CleanDescription.js";
 import {filterArr} from "@/cleanupResources.js";
 
-const MAX_VALUE_OF_NGRAM_SIZE = 10;
-
 const filterSet = new Set(filterArr);
 
 const keywordText = ref('')
-const selectedNgramSizes = ref(Array(MAX_VALUE_OF_NGRAM_SIZE));
+const selectedNgram = ref(1)
+const colorSelectorOption = ref('Dark')
 const ngramsList = ref([]);
 
-const uncheckInvisibleCheckboxes = () => {
-  for (let i = cleanKeywords.value.length; i < MAX_VALUE_OF_NGRAM_SIZE; i++) {
-    selectedNgramSizes.value[i] = false;
-  }
-}
+const ngramSelectorOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({'value': i, 'label': `${i}-gram`}))
+const colorSelectorOptions = ["Dark", "Pink"].map(op => ({"value": op, "label": op}))
 
 const toggleNgramCheckbox = (ngramSize) => {
   selectedNgramSizes.value[ngramSize - 1] = !selectedNgramSizes.value[ngramSize - 1];
@@ -33,135 +29,116 @@ const createNGrams = (words, n) => {
     }
     ngrams.add(ngram)
   }
-  return ngrams
+  return Array.from(ngrams);
 }
 
 const generateNGrams = () => {
-  ngramsList.value = ngramSizes.value.map(size => {
-    return {
-      size,
-      grams: createNGrams(cleanKeywords.value, size)
-    };
-  });
+  ngramsList.value = createNGrams(cleanKeywords.value, selectedNgram.value);
 }
 
 const cleanKeywords = computed(() => {
   return cleanDescription(keywordText.value).split(' ').filter(word => word.length > 0 && !filterSet.has(word));
 })
 
-const ngramSizes = computed(() => {
-  const sizes = [];
-  for (let i = 0; i < MAX_VALUE_OF_NGRAM_SIZE; i++) {
-    if (selectedNgramSizes.value[i] && i + 1 <= cleanKeywords.value.length) {
-      sizes.push(i + 1)
-    }
-  }
-  return sizes;
-})
-
 </script>
 
 <template>
-  <div class="kg-root">
+  <div>
+    <ma-switch
+        v-model:active="colorSelectorOption"
+        type="secondary"
+        :options="colorSelectorOptions"
+        @update:active="(selectedColor) => {colorSelectorOption=selectedColor}"
+        class="kg-color-switch"
+    />
     <div class="kg-top">
-      <h3 class="kg-header">Keyword Generator</h3>
+      <h3 class="kg-header" :class="(colorSelectorOption === 'Pink' ? 'kg-header-pink' : ' ')">Keyword Generator</h3>
       <div class="kg-input-wrapper">
         <ma-input
             type="textarea"
             placeholder="Enter the text to generate keywords from"
-            rows=5
+            rows=4
             size="large"
             class="kg-input-text-area"
             v-model:value="keywordText"
-            @change="uncheckInvisibleCheckboxes()"
         >
         </ma-input>
-        <div class="kg-input-checkboxes-wrapper">
-          <ma-checkbox v-for="ngramSize in Math.min(MAX_VALUE_OF_NGRAM_SIZE, cleanKeywords.length)"
-                       v-bind:key="ngramSize" @click="toggleNgramCheckbox(ngramSize)"> {{ ngramSize }}-gram
-          </ma-checkbox>
-        </div>
+        <ma-select
+            placeholder="Select ngram"
+            :options="ngramSelectorOptions"
+            option-filter-prop="label"
+            autofocus
+            allow-clear
+            v-model:value="selectedNgram"
+            class="kg-input-select"
+        >
+        </ma-select>
+        <ma-button type="primary" variant="dark" :class="(colorSelectorOption === 'Pink' ? 'kg-input-button' : ' ')"
+                   icon="add" @click="generateNGrams()">
+          Generate {{ selectedNgram }}-grams
+        </ma-button>
       </div>
-      <ma-button type="primary" variant="dark" class="kg-input-button" icon="add" @click="generateNGrams()">Generate Ngrams
-      </ma-button>
     </div>
     <div class="kg-ngrams-wrapper">
-      <div class="kg-ngrams-columns-wrapper">
-        <div v-for="ngramData in ngramsList" v-bind:key="ngramData" class="kg-ngrams-column">
-          <ma-badge variant="dark" size="large" type="primary" class="kg-ngrams-column-title-wrapper">
-            <h1 class="kg-ngrams-column-title">
-              {{ ngramData.size }}-grams
-            </h1>
-          </ma-badge>
-          <div v-for="ngram in ngramData.grams" v-bind:key="ngram"
-               class="group kg-ngrams-ngram">
-            <ma-badge v-for="ngramWord in ngram" v-bind:key="ngramWord" variant="dark" size="large"
-                      type="primary"
-                      class="kg-ngrams-ngram-word">
-              {{ ngramWord }}
-            </ma-badge>
-          </div>
-        </div>
+      <div v-for="ngram in ngramsList" v-bind:key="ngram" class="kg-ngrams-ngram">
+        <ma-badge variant="dark" v-for="ngramWord in ngram" v-bind:key="ngramWord" size="large"
+                  class="kg-ngrams-ngram-word"
+                  :class="(colorSelectorOption === 'Pink' ? 'kg-ngrams-ngram-word-pink' : ' ')">
+          {{ ngramWord }}
+        </ma-badge>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="postcss">
-.kg-root {
-  @apply w-5/6 mx-auto
+
+.kg-color-switch {
+  @apply ml-auto m-3
 }
 
 .kg-top {
-  @apply md:w-2/3 mx-auto
+  @apply w-5/6 md:w-2/3 mx-auto
 }
 
 .kg-header {
-  @apply font-sans font-bold text-center my-10 text-3xl
+  @apply font-sans font-bold text-center mb-10 py-3 text-3xl transition;
+}
+
+.kg-header-pink {
+  @apply border-2 rounded-full text-pink-700 bg-pink-200 border-pink-700;
 }
 
 .kg-input-wrapper {
-  @apply flex max-sm:flex-col md:flex-row
+  @apply grid max-sm:grid-rows-4 md:grid-rows-2 md:grid-flow-col gap-4
 }
 
 .kg-input-text-area {
-  @apply basis-1/2
+  @apply row-span-2
 }
 
-.kg-input-checkboxes-wrapper {
-  @apply grid grid-cols-4 gap-2 px-3
+.kg-input-select {
+  @apply w-full
 }
 
 .kg-input-button {
-  @apply my-3
+  @apply border-pink-700 border-2 bg-pink-200 text-pink-700 !important
 }
 
 .kg-ngrams-wrapper {
-  @apply mx-auto mt-5
-}
-
-.kg-ngrams-columns-wrapper {
-  @apply flex flex-row flex-wrap justify-center my-3
-}
-
-.kg-ngrams-column {
-  @apply shrink mx-2
-}
-
-.kg-ngrams-column-title-wrapper {
-  @apply py-1
-}
-
-.kg-ngrams-column-title {
-  @apply font-bold text-lg mx-auto
+  @apply w-5/6 md:w-1/2 mx-auto mt-5
 }
 
 .kg-ngrams-ngram {
-  @apply my-1 p-1 rounded-full flex flex-row flex-wrap justify-center hover:bg-gray-800
+  @apply my-1.5 p-1 flex flex-row flex-wrap justify-center
 }
 
 .kg-ngrams-ngram-word {
-  @apply transition text-center mr-0.5 group-hover:bg-gray-100 group-hover:text-gray-800
+  @apply text-center mr-0.5 px-3 mx-2 text-base transition;
+}
+
+.kg-ngrams-ngram-word-pink {
+  @apply bg-pink-200 text-pink-700 border-pink-700;
 }
 
 </style>
