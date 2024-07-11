@@ -65,7 +65,7 @@ const cleanKeywords = computed(() => {
             autofocus
             allow-clear
             v-model:value="selectedNgram"
-            class="kg-input-select w-full"
+            class="kg-input-select"
         >
         </ma-select>
         <ma-button type="primary" variant="dark" :class="(colorSelectorOption === 'Pink' ? 'kg-input-button' : ' ')"
@@ -112,7 +112,7 @@ const cleanKeywords = computed(() => {
 }
 
 .kg-input-select {
-  @apply w-full
+  @apply w-full max-w-full
 }
 
 .kg-input-button {
