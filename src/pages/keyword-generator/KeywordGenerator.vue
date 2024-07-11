@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import { MaButton } from "@mobileaction/action-kit";
 import { MaInput } from "@mobileaction/action-kit";
 import { MaSelect } from "@mobileaction/action-kit";
-
 const nGrams = ref([]);
 const text = ref('');
 const selectedNgrams = ref([]);
@@ -19,8 +18,7 @@ const options = [
   { label: '9-gram', value: 9 },
   { label: '10-gram', value: 10 },
 ];
-
-const generateNGram = (text, n) => {
+const generateNGramKeywords = (text, n) => {
   const result = new Set();
   const words = text.split(" ");
   for (let i = 0; i <= words.length - n; i++) {
@@ -29,14 +27,12 @@ const generateNGram = (text, n) => {
   }
   return Array.from(result);
 };
-
 const generateNGrams = (removeUnwanted) => {
   if (!text.value.trim()) { return; }
   const filteredText = removeUnwanted ? removeUnwantedWords() : text.value;
-  nGrams.value = selectedNgrams.value.map(n => ({ n, keywords: generateNGram(filteredText, n) }));
+  nGrams.value = selectedNgrams.value.map(n => ({ n, keywords: generateNGramKeywords(filteredText, n) }));
   nGrams.value = nGrams.value.filter(nGram => nGram.keywords.length);
 };
-
 const removeUnwantedWords = () => {
   const unwantedWords = new Set(['a', 'an', 'the', 'is']);
   const words = text.value.split(' ');
@@ -90,35 +86,29 @@ const removeUnwantedWords = () => {
   font-family: Arial;
   font-size: medium;
 }
-
 .ma-body {
   margin-top: 10px;
 }
-
 .ma-container {
   display: flex;
   justify-content: space-between;
   margin: 5px;
 }
-
 .ma-select {
   flex: 1;
   justify-content: center;
   margin: 5px;
 }
-
 .ma-generate {
   flex: 1;
   justify-content: center;
   margin: 5px;
 }
-
 .ma-filter {
   flex: 1;
   justify-content: center;
   margin: 5px;
 }
-
 .ma-display {
   font-family: Arial;
   background-color: #cae3ff;
