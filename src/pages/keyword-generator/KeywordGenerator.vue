@@ -19,6 +19,7 @@ const options = [
   { label: '9-gram', value: 9 },
   { label: '10-gram', value: 10 },
 ];
+
 const generateKeywordsForNValue = (text, n) => {
   const result = new Set();
   const words = text.split(" ");
@@ -29,12 +30,12 @@ const generateKeywordsForNValue = (text, n) => {
   return Array.from(result);
 };
 
-const generateAllNGrams = (shouldRemoveCommonWords) => {
-  const removeUnwantedWords = (inputText) => {
-    const unwantedWords = new Set(['a', 'an', 'the', 'is']);
-    return inputText.split(' ').filter(word => !unwantedWords.has(word.toLowerCase())).join(' ');
-  };
+const removeUnwantedWords = (inputText) => {
+  const unwantedWords = new Set(['a', 'an', 'the', 'is']);
+  return inputText.split(' ').filter(word => !unwantedWords.has(word.toLowerCase())).join(' ');
+};
 
+const generateAllNGrams = (shouldRemoveCommonWords) => {
   const inputText = text.value.trim();
   if (!inputText) return;
   const filteredText = shouldRemoveCommonWords ? removeUnwantedWords(inputText) : inputText;
