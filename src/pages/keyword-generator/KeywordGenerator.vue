@@ -54,7 +54,7 @@ const cleanKeywords = computed(() => {
             placeholder="Enter the text to generate keywords from"
             rows=4
             size="large"
-            class="kg-input-text-area"
+            class="kg-input-text-area lg:col-span-4"
             v-model:value="keywordText"
         >
         </ma-input>
@@ -65,7 +65,7 @@ const cleanKeywords = computed(() => {
             autofocus
             allow-clear
             v-model:value="selectedNgram"
-            class="kg-input-select"
+            class="kg-input-select w-full"
         >
         </ma-select>
         <ma-button type="primary" variant="dark" :class="(colorSelectorOption === 'Pink' ? 'kg-input-button' : ' ')"
@@ -108,7 +108,7 @@ const cleanKeywords = computed(() => {
 }
 
 .kg-input-text-area {
-  @apply row-span-2
+  @apply row-span-2;
 }
 
 .kg-input-select {
