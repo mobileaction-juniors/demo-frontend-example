@@ -6,5 +6,7 @@
         <h1>Welcome to Onboarding Progress </h1>
         <p>You can see the your first task details via link. Please continue that steps while coding. </p>
         <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank"> Implement First Front-End Task </a>
+        <a href="./keyword-generator" target="_blank"> keyword-generator</a>
+        <a href="./keyword-density" target="_blank"> keyword-density</a>
     </div>
 </template>
