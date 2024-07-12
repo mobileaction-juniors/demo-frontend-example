@@ -3,60 +3,15 @@ import {computed, ref} from "vue"
 
 import {MaButton, MaEmpty, MaInput} from "@mobileaction/action-kit";
 
-import {cleanDescription} from "@/utils/CleanDescription.js";
-import {filterArr} from "@/cleanupResources.js";
+import {useDensityStore} from "@/stores/densityStore.js";
 
-const filterSet = new Set(filterArr);
-
-const densityText = ref('')
-const wordFrequency = ref({});
-const totalWordCount = ref(0);
-
-const cleanDensityWords = computed(() => {
-  return cleanDescription(densityText.value).split(' ').filter(word => word.length > 0 && !filterSet.has(word)).map((word) => word.trim());
-})
-
-const totalCharacters = computed(() => {
-  return densityText.value.length;
-});
-
-const frequencyToWordMap = computed(() => {
-  let wordMap = {};
-  for (const word in wordFrequency.value) {
-    const occurence = wordFrequency.value[word];
-    if (occurence === 1) continue;
-    if (!wordMap[occurence]) {
-      wordMap[occurence] = [];
-    }
-    wordMap[occurence].push(word);
-  }
-  return wordMap;
-})
-
-const calculateFrequency = () => {
-  let frequency = {};
-  cleanDensityWords.value.forEach(word => {
-    frequency[word] = (frequency[word] || 0) + 1;
-  });
-  wordFrequency.value = frequency;
-  totalWordCount.value = cleanDensityWords.value.length;
-}
-
-const calculateDensity = (count) => {
-  return (count / totalWordCount.value * 100).toFixed(1);
-}
-
-const generateRowTextData = (count) => `${frequencyToWordMap.value[count].join(', ')} - ${count} - ${calculateDensity(count)}%`;
-
-const reduceRowTextData = (table, newRow) => table + '\n' + newRow;
-
-const copyTableToClipboard = () => {
-  copyToClipboard(Object.keys(frequencyToWordMap.value).reverse().map(generateRowTextData).reduce(reduceRowTextData));
-}
-
-const copyToClipboard = (textData) => {
-  navigator.clipboard.writeText(textData);
-}
+const store = useDensityStore();
+const densityText = ref('');
+const frequencyToWordMap = computed(() => store.frequencyToWordMap);
+const totalCharacters = computed(() => store.totalCharacters);
+const calculateFrequency = store.calculateFrequency;
+const calculateDensity = store.calculateDensity;
+const copyTableToClipboard = store.copyTableToClipboard;
 </script>
 
 <template>
@@ -71,7 +26,7 @@ const copyToClipboard = (textData) => {
           v-model:value="densityText"
       />
       <div class="kd-input-bottom-wrapper">
-        <ma-button class="kd-input-button" size="large" @click="calculateFrequency">Count</ma-button>
+        <ma-button class="kd-input-button" size="large" @click="calculateFrequency(densityText)">Count</ma-button>
         <div class="kd-input-total-characters-wrapper">
           <p class="kd-input-total-characters-text">
             Total characters:
