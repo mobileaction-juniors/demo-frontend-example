@@ -4,9 +4,10 @@ import { MaButton } from "@mobileaction/action-kit";
 import { MaInput } from "@mobileaction/action-kit";
 import { MaSelect } from "@mobileaction/action-kit";
 import { MaBadge } from "@mobileaction/action-kit";
+import router from "@/router/index.js";
 
 const nGrams = ref([]);
-const text = ref('');
+const userInputText = ref('');
 const selectedNgrams = ref([]);
 const options = [
   { label: '1-gram', value: 1 },
@@ -37,7 +38,7 @@ const removeUnwantedWords = (inputText) => {
 };
 
 const generateAllNGrams = (shouldRemoveCommonWords) => {
-  const inputText = text.value.trim();
+  const inputText = userInputText.value.trim();
   if (!inputText) return;
   const filteredText = shouldRemoveCommonWords ? removeUnwantedWords(inputText) : inputText;
   const generatedNGrams = selectedNgrams.value.map(n => ({
@@ -45,6 +46,10 @@ const generateAllNGrams = (shouldRemoveCommonWords) => {
       .filter(nGram => nGram.keywords.length);
   nGrams.value = generatedNGrams;
 };
+
+const goToKeywordDensity = () => {
+  router.push('/keyword-density');
+}
 </script>
 
 <template>
@@ -52,7 +57,7 @@ const generateAllNGrams = (shouldRemoveCommonWords) => {
     <h3 class="text-xl m-2">Keyword Generator</h3>
     <div class="ma-body">
       <MaInput
-          v-model:value="text"
+          v-model:value="userInputText"
           type="textarea"
           placeholder="Enter a text to generate associated keywords."
       ></MaInput>
@@ -89,4 +94,5 @@ const generateAllNGrams = (shouldRemoveCommonWords) => {
       </div>
     </div>
   </div>
+  <MaButton highlight class="flex-1 justify-center ml-1 mt-2" @click="goToKeywordDensity" >Go to Keyword Density Calculator'</MaButton>
 </template>
