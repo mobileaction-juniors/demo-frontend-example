@@ -56,7 +56,7 @@ const copyTableToClipboard = store.copyTableToClipboard;
           <td colspan="3">
             <ma-empty size="medium" animation="no-data-found" variant="table">
               <template #title> No data to show! </template>
-              <template #description> You need at least one word with 2 occurences. </template>
+              <template #description> You need at least one word with 2 occurrences. </template>
             </ma-empty>
           </td>
         </tr>

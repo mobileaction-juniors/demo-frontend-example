@@ -18,12 +18,12 @@ export const useDensityStore = defineStore('densityStore', () => {
     const frequencyToWordMap = computed(() => {
         let wordMap = {};
         for (const word in wordFrequency.value) {
-            const occurence = wordFrequency.value[word];
-            if (occurence === 1) continue;
-            if (!wordMap[occurence]) {
-                wordMap[occurence] = [];
+            const occurrence = wordFrequency.value[word];
+            if (occurrence === 1) continue;
+            if (!wordMap[occurrence]) {
+                wordMap[occurrence] = [];
             }
-            wordMap[occurence].push(word);
+            wordMap[occurrence].push(word);
         }
         return wordMap;
     })
