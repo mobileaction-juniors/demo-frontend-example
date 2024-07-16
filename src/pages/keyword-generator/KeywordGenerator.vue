@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { MaInput } from "@mobileaction/action-kit"
 import { MaBadge } from "@mobileaction/action-kit"
+import { MaButton } from '@mobileaction/action-kit';
 
 const selectedNGrams = ref([])
 const excludeWords = ref('is, a, an, the') // default words to exclude
@@ -38,65 +39,40 @@ const generateNGrams = () => {
 </script>
 
 <template>
-    <div class="ma-keywords-generator">
-        <div class="ma-header">
-            <label for="allwords">Keyword Generator</label>
+    <div class="ma-keywords-generator p-4">
+        <div class="ma-header mb-4">
+            <label for="allwords" class="text-xl font-bold">Keyword Generator</label>
         </div>
-        <MaInput id="allwords" v-model:value = "inputText" type="textarea" hint-text="Please select how you want to see n-grams and dont forget to use ',' for different exluded words." style="height: 100px; resize: none; border-radius: 10px; margin: 5px; width: 100%;"> </MaInput>
-        <div style="margin: 10px">Checked N-Grams: {{ selectedNGrams }}</div>
-        <div style="display: flex; margin: 10px">
-            <div v-for="index in Math.min(filteredWords.length, 10)" :key="index" >
-                <input type="checkbox" :id="'n' + index" :value="index" v-model="selectedNGrams" />
+        <MaInput id="allwords" 
+                v-model:value="inputText" 
+                type="textarea" 
+                hint-text="Please select how you want to see n-grams and don't forget to use ',' for different excluded words." 
+                class="input-area resize-none w-full p-2 mb-1" 
+                style="resize: none;">
+        </MaInput>
+        <div class="mb-4 text-sm">Checked N-Grams: {{ selectedNGrams }}</div>
+        <div class="flex flex-wrap mb-4 space-x-2">
+            <div v-for="index in Math.min(filteredWords.length, 10)" :key="index" class="flex items-center space-x-1">
+                <input type="checkbox" :id="'n' + index" :value="index" v-model="selectedNGrams" class="mr-1">
                 <label :for="'n' + index">{{ index }}</label>
             </div>
         </div>
-        <label for="excludeWords">Exclude Words:</label>
-        <input type="text" id="excludeWords" v-model="excludeWords" placeholder="Comma separated">
-        <button class="submit-button" style="margin-top: 10px;" @click="generateNGrams">Submit</button>
-        <div class="preview" v-for ="(keyword, index) in nGrams" :key="index" >
+        <label for="excludeWords" class="block mb-2">Exclude Words:</label>
+        <input type="text" id="excludeWords" v-model="excludeWords" placeholder="Comma separated" class="w-full md:w-1/2 lg:w-1/3 p-2 border border-gray-300 rounded mb-4 transition-all duration-500 ease-in-out">
+        <MaButton class="submit-button mb-4 w-full md:w-auto transition-all duration-500 ease-in-out" 
+                type="primary" 
+                variant="dark" 
+                icon="tick" 
+                @click="generateNGrams">Submit</MaButton>
+        <div class="preview space-y-4" v-for="(keyword, index) in nGrams" :key="index">
             <strong>{{ keyword.n + "-gram:" }}</strong>
-            <div v-for="tag in keyword.combinations" style="width: fit-content; margin: 2px;">
-                <ma-badge shape="square" variant="dark" type="secondary" size="medium"><ma-badge shape="dot" variant="dark"/> {{ tag }} </ma-badge>
+            <div class="flex flex-wrap">
+                <div v-for="tag in keyword.combinations" :key="tag" class="m-1">
+                    <MaBadge shape="square" variant="dark" type="secondary" size="medium">
+                        <MaBadge shape="dot" variant="dark"/> {{ tag }}
+                    </MaBadge>
+                </div>
             </div>
         </div>
     </div>
 </template>
-  
-<style scoped>
-.ma-keywords-generator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 5px;
-  width: 100%;
-}
-
-.ma-header {
-  margin-bottom: 10px;
-  width: 50%; 
-  text-align: center;
-}
-
-.input-area {
-  height: 100px;
-  resize: none;
-  border: 10px solid cornflowerblue;
-  border-radius: 10px;
-  margin: 5px;
-  width: 50%;
-}
-
-.submit-button {
-  width: 50%;
-  margin-top: 10px;
-}
-
-.preview {
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  padding: 10px 20px;
-  margin: 5px 0;
-  width: 50%;
-  
-}
-</style>
