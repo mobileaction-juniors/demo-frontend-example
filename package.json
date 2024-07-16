@@ -1,6 +1,9 @@
 {
   "name": "demo-frontend-example",
   "version": "0.0.0",
+  "browserslist": [
+    "last 2 years"
+  ],
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,13 +13,18 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@mobileaction/action-kit": "^1.31.3",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
-    "eslint": "^8.57.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^9.6.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-vue": "^9.23.0",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
     "vite": "^5.3.1"
   }
 }
