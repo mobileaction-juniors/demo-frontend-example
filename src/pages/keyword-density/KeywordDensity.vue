@@ -3,38 +3,60 @@ import { ref } from 'vue';
 import { MaInput, MaButton } from "@mobileaction/action-kit";
 import "@/pages/keyword-generator/KeywordGenerator.vue"
 import router from "@/router/index.js";
+import {textStore} from "@/stores/textStore.js";
+import {storeToRefs} from "pinia";
 
-const text = ref('');
-const totalCharacters = ref(0);
+const store = textStore()
+const text = storeToRefs((store)).userInputText;
+const totalCharacters = ref(text.value.length);
 const keywordsArray = ref([]);
 
 const keywordDensity = () => {
-  const words = text.value.trim().toLowerCase().split(/\s+/);
-  const wordCounts = words.reduce((counts, word) => { counts[word] = (counts[word] || 0) + 1;
-    return counts; },{});
+  const removedSpecialCharacters = text.value.replace(/[^\w\s]/gi, '');
+  const words = removedSpecialCharacters.trim().toLowerCase().split(/\s+/);
+  const wordCount = words.length;
+  const wordCountsArray = words.reduce((counts, word) => {
+    counts[word] = (counts[word] || 0) + 1;
+    return counts;
+  }, {});
 
-  keywordsArray.value = Object.entries(wordCounts)
-      .map(([word, count]) => ({ word, count, percentage: ((count / words.length) * 100).toFixed(2),}))
+  const sameCountWords = {};
+  for (const [word, count] of Object.entries(wordCountsArray)) {
+    if (!sameCountWords[count]) {
+      sameCountWords[count] = [];
+    }
+    sameCountWords[count].push(word);
+  }
+
+  keywordsArray.value = Object.entries(sameCountWords)
+      .map(([count, words]) => {
+        const joinedWords = words.join(', ');
+        return { word: joinedWords, count: parseInt(count), percentage: ((parseInt(count) / wordCount) * 100).toFixed(2) };
+      })
       .sort((a, b) => b.count - a.count);
+
   totalCharacters.value = text.value.length;
 };
-
 
 const copyClipboard = () => {
   const tableContent = keywordsArray.value.map(keyword => `${keyword.word}, ${keyword.count}, ${keyword.percentage}`).join('\n');
   navigator.clipboard.writeText(tableContent);
 };
+
 const goToKeywordGenerator = () => {
   router.push('/');
 }
 </script>
 
 <template>
-  <h1 class="ml-4 mt-10 text-2xl font-bold text-blue-700 md:ml-20">Keyword Density Calculator</h1>
-  <div class="max-w-4xl mx-auto mt-5 px-4">
-    <div class="flex flex-col md:flex-row">
-      <div class="w-full md:w-1/2">
-        <div class="bg-gradient-to-r from-white via-blue-100 to-white shadow-md rounded-lg p-8">
+  <div class="max-w-8xl mx-auto mt-5 px-4">
+    <div class="mr-5">
+      <MaButton highlight class="ml-3 mt-3 text-white px-4 py-2 rounded md:ml-20" @click="goToKeywordGenerator">Go Back To Keyword Generator</MaButton>
+    </div>
+    <h1 class="ml-4 mt-10 text-2xl font-bold text-blue-700 md:ml-20">Keyword Density Calculator</h1>
+    <div class="flex flex-col md:flex-row mt-5">
+      <div class="w-full md:w-1/2 mb-4 md:mb-0">
+        <div class="bg-gradient-to-r from-white via-blue-100 to-white shadow-md rounded-lg p-8 ml-5 mr-5">
           <MaInput
               v-model:value="text"
               type="textarea"
@@ -49,15 +71,15 @@ const goToKeywordGenerator = () => {
           </div>
         </div>
       </div>
-      <div class="w-full mt-4 md:mt-0 md:ml-4 md:w-1/2">
-        <div class="bg-gradient-to-r from-white via-blue-100 to-white shadow-md rounded-lg p-8">
+      <div class="w-full md:w-1/2">
+        <div class="bg-gradient-to-r from-white via-blue-100 to-white shadow-md rounded-lg p-8 ml-5 mr-5">
           <div class="overflow-x-auto">
             <table class="min-w-full bg-white border-collapse border">
               <thead>
               <tr>
                 <th class="py-2 px-4 border border-white bg-blue-700 text-white rounded-lg">Keyword</th>
                 <th class="py-2 px-4 border border-white bg-blue-700 text-white rounded-lg">Count</th>
-                <th class="py-2 px-4 border border-white bg-blue-700 text-white rounded-lg">Density</th>
+                <th class="py-2 px-4 border border-white bg-blue-700 text-white rounded-lg">Percentage</th>
               </tr>
               </thead>
               <tbody>
@@ -76,5 +98,5 @@ const goToKeywordGenerator = () => {
       </div>
     </div>
   </div>
-  <MaButton highlight class="ml-4 mt-10 text-white px-4 py-2 rounded md:ml-20" @click="goToKeywordGenerator">Go Back To Keyword Generator</MaButton>
 </template>
+
