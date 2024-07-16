@@ -12,6 +12,7 @@ const totalCharacters = computed(() => store.totalCharacters);
 const calculateFrequency = store.calculateFrequency;
 const calculateDensity = store.calculateDensity;
 const copyTableToClipboard = store.copyTableToClipboard;
+
 </script>
 
 <template>
