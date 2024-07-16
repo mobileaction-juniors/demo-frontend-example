@@ -21,3 +21,7 @@
 .preview {
     @apply box-border border border-gray-300 p-4 m-2 w-full md:w-1/2;
 }
+
+tr:nth-child(even) {
+    @apply bg-gray-300;
+}

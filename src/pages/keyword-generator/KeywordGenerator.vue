@@ -1,20 +1,18 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { MaInput } from "@mobileaction/action-kit"
-import { MaBadge } from "@mobileaction/action-kit"
-import { MaButton } from '@mobileaction/action-kit';
+import { computed, ref, watchEffect } from 'vue'
+import { MaInput, MaBadge, MaButton } from "@mobileaction/action-kit"
 
 const selectedNGrams = ref([])
-const excludeWords = ref('is, a, an, the') // default words to exclude
+const excludeWords = ref('is, a, an, the, in, of, text, and') // default words to exclude
 const inputText = ref('')
 const nGrams = ref([])
 
 const excludedWordsArray = computed(() => {
-  return excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase());
+    return excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase());
 });
 
 const filteredWords = computed(() => {
-  return inputText.value.split(/\s+/).filter(word => !excludedWordsArray.value.includes(word.toLowerCase()));
+    return inputText.value.split(/\s+/).filter(word => word && !excludedWordsArray.value.includes(word.toLowerCase()));
 });
 
 const generateNGrams = () => {
@@ -36,6 +34,11 @@ const generateNGrams = () => {
         }
     })
 };
+
+watchEffect(() => {
+    localStorage.setItem('excludeWords', excludeWords.value)
+    localStorage.setItem('inputText', inputText.value)
+});
 </script>
 
 <template>
