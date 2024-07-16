@@ -16,6 +16,12 @@ const ngramsList = ref([]);
 const ngramSelectorOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({'value': i, 'label': `${i}-gram`}))
 const colorSelectorOptions = ["Dark", "Pink"].map(op => ({"value": op, "label": op}))
 
+const generateButtonDisabled = computed(() => {return selectedNgram.value > cleanKeywords.value.length;})
+
+const cleanKeywords = computed(() => {
+  return cleanDescription(keywordText.value).split(' ').filter(word => word.length > 0 && !filterSet.has(word));
+})
+
 const createNGrams = (words, n) => {
   const ngrams = new Set()
   for (let i = 0; i <= words.length - n; i++) {
@@ -32,9 +38,6 @@ const generateNGrams = () => {
   ngramsList.value = createNGrams(cleanKeywords.value, selectedNgram.value);
 }
 
-const cleanKeywords = computed(() => {
-  return cleanDescription(keywordText.value).split(' ').filter(word => word.length > 0 && !filterSet.has(word));
-})
 </script>
 
 <template>
@@ -69,7 +72,7 @@ const cleanKeywords = computed(() => {
         >
         </ma-select>
         <ma-button type="primary" variant="dark" :class="(colorSelectorOption === 'Pink' ? 'kg-input-button' : ' ')"
-                   icon="add" @click="generateNGrams()">
+                   icon="add" :disabled="generateButtonDisabled" @click="generateNGrams()">
           Generate {{ selectedNgram }}-grams
         </ma-button>
       </div>
