@@ -1,69 +1,89 @@
-import {setActivePinia, createPinia} from 'pinia'
+import {setActivePinia, createPinia, storeToRefs} from 'pinia'
 import {useDensityStore} from './densityStore.js'
-import {describe, beforeEach, test, expect} from 'vitest';
+import {describe, beforeEach, it, expect} from 'vitest';
 
 describe('DensityStore', () => {
     let store = null;
+    let densityText,
+        wordFrequency,
+        totalWordCount,
+        cleanDensityWords,
+        totalCharacters,
+        frequencyToWordMap,
+        calculateFrequency,
+        calculateDensity;
+
 
     beforeEach(() => {
         setActivePinia(createPinia())
         store = useDensityStore();
+        ({
+            densityText,
+            wordFrequency,
+            totalWordCount,
+            cleanDensityWords,
+            totalCharacters,
+            frequencyToWordMap,
+        } = storeToRefs(store));
+        ({
+            calculateFrequency,
+            calculateDensity,
+        } = store);
     })
 
-    test('sets densityText', () => {
+    it('sets densityText', () => {
         const testText = 'test density text'
-        expect(store.densityText).toBe("");
-        store.calculateFrequency(testText);
-        expect(store.densityText).toBe(testText);
+        expect(densityText.value).toBe("");
+        calculateFrequency(testText);
+        expect(densityText.value).toBe(testText);
     })
 
-    test('populates wordFrequency', () => {
+    it('populates wordFrequency.value', () => {
         const testText = 'test density text'
         const expectedWordFrequency = {
             'test': 1, 'density': 1, 'text': 1
         }
-        expect(store.wordFrequency).toEqual({});
-        store.calculateFrequency(testText);
-        expect(store.wordFrequency).toEqual(expectedWordFrequency);
+        expect(wordFrequency.value).toEqual({});
+        calculateFrequency(testText);
+        expect(wordFrequency.value).toEqual(expectedWordFrequency);
     })
 
-    test('sets totalWordCount', () => {
+    it('sets totalWordCount', () => {
         const testText = 'test density text'
-        expect(store.totalWordCount).toBe(0);
-        store.calculateFrequency(testText);
-        expect(store.totalWordCount).toBe(3);
+        expect(totalWordCount.value).toBe(0);
+        calculateFrequency(testText);
+        expect(totalWordCount.value).toBe(3);
     })
 
-    test('cleans density text', () => {
+    it('cleans density text', () => {
         const testText = 'test/.][ density;       text a ';
         const expectedClenDensityWords = ['test', 'density', 'text'];
-        expect(store.cleanDensityWords).toEqual([]);
-        store.densityText = testText;
-        expect(store.cleanDensityWords).toEqual(expectedClenDensityWords);
+        expect(cleanDensityWords.value).toEqual([]);
+        densityText.value = testText;
+        expect(cleanDensityWords.value).toEqual(expectedClenDensityWords);
     })
 
-    test('sets totalCharacters', () => {
+    it('sets totalCharacters', () => {
         const testText = 'test density text'
         const expectedTotalCharacters = testText.length;
-        expect(store.totalCharacters).toEqual(0);
-        store.densityText = testText;
-        expect(store.totalCharacters).toEqual(expectedTotalCharacters);
+        expect(totalCharacters.value).toEqual(0);
+        densityText.value = testText;
+        expect(totalCharacters.value).toEqual(expectedTotalCharacters);
     })
 
-    test('populates frequencyToWordMap', () => {
+    it('populates frequencyToWordMap', () => {
         const testWordFrequency = {'text': 1, 'test': 2, 'density': 1};
         const expectedFrequencyToWordMap = {
             2: ['test']
         };
-        expect(store.frequencyToWordMap).toEqual({});
-        store.wordFrequency = testWordFrequency;
-        expect(store.frequencyToWordMap).toEqual(expectedFrequencyToWordMap);
+        expect(frequencyToWordMap.value).toEqual({});
+        wordFrequency.value = testWordFrequency;
+        expect(frequencyToWordMap.value).toEqual(expectedFrequencyToWordMap);
     })
 
-    test('calculates density', () => {
-        const store = useDensityStore();
+    it('calculates density', () => {
         const expectedDensity = (1 / 7 * 100).toFixed(1);
-        store.totalWordCount = 7;
-        expect(store.calculateDensity(1)).toEqual(expectedDensity);
+        totalWordCount.value = 7;
+        expect(calculateDensity(1)).toEqual(expectedDensity);
     })
 })
