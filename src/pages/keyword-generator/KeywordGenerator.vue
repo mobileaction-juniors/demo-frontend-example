@@ -3,9 +3,12 @@ import { computed, ref, watchEffect } from 'vue'
 import { MaInput, MaBadge, MaButton } from "@mobileaction/action-kit"
 
 const selectedNGrams = ref([])
-const excludeWords = ref('is, a, an, the, in, of, text, and') // default words to exclude
 const inputText = ref('')
 const nGrams = ref([])
+
+const excludeWords = computed({
+    get: () => 'is, a, an, the, in, of, text, and' // default words to exclude
+});
 
 const excludedWordsArray = computed(() => {
     return excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase());

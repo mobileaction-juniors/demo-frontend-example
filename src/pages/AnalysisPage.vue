@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onBeforeMount } from 'vue'
 import { MaInput, MaButton } from "@mobileaction/action-kit"
 
 const text = ref('')
@@ -7,26 +7,20 @@ const excludeWords = ref('')
 const textLenght = ref(0)
 const countAndDensityDict = ref({})
 
-onMounted(() => {
-    if (localStorage.getItem('excludeWords')) {
-        excludeWords.value = localStorage.getItem('excludeWords')
-    }
-    if (localStorage.getItem('inputText')) {
-        text.value = localStorage.getItem('inputText')
-    }
+onBeforeMount(() => {
+    excludeWords.value = localStorage.getItem('excludeWords') || ''
+    text.value = localStorage.getItem('inputText') || ''
+    textLenght.value = text.value.length
 });
 
-const calculateTotalChars = () => {
-    textLenght.value = text.value.length
-};
-
 const calculateCountAndDensity = () => {
+    textLenght.value = text.value.length
     const wordArray = text.value.toLowerCase().match(/[a-zA-Z]+/g) || [];
     const singleWordCount = {}
     const totalWords = wordArray.length
 
     wordArray.forEach(word => {
-        if (!isExcluded(word)) {
+        if (!isExcludeWord(word)) {
             singleWordCount[word] = (singleWordCount[word] || 0) + 1
         }
     })
@@ -47,12 +41,12 @@ const calculateCountAndDensity = () => {
     countAndDensityDict.value = countDict
 };
 
-const isExcluded = (word) => {
+const isExcludeWord = (word) => {
     const excludedWordsArray = excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase())
     return excludedWordsArray.includes(word.toLowerCase())
 };
 
-const sortAndFilterCountAndDensity = computed(() => {
+const countAndDensityEntries = computed(() => {
     const sortedCounts = Object.keys(countAndDensityDict.value)
         .map(Number)
         .sort((a, b) => b - a)
@@ -64,20 +58,19 @@ const sortAndFilterCountAndDensity = computed(() => {
     return filteredEntries
 });
 
-const copyTableToClipboard = () => {
-    const tableData = sortAndFilterCountAndDensity.value.flatMap(([count, words]) => 
+const copyTableToClipboard = async () => {
+    const tableData = countAndDensityEntries.value.flatMap(([count, words]) => 
         words.map(({ word, density }) => `${word}\t${count}\t${density}`)
     )
     const tableText = tableData.join('\n')
     
-    navigator.clipboard.writeText(tableText)
-        .then(() => {
-            alert('Table copied to clipboard!')
-        })
-        .catch(err => {
-            console.error('Failed to copy table to clipboard:', err)
-        })
-};
+    try {
+        await navigator.clipboard.writeText(tableText)
+        alert('Table copied to clipboard!')
+    } catch (err) {
+        console.error('Failed to copy table to clipboard:', err)
+    }
+}
 </script>
 
 <template>
@@ -90,7 +83,7 @@ const copyTableToClipboard = () => {
                             type="primary" 
                             variant="danger" 
                             size="middle"
-                            @click="calculateTotalChars(); calculateCountAndDensity();">Count</MaButton>
+                            @click="calculateCountAndDensity();">Count</MaButton>
                     <div class="ml-auto mr-14">Total Characters: {{ textLenght }}</div>
                 </div>
             </div>
@@ -105,7 +98,7 @@ const copyTableToClipboard = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="sortAndFilterCountAndDensity.length > 0" v-for="([count, words], index) in sortAndFilterCountAndDensity" :key="index">
+                        <tr v-if="countAndDensityEntries.length" v-for="([count, words], index) in countAndDensityEntries" :key="index * count">
                             <th class="text-left pl-2" scope="row">{{ words.map(word => word.word).join(', ') }}</th>
                             <td class="pl-1">{{ count }}</td>
                             <td>{{ words[0].density }}%</td>

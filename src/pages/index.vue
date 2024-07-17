@@ -1,8 +1,5 @@
 <script setup>
-
 import { MaButton } from "@mobileaction/action-kit"
-
-
 </script>
 <template>
     <div style="text-align: center">
