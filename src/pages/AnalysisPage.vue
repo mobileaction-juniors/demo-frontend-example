@@ -4,17 +4,14 @@ import { MaInput, MaButton } from "@mobileaction/action-kit"
 
 const text = ref('')
 const excludeWords = ref('')
-const textLenght = ref(0)
 const countAndDensityDict = ref({})
 
 onBeforeMount(() => {
     excludeWords.value = localStorage.getItem('excludeWords') || ''
     text.value = localStorage.getItem('inputText') || ''
-    textLenght.value = text.value.length
 });
 
 const calculateCountAndDensity = () => {
-    textLenght.value = text.value.length
     const wordArray = text.value.toLowerCase().match(/[a-zA-Z]+/g) || [];
     const singleWordCount = {}
     const totalWords = wordArray.length
@@ -83,8 +80,8 @@ const copyTableToClipboard = async () => {
                             type="primary" 
                             variant="danger" 
                             size="middle"
-                            @click="calculateCountAndDensity();">Count</MaButton>
-                    <div class="ml-auto mr-14">Total Characters: {{ textLenght }}</div>
+                            @click="calculateCountAndDensity">Count</MaButton>
+                    <div class="ml-auto mr-14">Total Characters: {{ text.length }}</div>
                 </div>
             </div>
             

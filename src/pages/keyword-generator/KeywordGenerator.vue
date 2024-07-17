@@ -6,12 +6,11 @@ const selectedNGrams = ref([])
 const inputText = ref('')
 const nGrams = ref([])
 
-const excludeWords = computed({
-    get: () => 'is, a, an, the, in, of, text, and' // default words to exclude
-});
+// Defined excludeWords as a constant
+const EXCLUDED_WORDS = 'is, a, an, the, in, of, text, and';
 
 const excludedWordsArray = computed(() => {
-    return excludeWords.value.split(/\s*,\s*/).map(word => word.toLowerCase());
+    return EXCLUDED_WORDS.split(/\s*,\s*/).map(word => word.toLowerCase());
 });
 
 const filteredWords = computed(() => {
@@ -39,7 +38,6 @@ const generateNGrams = () => {
 };
 
 watchEffect(() => {
-    localStorage.setItem('excludeWords', excludeWords.value)
     localStorage.setItem('inputText', inputText.value)
 });
 </script>
@@ -64,7 +62,7 @@ watchEffect(() => {
             </div>
         </div>
         <label for="excludeWords" class="block mb-2">Exclude Words:</label>
-        <input type="text" id="excludeWords" v-model="excludeWords" placeholder="Comma separated" class="w-full md:w-1/2 lg:w-1/3 p-2 border border-gray-300 rounded mb-4 transition-all duration-500 ease-in-out">
+        <input type="text" id="excludeWords" :value="EXCLUDED_WORDS" disabled class="w-full md:w-1/2 lg:w-1/3 p-2 border border-gray-300 rounded mb-4 transition-all duration-500 ease-in-out">
         <MaButton class="submit-button mb-4 w-full md:w-auto transition-all duration-500 ease-in-out" 
                 type="primary" 
                 variant="dark" 
