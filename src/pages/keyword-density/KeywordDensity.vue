@@ -10,8 +10,9 @@ const densityText = ref('');
 const frequencyToWordMap = computed(() => store.frequencyToWordMap);
 const totalCharacters = computed(() => store.totalCharacters);
 const calculateFrequency = store.calculateFrequency;
-const calculateDensity = store.calculateDensity;
-const copyTableToClipboard = store.copyTableToClipboard;
+const calculateDensity = (count) => store.calculateDensity(count);
+const copyTableToClipboard = () => store.copyTableToClipboard();
+
 
 </script>
 
@@ -43,8 +44,8 @@ const copyTableToClipboard = store.copyTableToClipboard;
         <thead>
         <tr class="kd-output-table-header">
           <th class="kd-output-table-header-first-col">Keyword</th>
-          <th class="kd-outputTable-header-col">Count</th>
-          <th class="kd-outputTable-header-col">Density</th>
+          <th class="kd-output-table-header-col">Count</th>
+          <th class="kd-output-table-header-col">Density</th>
         </tr>
         </thead>
         <tbody>
@@ -125,7 +126,7 @@ const copyTableToClipboard = store.copyTableToClipboard;
   @apply text-white w-3/5 text-left p-2 pl-4;
 }
 
-.kd-outputTable-header-col {
+.kd-output-table-header-col {
   @apply text-white w-1/5;
 }
 
