@@ -1,18 +1,34 @@
 <script setup>
-import { ref } from 'vue';
-import { MaInput, MaButton } from "@mobileaction/action-kit";
+import { ref, computed } from 'vue';
+import {MaInput, MaButton, MaStep, MaSteps} from "@mobileaction/action-kit";
 import "@/pages/keyword-generator/KeywordGenerator.vue"
 import router from "@/router/index.js";
-import {textStore} from "@/stores/textStore.js";
+import {useTextStore} from "@/stores/useTextStore.js";
 import {storeToRefs} from "pinia";
 
-const store = textStore()
+const activeStep = ref(2);
+const store = useTextStore()
 const text = storeToRefs((store)).userInputText;
-const totalCharacters = ref(text.value.length);
+const totalCharacters = computed(() => useTextStore().userInputText.length);
 const keywordsArray = ref([]);
+const defaultText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+    "Phasellus aliquam eros ullamcorper orci tempor facilisis. In viverra tristique " +
+    "eros, et vestibulum odio vestibulum non. Nullam tincidunt metus in accumsan " +
+    "accumsan. Phasellus efficitur id neque ut malesuada. Phasellus volutpat eleifend " +
+    "felis pellentesque posuere. Donec velit dui, suscipit eget condimentum vitae," +
+    " mollis ultrices orci. Nam blandit turpis neque, ac hendrerit sem vehicula et. " +
+    "Quisque et nisl lorem. Nunc in pulvinar sapien. Nam dignissim ipsum diam, at " +
+    "efficitur libero maximus quis.";
 
-const keywordDensity = () => {
-  const removedSpecialCharacters = text.value.replace(/[^\w\s]/gi, '');
+const keywordDensity = (isDefault) => {
+  let removedSpecialCharacters = text.value.replace(/[^\w\s]/gi, '');
+   if(isDefault) {
+    text.value = defaultText;
+    removedSpecialCharacters = defaultText.replace(/[^\w\s]/gi, '');
+  }
+  if(!text.value.length) {
+    return;
+  }
   const words = removedSpecialCharacters.trim().toLowerCase().split(/\s+/);
   const wordCount = words.length;
   const wordCountsArray = words.reduce((counts, word) => {
@@ -38,12 +54,21 @@ const keywordDensity = () => {
   totalCharacters.value = text.value.length;
 };
 
+const resetValues = () => {
+  text.value = "";
+  totalCharacters.value = 0;
+  keywordsArray.value = null;
+}
+
 const copyClipboard = () => {
-  const tableContent = keywordsArray.value.map(keyword => `${keyword.word}, ${keyword.count}, ${keyword.percentage}`).join('\n');
+  const tableContent = keywordsArray.value.map(keyword => `${keyword.word} : ${keyword.count} time(s) : ${keyword.percentage}%`).join('\n');
   navigator.clipboard.writeText(tableContent);
 };
 
 const goToKeywordGenerator = () => {
+  router.push('/keyword-generator');
+}
+const returnToHomePage = () => {
   router.push('/');
 }
 </script>
@@ -58,17 +83,19 @@ const goToKeywordGenerator = () => {
       <div class="w-full md:w-1/2 mb-4 md:mb-0">
         <div class="bg-gradient-to-r from-white via-blue-100 to-white shadow-md rounded-lg p-8 ml-5 mr-5">
           <MaInput
-              v-model:value="text"
+              v-model:value="store.userInputText"
               type="textarea"
               size="large"
               rows=5
               placeholder="Enter your text here..."
               class="w-full h-40 p-4 border rounded mb-4"
           ></MaInput>
-          <div class="flex justify-between items-center mb-4">
-            <MaButton class="px-4 py-2 rounded" @click="keywordDensity">Count</MaButton>
-            <h3 class="text-base text-gray-600">Total characters: {{ totalCharacters }}</h3>
+          <div class="flex justify-between items-left mb-4">
+            <MaButton class="w-full m-2" @click="keywordDensity(false)">Count</MaButton>
+            <MaButton class="w-full m-2" @click="resetValues">Reset</MaButton>
+            <MaButton class="w-full m-2" @click="keywordDensity(true)">Use Default Text</MaButton>
           </div>
+          <h3 class="text-base text-gray-600 text-center">Total characters: {{ totalCharacters }}</h3>
         </div>
       </div>
       <div class="w-full md:w-1/2">
@@ -97,6 +124,13 @@ const goToKeywordGenerator = () => {
         </div>
       </div>
     </div>
+    <div class="m-8 max-w-full">
+      <MaSteps v-model:current="activeStep">
+        <MaStep title="Step 1" description="Open Application" />
+        <MaStep title="Step 2" description="Enter a text to generate associated keywords"/>
+        <MaStep title="Step 3" description="Analyze keyword data"/>
+      </MaSteps>
+      <MaButton highlight class="mt-12 text-white px-4 py-2 rounded md:ml-16" @click="returnToHomePage">Return To Home Page</MaButton>
+    </div>
   </div>
 </template>
-
