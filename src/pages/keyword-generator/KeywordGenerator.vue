@@ -7,12 +7,10 @@ import { MaBadge } from "@mobileaction/action-kit";
 import { MaSteps, MaStep } from "@mobileaction/action-kit";
 import router from "@/router/index.js";
 import {useTextStore} from "@/stores/useTextStore.js";
-import {storeToRefs} from "pinia";
 
 const activeStep = ref(1);
 const store = useTextStore()
 const nGrams = ref([]);
-const userInputText = storeToRefs((store)).userInputText;
 const selectedNgrams = ref([]);
 const options = [
   { label: '1-gram', value: 1 },
@@ -44,7 +42,7 @@ const removeUnwantedWords = (inputText) => {
 };
 
 const generateAllNGrams = (shouldRemoveCommonWords) => {
-  const inputText = userInputText.value.trim();
+  const inputText = store.userInputText.trim();
   if (!inputText) return;
   const filteredText = shouldRemoveCommonWords ? removeUnwantedWords(inputText) : inputText;
   const generatedNGrams = selectedNgrams.value.map(n => ({
@@ -68,7 +66,7 @@ const returnToHomePage = () => {
     <h3 class=" ml-10 mt-2 text-2xl font-bold text-blue-700 ">Keyword Generator</h3>
     <div class="ma-body">
       <MaInput
-          v-model:value="userInputText"
+          v-model:value="store.userInputText"
           type="textarea"
           placeholder="Enter a text to generate associated keywords."
           class = "m-4"

@@ -4,12 +4,10 @@ import {MaInput, MaButton, MaStep, MaSteps} from "@mobileaction/action-kit";
 import "@/pages/keyword-generator/KeywordGenerator.vue"
 import router from "@/router/index.js";
 import {useTextStore} from "@/stores/useTextStore.js";
-import {storeToRefs} from "pinia";
 
 const activeStep = ref(2);
-const store = useTextStore()
-const text = storeToRefs((store)).userInputText;
-const totalCharacters = computed(() => useTextStore().userInputText.length);
+const store = useTextStore();
+const totalCharacters = computed(() => store.userInputText.length);
 const keywordsArray = ref([]);
 const defaultText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
     "Phasellus aliquam eros ullamcorper orci tempor facilisis. In viverra tristique " +
@@ -21,12 +19,12 @@ const defaultText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " 
     "efficitur libero maximus quis.";
 
 const keywordDensity = (isDefault) => {
-  let removedSpecialCharacters = text.value.replace(/[^\w\s]/gi, '');
+  let removedSpecialCharacters = store.userInputText.replace(/[^\w\s]/gi, '');
    if(isDefault) {
-    text.value = defaultText;
+     store.userInputText = defaultText;
     removedSpecialCharacters = defaultText.replace(/[^\w\s]/gi, '');
   }
-  if(!text.value.length) {
+  if(!store.userInputText.length) {
     return;
   }
   const words = removedSpecialCharacters.trim().toLowerCase().split(/\s+/);
@@ -51,11 +49,11 @@ const keywordDensity = (isDefault) => {
       })
       .sort((a, b) => b.count - a.count);
 
-  totalCharacters.value = text.value.length;
+  totalCharacters.value = store.userInputText.length;
 };
 
 const resetValues = () => {
-  text.value = "";
+  store.userInputText = "";
   totalCharacters.value = 0;
   keywordsArray.value = null;
 }
