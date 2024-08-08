@@ -2,27 +2,27 @@
   <div class="ma-keywords-generator">
     <div class="card">
       <div class="container">
-        <div :class="['input-container', { 'centered': Object.keys(keywords).some(key => keywords[key].length) }]">
+        <div class="input-container">
           <div class="ma-header">
             <span>Keyword Generator</span>
           </div>
-          <textarea ref="textarea" v-model="inputValue" placeholder="Enter text here..." rows="6" class="input-textarea"></textarea>
-          <button @click="generateKeywords">Generate Keywords</button>
+          <textarea v-model="inputValue" placeholder="Enter text here..." rows="6" class="input-textarea"></textarea>
+          <button @click="generateNGrams" class="custom-button">Generate N-Grams</button>
         </div>
-        <div v-if="Object.keys(keywords).some(key => keywords[key].length)" class="keywords-output">
+        <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output">
           <div class="ma-header">
             <span>Generated Keywords</span>
           </div>
           <div class="filter-container">
             <label for="ngram-filter">Filter by:</label>
-            <select id="ngram-filter" v-model="selectedNGram" @change="filterKeywords">
-              <option v-for="(value, key) in keywords" :key="key" :value="key">{{ key }}</option>
+            <select id="ngram-filter" v-model="selectedNGram" @change="filterKeywords" class="custom-select">
+              <option v-for="(value, key) in nGrams" :key="key" :value="key">{{ key }}</option>
             </select>
           </div>
           <div>
-            <h4>{{ getNGramLabel() }}</h4>
-            <ul>
-              <li v-for="(item, index) in filteredKeywords" :key="index">{{ item }}</li>
+            <h4>{{selectedNGram}}</h4>
+            <ul class="custom-list">
+              <li v-for="(item, index) in filteredKeywords" :key="index" class="custom-list-item">{{ item }}</li>
             </ul>
           </div>
         </div>
@@ -35,14 +35,14 @@
 import { ref, computed } from 'vue';
 
 const inputValue = ref('');
-const keywords = ref({});
+const nGrams = ref({});
 const selectedNGram = ref('');
+const MAX_N_GRAMS_COUNT = 3;
 
-const generateKeywords = () => {
+const generateNGrams = () => {
   const words = cleanText(inputValue.value).split(/\s+/);
-  const maxNGram = 3; // Can be changed to any n value for n-grams
-  for (let n = 1; n <= maxNGram; n++) {
-    keywords.value[`${n}-grams`] = getNGrams(words, n);
+  for (let n = 1; n <= MAX_N_GRAMS_COUNT; n++) {
+    nGrams.value[`${n}-grams`] = getNGrams(words, n);
   }
   selectedNGram.value = '1-grams';
 };
@@ -62,12 +62,8 @@ const getNGrams = (words, n) => {
   return nGrams;
 };
 
-const getNGramLabel = () => {
-  return selectedNGram.value;
-};
-
 const filteredKeywords = computed(() => {
-  return keywords.value[selectedNGram.value] || [];
+  return nGrams.value[selectedNGram.value] || [];
 });
 </script>
 
@@ -94,25 +90,22 @@ const filteredKeywords = computed(() => {
   width: 100%;
 }
 
-.input-container {
+.input-container, .keywords-output {
   flex: 1;
+  width: 100%; /* Ensure both sections take full width */
+}
+
+.input-container {
   display: flex;
   flex-direction: column;
   gap: 1em;
-  width: 100%;
   transition: transform 0.3s ease, width 0.3s ease;
-  transform: translateX(0);
-}
-
-.input-container.centered {
-  transform: translateX(0); /* Remove the translateX to keep it centered */
 }
 
 .keywords-output {
-  flex: 1;
   padding-left: 1em;
   border-left: 2px solid #e0e0e0;
-  max-height: 70vh;
+  max-height: 50vh;
   overflow-y: auto;
 }
 
@@ -138,7 +131,7 @@ const filteredKeywords = computed(() => {
   overflow-y: auto; /* Scroll when content exceeds max-height */
 }
 
-button {
+.custom-button {
   padding: 0.75em 1.5em;
   border: none;
   border-radius: 12px;
@@ -150,11 +143,11 @@ button {
   transition: background-color 0.3s, transform 0.2s;
 }
 
-button:hover {
+.custom-button:hover {
   background-color: #0051a8;
 }
 
-button:active {
+.custom-button:active {
   transform: scale(0.98);
 }
 
@@ -167,7 +160,7 @@ button:active {
   margin-right: 0.5em;
 }
 
-select {
+.custom-select {
   padding: 0.5em;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
@@ -175,18 +168,41 @@ select {
   line-height: 1.6;
 }
 
-ul {
+.custom-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-li {
+.custom-list-item {
   margin-bottom: 0.5em;
   font-size: 1em;
   color: #555;
   background: #f9f9f9;
   border-radius: 8px;
   padding: 0.5em;
+}
+
+.custom-list-item:last-child {
+  margin: 1px;
+  padding: 1px;
+  padding-left: 12px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .keywords-output {
+    padding-left: 0;
+    border-left: none;
+    border-top: 2px solid #e0e0e0;
+    padding-top: 1em;
+  }
+  .input-textarea {
+    padding: 0px;
+  }
 }
 </style>
