@@ -6,24 +6,55 @@
           <div class="ma-header">
             <span>Keyword Generator</span>
           </div>
-          <textarea v-model="inputValue" placeholder="Enter text here..." rows="6" class="input-textarea"></textarea>
+          <MaInput
+            v-model:value="inputValue"
+            type="textarea"            
+            size="large"
+            placeholder="Enter text here..."            
+            rows="6"
+          >
+            <template #title>Your Text</template>
+          </MaInput>          
+          <MaInput
+            v-model:value="excludedWords"
+            type="textarea"            
+            size="large"
+            placeholder="Enter words to exclude (space-separated)..."
+            hint-text="You may want to exclude 'is', 'a', 'an', 'the'."
+            rows="3"
+          >
+
+            <template #title>Exclude Words</template>
+          </MaInput>
+          <div class="multi-select-container">
+            <label>Select N-Grams to Generate:</label>
+            <div class="checkbox-group">
+              <div v-for="n in MAX_N_GRAMS_COUNT" :key="n">
+                <input type="checkbox" :id="'ngram-' + n" :value="n" v-model="selectedNGrams" />
+                <label :for="'ngram-' + n">{{ n }}-gram</label>
+              </div>
+            </div>
+          </div>
           <button @click="generateNGrams" class="custom-button">Generate N-Grams</button>
         </div>
         <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output">
           <div class="ma-header">
-            <span>Generated Keywords</span>
+            <span>Generated Tags</span>
           </div>
           <div class="filter-container">
-            <label for="ngram-filter">Filter by:</label>
-            <select id="ngram-filter" v-model="selectedNGram" @change="filterKeywords" class="custom-select">
-              <option v-for="(value, key) in nGrams" :key="key" :value="key">{{ key }}</option>
-            </select>
+            <label>Filter by:</label>
+            <div class="checkbox-group">
+              <div v-for="(value, key) in sortedNGrams" :key="key">
+                <input type="checkbox" :id="'filter-' + key" :value="key" v-model="selectedNGramFilters" />
+                <label :for="'filter-' + key">{{ key }}</label>
+              </div>
+            </div>
           </div>
-          <div>
-            <h4>{{selectedNGram}}</h4>
-            <ul class="custom-list">
-              <li v-for="(item, index) in filteredKeywords" :key="index" class="custom-list-item">{{ item }}</li>
-            </ul>
+          <div v-for="key in sortedNGramFilters" :key="key">
+            <h4>{{ key }}</h4>
+            <div class="tags-container">
+              <span v-for="(item, index) in nGrams[key]" :key="index" class="tag">{{ item }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -33,22 +64,33 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { MaInput } from "@mobileaction/action-kit";
+import "@mobileaction/action-kit/dist/style.css"
 
 const inputValue = ref('');
+const excludedWords = ref('');
 const nGrams = ref({});
-const selectedNGram = ref('');
-const MAX_N_GRAMS_COUNT = 3;
+const selectedNGrams = ref([]);
+const selectedNGramFilters = ref([]);
+const MAX_N_GRAMS_COUNT = 10;
 
 const generateNGrams = () => {
   const words = cleanText(inputValue.value).split(/\s+/);
-  for (let n = 1; n <= MAX_N_GRAMS_COUNT; n++) {
+  selectedNGrams.value.forEach(n => {
     nGrams.value[`${n}-grams`] = getNGrams(words, n);
-  }
-  selectedNGram.value = '1-grams';
+  });
+  selectedNGramFilters.value = selectedNGrams.value.map(n => `${n}-grams`);
 };
 
 const cleanText = (text) => {
-  return text.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ").toLowerCase();
+  const unwantedWords = excludedWords.value.split(' ');
+  return text
+    .replace(/[^\w\s]|_/g, "")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .split(' ')
+    .filter(word => !unwantedWords.includes(word))
+    .join(' ');
 };
 
 const getNGrams = (words, n) => {
@@ -62,8 +104,25 @@ const getNGrams = (words, n) => {
   return nGrams;
 };
 
-const filteredKeywords = computed(() => {
-  return nGrams.value[selectedNGram.value] || [];
+const sortedNGramFilters = computed(() => {
+  return selectedNGramFilters.value.sort((a, b) => {
+    const aNum = parseInt(a.split('-')[0], 10);
+    const bNum = parseInt(b.split('-')[0], 10);
+    return aNum - bNum;
+  });
+});
+const sortedNGrams = computed(() => {
+  // Sort nGrams by key
+  return Object.keys(nGrams.value)
+    .sort((a, b) => {
+      const aNum = parseInt(a.split('-')[0], 10);
+      const bNum = parseInt(b.split('-')[0], 10);
+      return aNum - bNum;
+    })
+    .reduce((sorted, key) => {
+      sorted[key] = nGrams.value[key];
+      return sorted;
+    }, {});
 });
 </script>
 
@@ -84,7 +143,7 @@ const filteredKeywords = computed(() => {
 
 .container {
   display: flex;
-  justify-content: center; /* Center the content horizontally */
+  justify-content: center;
   align-items: flex-start;
   gap: 3em;
   width: 100%;
@@ -92,7 +151,7 @@ const filteredKeywords = computed(() => {
 
 .input-container, .keywords-output {
   flex: 1;
-  width: 100%; /* Ensure both sections take full width */
+  width: 100%;
 }
 
 .input-container {
@@ -102,10 +161,28 @@ const filteredKeywords = computed(() => {
   transition: transform 0.3s ease, width 0.3s ease;
 }
 
+.multi-select-container, .filter-container {
+  margin-top: 1em;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.checkbox-group label {
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+
 .keywords-output {
   padding-left: 1em;
   border-left: 2px solid #e0e0e0;
-  max-height: 50vh;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
@@ -126,9 +203,9 @@ const filteredKeywords = computed(() => {
   font-size: 1em;
   line-height: 1.6;
   resize: none;
-  min-height: 6em; /* Minimum height */
-  max-height: 50vh; /* Maximum height before scrolling */
-  overflow-y: auto; /* Scroll when content exceeds max-height */
+  min-height: 6em;
+  max-height: 50vh;
+  overflow-y: auto;
 }
 
 .custom-button {
@@ -151,42 +228,18 @@ const filteredKeywords = computed(() => {
   transform: scale(0.98);
 }
 
-.filter-container {
-  margin-bottom: 1em;
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
 }
 
-.filter-container label {
-  font-size: 1em;
-  margin-right: 0.5em;
-}
-
-.custom-select {
-  padding: 0.5em;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  font-size: 1em;
-  line-height: 1.6;
-}
-
-.custom-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.custom-list-item {
-  margin-bottom: 0.5em;
-  font-size: 1em;
-  color: #555;
-  background: #f9f9f9;
-  border-radius: 8px;
-  padding: 0.5em;
-}
-
-.custom-list-item:last-child {
-  margin: 1px;
-  padding: 1px;
-  padding-left: 12px;
+.tag {
+  background-color: #e0f7fa;
+  color: #00796b;
+  padding: 0.5em 1em;
+  border-radius: 12px;
+  font-size: 0.875em;
 }
 
 @media (max-width: 768px) {
