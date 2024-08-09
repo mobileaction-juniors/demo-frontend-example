@@ -13,6 +13,9 @@
     "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.1.5",
     "@mobileaction/action-kit": "^1.32.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.9",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },

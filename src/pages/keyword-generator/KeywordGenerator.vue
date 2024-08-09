@@ -1,12 +1,11 @@
-
 <template>
-    <div class="ma-keyword-generator">
-        <div class="ma-container">
-            <div class="ma-input-section">
+    <div class="p-5 max-w-[1000px] mx-auto mt-[10%]">
+        <div class="flex justify-around items-start">
+            <div class="w-[35%]">
                 <MaInput v-model:value="inputText" type="textarea" placeholder="Write your text here" @change="clearText" hint-text="Enter your filter words below."></MaInput>
                 <MaTagInput :tags="unwantedWords" size="sm" />
             </div>
-            <div class="mid-container" v-if="inputText !== '' ">
+            <div class="flex flex-col mx-auto" v-if="inputText !== '' ">
                 <MaButton @click="generateKeywords" size="medium" variant="filled" color="blak"> 
                     <MaIcon name="chevrons-right" size="xl" /> 
                 </MaButton>
@@ -20,11 +19,11 @@
                     mode="multiselect">
                 </MaSelect>
             </div>
-            <div v-if="inputText !== '' " class="ma-output-section">
-                <div class="output-section">
+            <div v-if="inputText !== '' " class="w-[35%] max-h-[200px] overflow-y-auto p-2.5">
+                <div class="overflow-y-auto">
                     <div v-for="(group, groupIndex) in keywordTags" :key="groupIndex">
                         <h3>{{ group.label }}</h3> <!-- Display the n-gram group label -->
-                        <div v-for="(tag, index) in group.tags" :key="index" class="keyword-tag">
+                        <div v-for="(tag, index) in group.tags" :key="index" class="inline-block bg-gray-300 p-1.5 mx-1.5 my-1.5 rounded-full text-sm">
                             {{ tag }}
                         </div>
                     </div>
@@ -94,33 +93,9 @@ export default {
 </script>
 
 <style>
+@import "../../assets/tailwind.css";
 @import "@mobileaction/action-kit/dist/style.css";
-.ma-keyword-generator {
-    padding: 20px;
-    max-width: 1000px;
-    margin: auto;
-    margin-top: 10%;
-}
-.header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.ma-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-}
-.output-section{
-    overflow-y:auto;
-}
-.ma-input-section, .ma-output-section {
-    width: 35%;
-}
-.ma-output-section{
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 10px;
-}
+
 textarea {
     width: 100%;
     height: 200px;
@@ -132,19 +107,6 @@ textarea {
     background-color: #f8f8f8;
     font-size: 16px;
     resize: none;
-}
-.mid-container{
-display: flex;
-flex-direction: column;
-margin: auto;
-}
-.keyword-tag {
-    display: inline-block;
-    background-color: #e0e0e0;
-    padding: 5px 10px;
-    margin: 5px;
-    border-radius: 20px;
-    font-size: 14px;
 }
 </style>
 
