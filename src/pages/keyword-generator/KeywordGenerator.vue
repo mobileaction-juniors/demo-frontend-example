@@ -1,99 +1,126 @@
 
 <template>
-
     <div class="ma-keyword-generator">
         <div class="ma-container">
-
             <div class="ma-input-section">
-                <h1>Input</h1>
-                <textarea v-model="inputText" placeholder="Enter description"></textarea>
-                <div class="ma-selection-section">
-                    <label for="ngram">Select N-Gram: </label>
-                    <select v-model="selectedNgram" id="ngram" @change="generateKeywords" >
-                        <option v-for="n in nGramRange" :key="n" :value="n">{{ n }}-Gram</option>
-                    </select>
-                </div>
+                <MaInput v-model:value="inputText" type="textarea" placeholder="Write your text here" @change="clearText" hint-text="Enter your filter words below."></MaInput>
+                <MaTagInput :tags="unwantedWords" size="sm" />
             </div>
-
-            <div class="ma-divider"></div>
-
+            <div class="mid-container" v-if="inputText !== '' ">
+                <MaButton @click="generateKeywords" size="medium" variant="filled" color="blak"> 
+                    <MaIcon name="chevrons-right" size="xl" /> 
+                </MaButton>
+                <MaSelect
+                    v-model:value="selectedNgram"
+                    placeholder="Select option..."
+                    :options="nGramData"
+                    size="small"
+                    allow-clear
+                    dropdown-match-select-width
+                    mode="multiselect">
+                </MaSelect>
+            </div>
             <div v-if="inputText !== '' " class="ma-output-section">
-                <h1>Output</h1>
                 <div class="output-section">
-                    <textarea v-model="outputText" readonly></textarea>
+                    <div v-for="(group, groupIndex) in keywordTags" :key="groupIndex">
+                        <h3>{{ group.label }}</h3> <!-- Display the n-gram group label -->
+                        <div v-for="(tag, index) in group.tags" :key="index" class="keyword-tag">
+                            {{ tag }}
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </template>
 
 <script>
-
+import { MaButton, MaIcon, MaInput, MaSelect, MaTagInput } from "@mobileaction/action-kit"
 export default {
     name: 'KeywordGenerator',
     data() {
         return {
             inputText: "",
-            selectedNgram: '0',
-            nGramRange: 3,
-            outputText: ""
+            selectedNgram: [],
+            nGramRange: 10,
+            outputText: "",
+            unwantedWords: ['is', 'a', 'an', 'the'],
+            nGramData: [
+                {value:1,label:"1-gram"},
+                {value:2,label:"2-gram"},
+                {value:3,label:"3-gram"},
+                {value:4,label:"4-gram"},
+                {value:5,label:"5-gram"},
+                {value:6,label:"6-gram"},
+                {value:7,label:"7-gram"},
+                {value:8,label:"8-gram"},
+                {value:9,label:"9-gram"},
+                {value:10,label:"10-gram"},
+            ],
+            keywordTags: []
         };
     },
-
+    components:{
+        MaButton,
+        MaIcon,
+        MaInput,
+        MaSelect,
+        MaTagInput
+    },
     methods: {
         generateKeywords() {
+            this.keywordTags = [];
             const text = this.inputText.trim().toLowerCase();
-            const words = text.split(" ");
-
-            const keywordSet = new Set();
-
-            for (let i = 0; i <= words.length - this.selectedNgram; i++) {
-                let nGram = words.slice(i, i + this.selectedNgram).join(' ');
-                keywordSet.add(nGram);
+            let words = text.split(" ");
+            words = words.filter(word => !this.unwantedWords.includes(word));
+            
+            this.selectedNgram.forEach(selectedGram => {
+                let nGramSet = new Set();
+                for (let i = 0; i <= words.length - selectedGram; i++) {
+                    let nGram = words.slice(i, i + selectedGram).join(' ');
+                    nGramSet.add(nGram);
+                }
+                this.keywordTags.push({label: `${selectedGram}-gram`,tags: Array.from(nGramSet)});
+            });
+        },
+        clearText(){
+            console.log("Hi asdas")
+            if(this.inputText===""){
+                this.outputText="";
             }
-
-            this.outputText = Array.from(keywordSet).join('\n');
-
         }
     }
-
 }
-
 </script>
 
-<style scoped>
-
+<style>
+@import "@mobileaction/action-kit/dist/style.css";
 .ma-keyword-generator {
     padding: 20px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
     margin-top: 10%;
 }
-
 .header {
     text-align: center;
     margin-bottom: 20px;
 }
-
 .ma-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: flex-start;
 }
-
+.output-section{
+    overflow-y:auto;
+}
 .ma-input-section, .ma-output-section {
-    width: 48%;
+    width: 35%;
 }
-
-.ma-divider {
-    width: 1px;
-    background-color: #ccc;
-    height: 100%;
-    margin: 0 10px;
+.ma-output-section{
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
 }
-
 textarea {
     width: 100%;
     height: 200px;
@@ -106,35 +133,19 @@ textarea {
     font-size: 16px;
     resize: none;
 }
-
-.ma-selection-section {
-    margin-bottom: 10px;
+.mid-container{
+display: flex;
+flex-direction: column;
+margin: auto;
 }
-
-button {
-    display: block;
-    margin: auto;
-    width: 100px;
-    height: 75px;
+.keyword-tag {
+    display: inline-block;
+    background-color: #e0e0e0;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 20px;
+    font-size: 14px;
 }
-
-h1{
-    text-align: center;
-}
-
-h3 {
-    margin-bottom: 10px;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin-bottom: 5px;
-}
-
 </style>
 
 
