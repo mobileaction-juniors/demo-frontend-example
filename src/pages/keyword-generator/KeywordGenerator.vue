@@ -6,34 +6,33 @@
           <div class="ma-header">
             <span>Keyword Generator</span>
           </div>
-          <MaInput
+          <ma-input
             v-model:value="inputValue"
-            type="textarea"            
+            type="textarea"
             size="large"
-            placeholder="Enter text here..."            
+            placeholder="Enter text here..."
             rows="6"
           >
             <template #title>Your Text</template>
-          </MaInput>          
-          <MaInput
-            v-model:value="excludedWords"
-            type="textarea"            
+          </ma-input>
+          <ma-input
+            v-model:value="excludedWordsInputValue"
+            type="textarea"
             size="large"
             placeholder="Enter words to exclude (space-separated)..."
             hint-text="You may want to exclude 'is', 'a', 'an', 'the'."
             rows="3"
           >
-
             <template #title>Exclude Words</template>
-          </MaInput>
+          </ma-input>
           <div class="multi-select-container">
             <label>Select N-Grams to Generate:</label>
-            <div class="checkbox-group">
-              <div v-for="n in MAX_N_GRAMS_COUNT" :key="n">
-                <input type="checkbox" :id="'ngram-' + n" :value="n" v-model="selectedNGrams" />
-                <label :for="'ngram-' + n">{{ n }}-gram</label>
-              </div>
-            </div>
+            <ma-checkbox-group
+              v-model:value="selectedNGrams"
+              :options="nGramOptions"
+              name="ngram-checkboxgroup"
+              class="ma-my-checkbox-group"
+            />
           </div>
           <button @click="generateNGrams" class="custom-button">Generate N-Grams</button>
         </div>
@@ -43,14 +42,14 @@
           </div>
           <div class="filter-container">
             <label>Filter by:</label>
-            <div class="checkbox-group">
-              <div v-for="(value, key) in sortedNGrams" :key="key">
-                <input type="checkbox" :id="'filter-' + key" :value="key" v-model="selectedNGramFilters" />
-                <label :for="'filter-' + key">{{ key }}</label>
-              </div>
-            </div>
+            <ma-checkbox-group
+              v-model:value="selectedNGramFilters"
+              :options="sortedNGramOptions"
+              name="filter-checkboxgroup"
+              class="ma-my-checkbox-group"
+            />
           </div>
-          <div v-for="key in sortedNGramFilters" :key="key">
+          <div v-for="key in selectedNGramFilters" :key="key">
             <h4>{{ key }}</h4>
             <div class="tags-container">
               <span v-for="(item, index) in nGrams[key]" :key="index" class="tag">{{ item }}</span>
@@ -63,33 +62,36 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { MaInput } from "@mobileaction/action-kit";
-import "@mobileaction/action-kit/dist/style.css"
+import { ref, computed, watch } from 'vue';
+import { MaInput, MaCheckboxGroup } from "@mobileaction/action-kit";
 
 const inputValue = ref('');
-const excludedWords = ref('');
+const excludedWordsInputValue = ref('');
 const nGrams = ref({});
 const selectedNGrams = ref([]);
 const selectedNGramFilters = ref([]);
 const MAX_N_GRAMS_COUNT = 10;
 
+const nGramOptions = Array.from({ length: MAX_N_GRAMS_COUNT }, (_, i) => `${i + 1}-gram`);
+
 const generateNGrams = () => {
+  nGrams.value = {}; // Clear existing n-grams
   const words = cleanText(inputValue.value).split(/\s+/);
   selectedNGrams.value.forEach(n => {
-    nGrams.value[`${n}-grams`] = getNGrams(words, n);
+    const nGramKey = `${n}`;
+    nGrams.value[nGramKey] = getNGrams(words, parseInt(n));
   });
-  selectedNGramFilters.value = selectedNGrams.value.map(n => `${n}-grams`);
+  updateSelectedNGramFilters();
 };
 
 const cleanText = (text) => {
-  const unwantedWords = excludedWords.value.split(' ');
+  const unwantedWords = excludedWordsInputValue.value.split(' ').map(word => word.trim().toLowerCase());
   return text
     .replace(/[^\w\s]|_/g, "")
     .replace(/\s+/g, " ")
     .toLowerCase()
     .split(' ')
-    .filter(word => !unwantedWords.includes(word))
+    .filter(word => word && !unwantedWords.includes(word))
     .join(' ');
 };
 
@@ -104,26 +106,22 @@ const getNGrams = (words, n) => {
   return nGrams;
 };
 
-const sortedNGramFilters = computed(() => {
-  return selectedNGramFilters.value.sort((a, b) => {
-    const aNum = parseInt(a.split('-')[0], 10);
-    const bNum = parseInt(b.split('-')[0], 10);
-    return aNum - bNum;
-  });
+const sortedNGramOptions = computed(() => {
+  return Array.from(new Set(Object.keys(nGrams.value)))
+    .sort(sortNGramsByKey);
 });
-const sortedNGrams = computed(() => {
-  // Sort nGrams by key
-  return Object.keys(nGrams.value)
-    .sort((a, b) => {
-      const aNum = parseInt(a.split('-')[0], 10);
-      const bNum = parseInt(b.split('-')[0], 10);
-      return aNum - bNum;
-    })
-    .reduce((sorted, key) => {
-      sorted[key] = nGrams.value[key];
-      return sorted;
-    }, {});
-});
+
+const sortNGramsByKey = (a, b) => {
+  const aNum = parseInt(a.split('-')[0], 10);
+  const bNum = parseInt(b.split('-')[0], 10);
+  return aNum - bNum;
+};
+
+const updateSelectedNGramFilters = () => {
+  selectedNGramFilters.value = selectedNGrams.value.map(n => `${n}`);
+};
+
+watch(selectedNGrams, updateSelectedNGramFilters);
 </script>
 
 <style scoped>
@@ -165,20 +163,6 @@ const sortedNGrams = computed(() => {
   margin-top: 1em;
 }
 
-.checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
-}
-
-.checkbox-group label {
-  cursor: pointer;
-}
-
-.checkbox-group input[type="checkbox"] {
-  margin-right: 0.5em;
-}
-
 .keywords-output {
   padding-left: 1em;
   border-left: 2px solid #e0e0e0;
@@ -192,20 +176,6 @@ const sortedNGrams = computed(() => {
   color: #333;
   text-align: center;
   margin: 0;
-}
-
-.input-textarea {
-  width: 100%;
-  padding: 1em;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  font-size: 1em;
-  line-height: 1.6;
-  resize: none;
-  min-height: 6em;
-  max-height: 50vh;
-  overflow-y: auto;
 }
 
 .custom-button {
@@ -254,8 +224,9 @@ const sortedNGrams = computed(() => {
     border-top: 2px solid #e0e0e0;
     padding-top: 1em;
   }
-  .input-textarea {
-    padding: 0px;
-  }
+}
+
+.ma-my-checkbox-group :deep(.antd-checkbox-inner)::after {
+  border-style: none;
 }
 </style>
