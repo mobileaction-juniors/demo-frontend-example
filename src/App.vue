@@ -1,13 +1,16 @@
 <template>
-  <div>
+    <div>
       <the-header/>
       <div>
-          <div>
-              <router-view/>
-          </div>
+        <div>
+          <router-view/>
+        </div>
       </div>
-  </div>
-</template>
-
-
-
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: 'App',
+  };
+  </script>
