@@ -118,7 +118,7 @@ const sortNGramsByKey = (a, b) => {
 };
 
 const updateSelectedNGramFilters = () => {
-  selectedNGramFilters.value = selectedNGrams.value.map(n => `${n}`);
+  selectedNGramFilters.value = selectedNGrams.value.map(n => n.toString());
 };
 
 watch(selectedNGrams, updateSelectedNGramFilters);
