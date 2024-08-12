@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "browserslist": "last 2 years",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
