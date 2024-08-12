@@ -1,9 +1,9 @@
 <template>
   <div class="ma-keywords-generator">
-    <div class="card bg-white rounded-2xl shadow-lg p-8">
-      <div class="container flex flex-col md:flex-row justify-center items-start gap-12">
-        <div class="input-container flex flex-col gap-4 w-full">
-          <div class="ma-header text-center text-2xl font-semibold text-gray-800">
+    <div class="card">
+      <div class="container">
+        <div class="input-container">
+          <div class="ma-header">
             <span>Keyword Generator</span>
           </div>
           <ma-input
@@ -25,7 +25,7 @@
           >
             <template #title>Exclude Words</template>
           </ma-input>
-          <div class="multi-select-container mt-4">
+          <div class="multi-select-container">
             <label class="block font-medium text-gray-700">Select N-Grams to Generate:</label>
             <ma-checkbox-group
               v-model:value="selectedNGrams"
@@ -34,16 +34,16 @@
               class="ma-my-checkbox-group"
             />
           </div>
-          <index @click="generateNGrams" class="custom-button bg-blue-600 text-white py-2 px-4 rounded-xl font-medium transition duration-300 hover:bg-blue-800 flex items-center justify-center">
+          <index @click="generateNGrams" class="custom-button">
             <span class="ml-2">Generate N-Grams</span>
             <ma-icon name="chevrons-right" size="md" />            
           </index>
         </div>
-        <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output w-full border-gray-200 md:pl-4 max-h-[70vh] overflow-y-auto">
-          <div class="ma-header text-center text-2xl font-semibold text-gray-800">
+        <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output">
+          <div class="ma-header">
             <span>Generated Tags</span>
           </div>
-          <div class="filter-container mt-4">
+          <div class="filter-container">
             <label class="block font-medium text-gray-700">Filter by:</label>
             <ma-checkbox-group
               v-model:value="selectedNGramFilters"
@@ -52,10 +52,10 @@
               class="ma-my-checkbox-group"
             />
           </div>
-          <div v-for="key in selectedNGramFilters" :key="key" class="mt-4">
-            <h4 class="font-semibold text-lg">{{ key }}</h4>
-            <div class="tags-container flex flex-wrap gap-2 mt-2">
-              <span v-for="(item, index) in nGrams[key]" :key="index" class="tag bg-teal-100 text-teal-800 px-3 py-1 rounded-xl text-sm">
+          <div v-for="key in selectedNGramFilters" :key="key" class="tag-container">
+            <h4 class="tag-header">{{ key }}</h4>
+            <div class="tags-container">
+              <span v-for="(item, index) in nGrams[key]" :key="index" class="tag">
                 {{ item }}
               </span>
             </div>
@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref, computed} from 'vue';
+import { ref, computed } from 'vue';
 import { MaInput, MaCheckboxGroup, MaIcon } from "@mobileaction/action-kit";
 
 const inputValue = ref('');
@@ -127,8 +127,57 @@ const updateSelectedNGramFilters = () => {
 };
 
 </script>
+
 <style>
 .ma-keywords-generator {
   @apply max-w-6xl mx-auto p-8;
+}
+
+.card {
+  @apply bg-white rounded-2xl shadow-lg p-8;
+}
+
+.container {
+  @apply flex flex-col md:flex-row justify-center items-start gap-12;
+}
+
+.input-container {
+  @apply flex flex-col gap-4 w-full;
+}
+
+.ma-header {
+  @apply text-center text-2xl font-semibold text-gray-800;
+}
+
+.multi-select-container {
+  @apply mt-4;
+}
+
+.custom-button {
+  @apply bg-blue-600 text-white py-2 px-4 rounded-xl font-medium transition duration-300 hover:bg-blue-800 flex items-center justify-center;
+}
+
+.keywords-output {
+  @apply w-full border-gray-200 md:pl-4 max-h-[70vh] overflow-y-auto;
+}
+
+.filter-container {
+  @apply mt-4;
+}
+
+.tag-container {
+  @apply mt-4;
+}
+
+.tag-header {
+  @apply font-semibold text-lg;
+}
+
+.tags-container {
+  @apply flex flex-wrap gap-2 mt-2;
+}
+
+.tag {
+  @apply bg-teal-100 text-teal-800 px-3 py-1 rounded-xl text-sm;
 }
 </style>
