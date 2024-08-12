@@ -1,5 +1,5 @@
 <template>
-  <div class="ma-keywords-generator max-w-6xl mx-auto p-8">
+  <div class="ma-keywords-generator">
     <div class="card bg-white rounded-2xl shadow-lg p-8">
       <div class="container flex flex-col md:flex-row justify-center items-start gap-12">
         <div class="input-container flex flex-col gap-4 w-full">
@@ -36,7 +36,7 @@
           </div>
           <index @click="generateNGrams" class="custom-button bg-blue-600 text-white py-2 px-4 rounded-xl font-medium transition duration-300 hover:bg-blue-800 flex items-center justify-center">
             <span class="ml-2">Generate N-Grams</span>
-            <ma-icon name="arrow-down" size="md" />            
+            <ma-icon name="chevrons-right" size="md" />            
           </index>
         </div>
         <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output w-full border-gray-200 md:pl-4 max-h-[70vh] overflow-y-auto">
@@ -127,3 +127,8 @@ const updateSelectedNGramFilters = () => {
 };
 
 </script>
+<style>
+.ma-keywords-generator {
+  @apply max-w-6xl mx-auto p-8;
+}
+</style>
