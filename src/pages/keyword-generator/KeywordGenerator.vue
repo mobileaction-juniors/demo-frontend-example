@@ -26,7 +26,7 @@
             <template #title>Exclude Words</template>
           </ma-input>
           <div class="multi-select-container">
-            <label class="block font-medium text-gray-700">Select N-Grams to Generate:</label>
+            <label class="multi-select-label">Select N-Grams to Generate:</label>
             <ma-checkbox-group
               v-model:value="selectedNGrams"
               :options="nGramOptions"
@@ -44,7 +44,7 @@
             <span>Generated Tags</span>
           </div>
           <div class="filter-container">
-            <label class="block font-medium text-gray-700">Filter by:</label>
+            <label class="filter-label">Filter by:</label>
             <ma-checkbox-group
               v-model:value="selectedNGramFilters"
               :options="sortedNGramOptions"
@@ -153,6 +153,10 @@ const updateSelectedNGramFilters = () => {
   @apply mt-4;
 }
 
+.multi-select-label {
+  @apply block font-medium text-gray-700;
+}
+
 .custom-button {
   @apply bg-blue-600 text-white py-2 px-4 rounded-xl font-medium transition duration-300 hover:bg-blue-800 flex items-center justify-center;
 }
@@ -163,6 +167,10 @@ const updateSelectedNGramFilters = () => {
 
 .filter-container {
   @apply mt-4;
+}
+
+.filter-label {
+  @apply block font-medium text-gray-700;
 }
 
 .tag-container {
