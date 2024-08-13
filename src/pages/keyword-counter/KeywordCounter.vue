@@ -145,8 +145,8 @@ const copyTable = () => {
     .join('\n');
 
   navigator.clipboard.writeText(rows)
-    .then(() => console.log('Table copied to clipboard'))
-    .catch(err => console.error('Failed to copy table: ', err));
+    .then(() => alert('Table copied to clipboard'))
+    .catch(err => alert('Failed to copy table: ' + err));
 };
 </script>
 
