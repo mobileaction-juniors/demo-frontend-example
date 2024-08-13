@@ -8,7 +8,7 @@
           class="w-full"
           disabled="true"
           @input="resetResults"
-        ></MaInput>
+        />
       <div class="flex justify-between">
         <div class="flex justify-center">
           <MaButton @click="analyzeKeywords" size="medium" variant="filled" color="black">
