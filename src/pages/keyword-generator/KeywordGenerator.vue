@@ -36,7 +36,11 @@
           </div>
           <index @click="generateNGrams" class="custom-button">
             <span class="ml-2">Generate N-Grams</span>
-            <ma-icon name="chevrons-right" size="md" />            
+            <ma-icon name="chevrons-right" size="md" />
+          </index>
+          <index @click="goToKeywordCounter" class="custom-button mt-4">
+            <span class="ml-2">Go to Keyword Counter</span>
+            <ma-icon name="chevrons-right" size="md" />
           </index>
         </div>
         <div v-if="Object.keys(nGrams).some(key => nGrams[key].length)" class="keywords-output">
@@ -67,7 +71,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 import { MaInput, MaCheckboxGroup, MaIcon } from "@mobileaction/action-kit";
 
 const inputValue = ref('');
@@ -76,6 +81,7 @@ const nGrams = ref({});
 const selectedNGrams = ref([]);
 const selectedNGramFilters = ref([]);
 const MAX_N_GRAMS_COUNT = 10;
+const router = useRouter();
 
 const nGramOptions = Array.from({ length: MAX_N_GRAMS_COUNT }, (_, i) => `${i + 1}-gram`);
 
@@ -125,6 +131,16 @@ const sortNGramsByKey = (a, b) => {
 const updateSelectedNGramFilters = () => {
   selectedNGramFilters.value = selectedNGrams.value.map(n => n.toString());
 };
+
+const goToKeywordCounter = () => {
+  // Save the inputValue to localStorage for use in KeywordCounter.vue
+  localStorage.setItem('inputValue', inputValue.value);
+  router.push({ name: 'KeywordCounter' });
+};
+
+watchEffect(() => {
+  localStorage.setItem('inputValue', inputValue.value)
+});
 
 </script>
 
