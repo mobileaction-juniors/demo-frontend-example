@@ -54,7 +54,9 @@
                     </tr>
                   </tbody>
                 </table>
-                <button @click="copyTable" class="copy-button">Copy to Clipboard</button>
+              </div>
+              <div class="copy-button-wrapper">
+                <index @click="copyTable" class="copy-button"><span class="ml-2">Copy To Clipboard</span></index>
               </div>
             </div>
           </div>
@@ -62,7 +64,7 @@
       </div>
     </div>
 </template>
-  
+
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue';
 import { MaInput, MaIcon } from "@mobileaction/action-kit";
@@ -147,7 +149,7 @@ const copyTable = () => {
     .catch(err => console.error('Failed to copy table: ', err));
 };
 </script>
-  
+
 <style scoped>
 .ma-keyword-counter {
   @apply max-w-6xl mx-auto p-4 md:p-8;
@@ -213,7 +215,10 @@ tbody tr:nth-child(even) {
   @apply text-right text-xs text-gray-600 mt-0;
 }
 
+.copy-button-wrapper {
+  @apply mt-2 sticky bottom-0 bg-white py-2;
+}
 .copy-button {
-  @apply bg-blue-600 text-white py-1 px-2 rounded-xl font-medium transition duration-300 hover:bg-blue-800 mt-4;
+  @apply bg-blue-600 text-white py-1 px-2 rounded-xl font-medium transition duration-300 hover:bg-blue-800;
 }
 </style>
