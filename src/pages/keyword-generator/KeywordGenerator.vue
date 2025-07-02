@@ -15,7 +15,7 @@ function getNGrams(words, n) {
   for (let i = 0; i <= words.length - n; i++) {
     result.push(words.slice(i, i + n).join(' '));
   }
-  return result;
+  return Array.from(new Set(result));
 }
 
 const ngramsResult = computed(() => {
