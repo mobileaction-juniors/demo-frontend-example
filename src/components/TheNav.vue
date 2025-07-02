@@ -1,5 +1,8 @@
 <template>
     <div class="ma-router-item">
+        <router-link to="/">
+            Home
+        </router-link>
         <router-link to="/keyword-generator">
             Keyword Generator
         </router-link>

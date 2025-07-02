@@ -1,3 +1,4 @@
+import { regex,splitRegex } from '../cleanupResources';
 export function cleanDescription(description) {
     const regex = /[!•"#$%&'’*+,./:;=?@^`|~]/g;
     const splitRegex = /[.*[({\-_><\].*[({\-_><\]?=.*?[)}\-_><\].*?[)}\-_><\]|[({\-_><\]?<=.*?[({\-_><\].*?[)}\-_><\].*[)}\-_><\].*]/g;
