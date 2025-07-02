@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { cleanDescription } from '../../utils/CleanDescription';
-import { filterArr } from '../../cleanupResources';
 
 const userInput = ref('');
 const generatedKeywords = ref(null);
@@ -10,7 +9,7 @@ const selectedKeyword = ref(null);
 
 function generateKeywords() {
     const cleaned = cleanDescription(userInput.value);
-    const words = cleaned.split(/\s+/).filter(word => word && !filterArr.includes(word));
+    const words = cleaned.split(/\s+/).filter(word => word);
 
     generatedKeywords.value = {
         '1-gram': generateNGrams(words, 1),
