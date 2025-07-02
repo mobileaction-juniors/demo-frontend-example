@@ -3,6 +3,7 @@ import Button from '@/components/Button.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
+
 function goToKeywordGenerator() {
   router.push('/keyword-generator');
 }

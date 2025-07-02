@@ -22,7 +22,9 @@ const ngramsResult = computed(() => {
 });
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
-
+const inputInfo = computed(() => {
+  return input.value.trim().length +' characters, '+ input.value.trim().split(/\s+/).filter(Boolean).length +' words'
+})
 
 function getNGrams(words, n) {
   if (words.length < n) return [];
@@ -37,13 +39,7 @@ const clearAll = () => {
     input.value = '';
 }
 
-function useTextStats(text) {
-  const charCount = computed(() => text.value.trim().length);
-  const wordCount = computed(() => text.value.trim().split(/\s+/).filter(Boolean).length);
-  return { charCount, wordCount };
-}
 
-const { charCount, wordCount } = useTextStats(input);
 </script>
 
 <template>
@@ -57,7 +53,7 @@ const { charCount, wordCount } = useTextStats(input);
                 <TextInput v-model="input"/>
             </div>
             <div class="ma-button-container">
-                <div class="ma-description-count">{{ charCount }} characters, {{ wordCount }} words</div>
+                <div class="ma-description-count">{{ inputInfo }}</div>
                 <Button label="Clear All" :icon="ArrowPathIcon" @click="clearAll" />
             </div>
         </Card>

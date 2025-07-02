@@ -1,10 +1,7 @@
 <script setup>
-
-const emit = defineEmits(['click']);
-
 defineProps({
   icon: {
-    type: [Object],
+    type: Object,
     default: null
   },
   label: {
@@ -16,6 +13,8 @@ defineProps({
     default: false
   }
 });
+
+const emit = defineEmits(['click']);
 
 function handleClick(event) {
   emit('click', event);

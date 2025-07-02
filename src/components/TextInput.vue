@@ -1,6 +1,5 @@
 <script setup>
-// 1- Props and Emi
-const emit = defineEmits(['update:modelValue']);
+
 defineProps({
     modelValue: {
         type: String,
@@ -16,6 +15,7 @@ defineProps({
     }
 });
 
+const emit = defineEmits(['update:modelValue']);
 
 const handleInput = (event) => {
     emit('update:modelValue', event.target.value);
