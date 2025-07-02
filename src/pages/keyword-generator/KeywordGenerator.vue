@@ -15,7 +15,6 @@ const ngramsResult = computed(() => {
     .split(/\s+/)
     .map(w => w.trim().toLowerCase())
     .filter(Boolean);
-  console.log(words);
 
   return n_grams.value.map(n => ({
     n,
