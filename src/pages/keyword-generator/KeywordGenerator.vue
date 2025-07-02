@@ -5,15 +5,17 @@ import TextInput from '@/components/TextInput.vue';
 import Button from '@/components/Button.vue';
 import { ArrowPathIcon } from '@heroicons/vue/24/outline';
 import Badge from '@/components/Badge.vue';
+import { cleanDescription } from '@/utils/CleanDescription';
 
 const input = ref('');
 const n_grams = ref([1, 2, 3]);
 
 const ngramsResult = computed(() => {
-  let words = input.value
+  let words = cleanDescription(input.value)
     .split(/\s+/)
     .map(w => w.trim().toLowerCase())
     .filter(Boolean);
+  console.log(words);
 
   return n_grams.value.map(n => ({
     n,
@@ -23,7 +25,8 @@ const ngramsResult = computed(() => {
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 const inputInfo = computed(() => {
-  return input.value.trim().length +' characters, '+ input.value.trim().split(/\s+/).filter(Boolean).length +' words'
+  const cleaned = cleanDescription(input.value);
+  return cleaned.trim().length +' characters, '+ cleaned.trim().split(/\s+/).filter(Boolean).length +' words'
 })
 
 function getNGrams(words, n) {
