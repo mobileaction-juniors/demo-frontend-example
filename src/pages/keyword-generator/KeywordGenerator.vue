@@ -1,20 +1,27 @@
 <script setup>
 import { ref, computed } from 'vue';
 import Card from '@/components/Card.vue';
-import TextInput from '@/components/TextInput.vue';
-import Button from '@/components/Button.vue';
-import { ArrowPathIcon } from '@heroicons/vue/24/outline';
-import Badge from '@/components/Badge.vue';
-import { cleanDescription } from '@/utils/CleanDescription';
+//import TextInput from '@/components/TextInput.vue';
+//import Button from '@/components/Button.vue';
+//import Badge from '@/components/Badge.vue';
+import { MaInput, MaInputSize, MaCheckbox2, MaButton, MaBadge } from '@mobileaction/action-kit'
+import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription';
 
 const input = ref('');
+const n_gram_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const n_grams = ref([1, 2, 3]);
+const removeStopWords = ref(true);
 
 const ngramsResult = computed(() => {
   let words = cleanDescription(input.value)
     .split(/\s+/)
     .map(w => w.trim().toLowerCase())
     .filter(Boolean);
+
+  words = words.filter(w => {
+    if (removeStopWords.value && cleanStopWords(input.value).includes(w)) return false;
+    return true;
+  });
 
   return n_grams.value.map(n => ({
     n,
@@ -27,6 +34,24 @@ const inputInfo = computed(() => {
   const cleaned = cleanDescription(input.value);
   return cleaned.trim().length +' characters, '+ cleaned.trim().split(/\s+/).filter(Boolean).length +' words'
 })
+const removedWords = computed(() => {
+  const words = Array.from(new Set(
+    input.value
+      .split(/\s+/)
+      .map(w => w.trim().toLowerCase())
+      .filter(Boolean)
+  ));
+  return words
+    .filter(word => removeStopWords.value && cleanStopWords(input.value).includes(word))
+    .map(word => ({
+      text: word,
+      isStop: true,
+    }));
+});
+
+const clearAll = () => {
+    input.value = '';
+}
 
 function getNGrams(words, n) {
   if (words.length < n) return [];
@@ -37,10 +62,18 @@ function getNGrams(words, n) {
   return Array.from(new Set(result));
 }
 
-const clearAll = () => {
-    input.value = '';
+function onNgramToggle(ngram, checked) {
+    console.log(ngram, checked);
+  if (checked && !n_grams.value.includes(ngram)) {
+    n_grams.value.push(ngram);
+  } else if (!checked) {
+    n_grams.value = n_grams.value.filter(n => n !== ngram);
+  }
 }
 
+function onStopWordsToggle(checked) {
+  removeStopWords.value = checked;
+}
 
 </script>
 
@@ -50,31 +83,75 @@ const clearAll = () => {
             <h1 class="ma-title">Keyword Generator</h1>
             <p class="ma-description">Generate n-gram keywords from your text. Perfect for app descriptions, and ASO analysis.</p>
         </div>
-        <Card title="Text Input" description="Enter your text to generate keywords. For example, paste an app description from the App Store.">
+        <div class="ma-keyword-generator-layout">
+            <div class="ma-keyword-generator-layout-left">
+           <Card title="Text Input" description="Enter your text to generate keywords. For example, paste an app description from the App Store.">
             <div class="ma-text-input-container">
-                <TextInput v-model="input"/>
+                <!-- <TextInput v-model="input"/> -->
+                <MaInput class="ma-text-input" type="textarea" placeholder="Enter your text here" :value="input" @update:value="input = $event" :size="MaInputSize.large" />
             </div>
             <div class="ma-button-container">
                 <div class="ma-description-count">{{ inputInfo }}</div>
-                <Button label="Clear All" :icon="ArrowPathIcon" @click="clearAll" />
+                <MaButton @click="clearAll" :size="medium" variant="stroke">Clear All</MaButton>
             </div>
         </Card>
         <Card title="Keywords" description="Generated keywords from your text.">
             <div v-if="!input.trim()" class="text-gray-400 text-base italic py-4">Waiting for your input</div>
-            <div v-else class="ma-ngram-container">
+            <div v-else-if="filteredNgramsResult.length > 0" class="ma-ngram-container">
                 <div class="ma-ngram-item" v-for="ngram in filteredNgramsResult" :key="ngram.n">
                     <div class="ma-ngram-item-title">
                         {{ ngram.n }}-gram <span class="ma-ngram-item-title-count">{{ ngram.keywords.length }}</span>
                     </div>
                     <div class="ma-ngram-item-keywords">
                         <div class="ma-ngram-item-keyword" v-for="keyword in ngram.keywords" :key="keyword">
-                            <Badge :text="keyword" />
+                            <MaBadge class="ma-ngram-item-keyword-badge" size="large" variant="basic">{{ keyword }}</MaBadge>
                         </div>
                     </div>
                     <div class="ma-divider"/>
                 </div>
             </div>
+            <div v-else class="text-gray-400 text-base italic py-4">No keywords generated</div>
         </Card>
+        </div>
+        <div class="ma-keyword-generator-layout-right">
+            <Card title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
+                <div class="ma-ngram-selection-container">
+                    <div class="ma-ngram-selection-item" v-for="ngram in n_gram_options" :key="ngram">
+                        <MaCheckbox2
+                          :checked="n_grams.includes(ngram)"
+                          @change="checked => onNgramToggle(ngram, checked)"
+                        >
+                          {{ngram}}-gram
+                        </MaCheckbox2>
+                    </div>
+                </div>
+            </Card>
+            <Card title="Filtering Options" description="Configure how keywords are filtered">
+                <div class="ma-filtering-options-container">
+                    <div class="ma-filtering-options-item">
+                        <MaCheckbox2
+                          :checked="removeStopWords"
+                          @change="checked => onStopWordsToggle(checked)"
+                        >
+                          Remove common stop words
+                        </MaCheckbox2>                    
+                    </div>
+                    <div v-if="removedWords.length > 0" class="font-semibold">Filtered Words</div>
+                    <div class="flex flex-wrap gap-2">
+                        <MaBadge
+                          v-for="word in removedWords"
+                          :key="word.text"
+                          class="badge-stopword"
+                          size="large"
+                          variant="basic"
+                        >
+                          {{ word.text }}
+                        </MaBadge>
+                    </div>
+                </div>
+            </Card>
+        </div>
+        </div>
     </div>
 </template>
 <style lang="scss" scoped>
@@ -118,7 +195,20 @@ const clearAll = () => {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    .ma-text-input {
+      /* @apply w-full h-full; */
+      width: 100%;
+      height: 100%;
+
+      ::v-deep(.ak-input__input) {
+        /* @apply w-full h-full resize-none; */
+        width: 100%;
+        height: 100%;
+        resize: none;
+      }
+    }
   }
+  
   .ma-description-count {
     /* @apply text-gray-500 text-sm; */
     color: #6b7280;
@@ -176,6 +266,7 @@ const clearAll = () => {
           font-size: 14px;
           color: #6b7280;
         }
+
       }
 
       .ma-divider {
@@ -186,5 +277,79 @@ const clearAll = () => {
       }
     }
   }
+}
+.ma-keyword-generator-layout {
+    /* @apply w-full h-full flex flex-row gap-4; */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    &-left {
+        /* @apply w-3/4 h-full flex flex-col gap-4; */
+        width: 75%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    &-right {
+        /* @apply w-1/4 h-full flex flex-col gap-4; */
+        width: 25%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.ma-ngram-selection-container {
+    /* @apply w-full h-full grid grid-cols-2 gap-x-4 gap-y-2; */
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 16px;
+    row-gap: 8px;
+
+    &-item {
+        /* @apply w-full h-full flex flex-col gap-2; */
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.badge-stopword {
+    /* @apply bg-gray-200 text-gray-500; */
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.ma-filtering-options-container {
+    /* @apply w-full h-full flex flex-col gap-2; */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &-item {
+        /* @apply w-full h-full flex flex-col gap-2; */
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.ma-ngram-item-keyword-badge {
+  border-color: #000 !important;
+  color: #000 !important;
 }
 </style>
