@@ -1,30 +1,18 @@
-// Stop words to filter out
-const stopWords = new Set([
-  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 
-  'in', 'it', 'its', 'of', 'on', 'that', 'the', 'to',
-  'but', 'or',
-  'if', 'then', 'else', 'when', 'about', 'against', 'between', 'into', 'through',
-  'during', 'before', 'after', 'above', 'below', 'up', 'down', 'out', 'off',
-  'over', 'under', 'again', 'further', 'how', 'all', 'any', 'both', 'each', 'few',
-  'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very'
-])
+import { regex, splitRegex, filterArr } from '../cleanupResources'
 
-// Text cleaning function
-export const cleanText = (text) => {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s]/g, ' ') // Remove special characters except spaces
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-    .trim()
-}
+const stopWords = new Set(filterArr)
 
-// Filter out stop words if enabled
-export const filterStopWords = (words, removeStopWords = true) => {
-  if (!removeStopWords) return words
+const cleanText = (text) => {
+  let cleaned = text.replace(regex, ' ')
+  cleaned = cleaned.replace(splitRegex, ' ')
+  cleaned = cleaned.toLowerCase().trim()
+  cleaned = cleaned.replace(/\s+/g, ' ')
+  
+  // Split into words and filter out stop words
+  const words = cleaned.split(' ').filter(word => word.length > 0)
   return words.filter(word => !stopWords.has(word))
 }
 
-// Generate n-gram keywords
 export const generateNGrams = (words, n) => {
   const ngrams = []
   for (let i = 0; i <= words.length - n; i++) {
@@ -35,14 +23,16 @@ export const generateNGrams = (words, n) => {
 }
 
 // Main keyword generation function
-export const generateKeywords = (inputText, selectedNGrams, removeStopWords = true) => {
+export const generateKeywords = (inputText, selectedNGrams) => {
   if (!inputText.trim()) {
-    return {}
+    const emptyKeywords = {}
+    selectedNGrams.forEach(n => {
+      emptyKeywords[`${n}-gram`] = []
+    })
+    return emptyKeywords
   }
 
-  const cleanedText = cleanText(inputText)
-  const words = cleanedText.split(' ').filter(word => word.length > 0)
-  const filteredWords = filterStopWords(words, removeStopWords)
+  const filteredWords = cleanText(inputText)
 
   // Generate n-grams for selected n values 
   const newKeywords = {}
