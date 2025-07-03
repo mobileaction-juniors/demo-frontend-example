@@ -14,7 +14,21 @@ import TheHeader from './components/TheHeader.vue';
 </script>
 
 <style lang="scss" scoped>
-.ma-app-container { display: flex; flex-direction: column; min-height: 100vh; }
-.ma-main-content { flex-grow: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
-.ma-page-wrapper { width: 100%; max-width: 1200px; }
+.ma-app-container { 
+    display: flex; 
+    flex-direction: 
+    column; 
+    min-height: 100vh; 
+}
+.ma-main-content { 
+    flex-grow: 1; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    padding: 20px; 
+}
+.ma-page-wrapper { 
+    width: 100%; 
+    max-width: 1200px; 
+    }
 </style>
