@@ -1,36 +1,32 @@
 <template>
-    <div class="home-container">
-        <div class="card">
-            <div class="card-body">
-                <p class="card-text">Navigate to the Keyword Generator to get started.</p>
-                <router-link to="/keyword-generator" class="btn btn-primary">Go to Keyword Generator</router-link>
+    <div class="ma-home-container">
+        <div class="ma-card">
+            <div class="ma-card-body">
+                <p class="ma-card-text">Navigate to the Keyword Generator to get started.</p>
+                <router-link to="/keyword-generator" class="ma-btn ma-btn-primary">Go to Keyword Generator</router-link>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.home-container {
+.ma-home-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 80vh;
 }
-.card {
+.ma-card {
     border: 1px solid #ccc;
     border-radius: 0.25rem;
     padding: 2rem;
     text-align: center;
 }
-.card-title {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-}
-.card-text {
+
+.ma-card-text {
     margin-bottom: 2rem;
 }
-.btn {
+.ma-btn {
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -48,7 +44,7 @@
     cursor: pointer;
     text-decoration: none;
 }
-.btn-primary {
+.ma-btn-primary {
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
