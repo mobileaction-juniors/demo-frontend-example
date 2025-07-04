@@ -173,17 +173,19 @@ watch(userInput, generateKeywords);
                 .ma-nav-item {
                     margin-bottom: -1px;
                     .ma-nav-link {
-                        background: none;
-                        border: none;
+                        background: #5d6069;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 0.25rem;
                         color: #ffffff;
                         padding: 0.5rem 1rem;
                         cursor: pointer;
                         transition: background 0.2s, color 0.2s;
+                        margin-right: 0.5rem;
                     }
                     .ma-nav-link:hover,
                     .ma-nav-link.active {
-                        background: #e9ecef;
-                        color: #6889ff;
+                        background: #224bc9;
+                        color: #ffffff;
                         text-decoration: none;
                     }
                 }
