@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { cleanDescription } from '../../utils/CleanDescription.js';
+import TheNav from '../../components/TheNav.vue';
+
 const userInput = ref('');
 const generatedKeywords = ref(null);
 const activeTab = ref('1-gram');
@@ -54,7 +56,7 @@ watch(userInput, generateKeywords);
 </script>
 
 <template>
-    <router-link to="/" class="ma-btn">Home</router-link>
+    <TheNav />
     <div class="ma-container">
         <div class="ma-card-content">
             <h5 class="ma-card-title">Keyword Generator</h5>
@@ -73,25 +75,21 @@ watch(userInput, generateKeywords);
                 <div class="ma-card-header">
                     <ul class="ma-nav">
                         <li class="ma-nav-item" v-for="(keywords, ngram) in generatedKeywords" :key="ngram">
-                            <button class="ma-nav-link" :class="{ active: activeTab === ngram }" @click="activeTab = ngram">
+                            <button class="ma-nav-link" :style="activeTab === ngram ? 'font-weight: bold; text-decoration: underline;' : ''" @click="activeTab = ngram">
                                 {{ ngram }} ({{ keywords.length }})
                             </button>
                         </li>
                     </ul>
                 </div>
-                <div>
-                    <div v-if="currentKeywords.length">
-                        <span v-for="item in currentKeywords" :key="item.keyword" class="ma-badge">
-                            {{ item.keyword }} ({{ item.count }})
-                        </span>
-                    </div>
-                    <p v-else class="ma-placeholder-text">No keywords found for this n-gram.</p>
+                <div v-if="currentKeywords.length">
+                    <span v-for="item in currentKeywords" :key="item.keyword" class="ma-badge">
+                        {{ item.keyword }} ({{ item.count }})
+                    </span>
                 </div>
+                <p v-else class="ma-placeholder-text">No keywords found for this n-gram.</p>
             </template>
             <template v-else>
-                <div class="ma-placeholder">
-                    <p class="ma-placeholder-text">Keywords will appear here once generated.</p>
-                </div>
+                <p class="ma-placeholder-text">Keywords will appear here once generated.</p>
             </template>
         </div>
     </div>
@@ -115,19 +113,12 @@ watch(userInput, generateKeywords);
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
-    &.ma-btn-secondary {
-        color: #fff;
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
 }
 
-.ma-home-button {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1000;
-    text-decoration: none;
+.ma-btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
 }
 
 .ma-container {

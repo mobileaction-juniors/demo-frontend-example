@@ -23,26 +23,22 @@
         .ma-card-text {
             margin-bottom: 2rem;
         }
-        .ma-btn {
-            display: inline-block;
-            font-weight: 400;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            user-select: none;
-            border: 1px solid transparent;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            text-decoration: none;
-            &.ma-btn-primary {
-                color: #fff;
-                background-color: #007bff;
-                border-color: #007bff;
-            }
-        }
     }
+}
+
+.ma-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.ma-btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
 }
 </style>
