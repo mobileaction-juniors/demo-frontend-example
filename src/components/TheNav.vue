@@ -7,5 +7,14 @@ function goHome() {
 </script>
 
 <template>
-    <button class="ma-btn ma-btn-secondary" style="position:fixed;top:1rem;left:1rem;z-index:1000;" @click="goHome">Home</button>
+    <button class="ma-btn ma-btn-secondary ma-home-fixed" @click="goHome">Home</button>
 </template>
+
+<style scoped>
+.ma-home-fixed {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+}
+</style>
