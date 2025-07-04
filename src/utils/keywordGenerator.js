@@ -25,11 +25,10 @@ export const generateNGrams = (words, n) => {
 // Main keyword generation function
 export const generateKeywords = (inputText, selectedNGrams) => {
   if (!inputText.trim()) {
-    const emptyKeywords = {}
-    selectedNGrams.forEach(n => {
-      emptyKeywords[`${n}-gram`] = []
-    })
-    return emptyKeywords
+    return selectedNGrams.reduce((acc, n) => {
+      acc[`${n}-gram`] = []
+      return acc
+    }, {})
   }
 
   const filteredWords = cleanText(inputText)

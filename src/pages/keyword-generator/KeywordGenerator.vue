@@ -12,17 +12,12 @@ const inputText = ref('')
 const selectedNGrams = ref([1, 2, 3]) 
 const generatedKeywords = ref({})
 
-const keywordTags = ref({
-  '1-gram': [],
-  '2-gram': [],
-  '3-gram': [],
-  '4-gram': [],
-  '5-gram': [],
-  '6-gram': [],
-  '7-gram': [],
-  '8-gram': [],
-  '9-gram': [],
-  '10-gram': []
+const keywordTags = computed(() => {
+  return selectedNGrams.value.reduce((acc, n) => {
+    const key = `${n}-gram`
+    acc[key] = generatedKeywords.value[key] || []
+    return acc
+  }, {})
 })
 
 // Generates keywords from input text
@@ -36,12 +31,7 @@ const generateKeywords = () => {
 }
 
 
-watch(generatedKeywords, (newKeywords) => {
-  selectedNGrams.value.forEach(n => {
-    const key = `${n}-gram`
-    keywordTags.value[key] = newKeywords[key] || []
-  })
-}, { deep: true })
+
 
 
 const toggleNGram = (n) => {
@@ -71,17 +61,17 @@ const nGramOptions = getNGramOptions(10)
 </script>
 
 <template>
-    <div class="container">
-        <div class="header">
+    <div class="ma-container">
+        <div class="ma-header">
             <h1 class="title">Keyword Generator</h1>
             <p class="subtitle">Generate n-gram keywords from application descriptions</p>
         </div>
 
-        <div class="main-layout">
+        <div class="ma-main-layout">
             <!-- Left Panel: Input and Settings -->
-            <div class="left-panel">
+            <div class="ma-left-panel">
                 <!-- Input Section -->
-                <div class="input-section">
+                <div class="ma-input-section">
                     <ma-input
                         v-model:value="inputText"
                         type="textarea"
@@ -94,20 +84,20 @@ const nGramOptions = getNGramOptions(10)
                 </div>
 
                 <!-- Settings Section -->
-                <div class="settings-section">
-                    <h3 class="settings-title">Settings</h3>
+                <div class="ma-settings-section">
+                    <h3 class="ma-settings-title">Settings</h3>
                     
                     <!-- N-gram Selection -->
-                    <div class="ngram-selection">
-                        <label class="selection-label">Select N-grams to Generate:</label>
-                        <div class="ngram-buttons">
+                    <div class="ma-ngram-selection">
+                        <label class="ma-selection-label">Select N-grams to Generate:</label>
+                        <div class="ma-ngram-buttons">
                             <button
                                 v-for="n in nGramOptions"
                                 :key="n"
                                 @click="toggleNGram(n)"
                                 :class="[
-                                    'ngram-button',
-                                    selectedNGrams.includes(n) ? getNGramClass(n) : 'ngram-button-inactive'
+                                    'ma-ngram-button',
+                                    selectedNGrams.includes(n) ? getNGramClass(n) : 'ma-ngram-button-inactive'
                                 ]"
                             >
                                 {{ n }}-gram
@@ -118,37 +108,37 @@ const nGramOptions = getNGramOptions(10)
             </div>
 
             <!-- Right Panel: Results -->
-            <div class="right-panel">
+            <div class="ma-right-panel">
                 <!-- Results Section -->
-                <div v-if="hasKeywords" class="results-section">
-                    <div class="results-header">
-                        <h2 class="results-title">Generated Keywords</h2>
-                        <div class="results-count">
+                <div v-if="hasKeywords" class="ma-results-section">
+                    <div class="ma-results-header">
+                        <h2 class="ma-results-title">Generated Keywords</h2>
+                        <div class="ma-results-count">
                             <span>Total: {{ totalKeywords }} keywords</span>
                         </div>
                     </div>
 
-                    <div class="results-content">
+                    <div class="ma-results-content">
                         <!-- Dynamic N-gram Sections -->
                         <div 
                             v-for="n in selectedNGrams" 
                             :key="n"
-                            class="ngram-section"
+                            class="ma-ngram-section"
                         >
-                            <h3 class="ngram-title">
+                            <h3 class="ma-ngram-title">
                                 {{ n }}-gram Keywords ({{ keywordTags[`${n}-gram`]?.length || 0 }})
                             </h3>
-                            <div v-if="keywordTags[`${n}-gram`]?.length > 0" class="keywords-container">
+                            <div v-if="keywordTags[`${n}-gram`]?.length > 0" class="ma-keywords-container">
                                 <ma-tag-input
                                     v-model:tags="keywordTags[`${n}-gram`]"
                                     :placeholder="`Add ${n}-gram keywords...`"
                                     prefix-icon="tag"
                                     size="sm"
                                     :disabled="true"
-                                    class="keyword-tag-input"
+                                    class="ma-keyword-tag-input"
                                 />
                             </div>
-                            <div v-else class="empty-ngram">
+                            <div v-else class="ma-empty-ngram">
                                 <p>No {{ n }}-gram keywords generated</p>
                             </div>
                         </div>
@@ -156,14 +146,14 @@ const nGramOptions = getNGramOptions(10)
                 </div>
 
                 <!-- Empty State -->
-                <div v-else-if="inputText.trim()" class="empty-state">
+                <div v-else-if="inputText.trim()" class="ma-empty-state">
                     <p>No keywords generated. Please enter some text.</p>
                 </div>
 
                 <!-- Initial State -->
-                <div v-else class="initial-state">
-                    <div class="initial-content">
-                        <div class="initial-icon">📝</div>
+                <div v-else class="ma-initial-state">
+                    <div class="ma-initial-content">
+                        <div class="ma-initial-icon">📝</div>
                         <h3>Ready to Generate Keywords</h3>
                         <p>Enter an application description in the left panel to start generating n-gram keywords.</p>
                     </div>
@@ -174,83 +164,83 @@ const nGramOptions = getNGramOptions(10)
 </template>
 
 <style scoped>
-.container {
+.ma-container {
     max-width: 90rem;
     margin: 0 auto;
     padding: 1.25rem;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }
 
-.header {
+.ma-header {
     text-align: center;
     margin-bottom: 2.5rem;
 }
 
-.title {
+.ma-title {
     font-size: 2.25rem;
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 0.5rem;
 }
 
-.subtitle {
+.ma-subtitle {
     font-size: 1.125rem;
     color: #4b5563;
 }
 
-.main-layout {
+.ma-main-layout {
     display: flex;
     gap: 2rem;
     min-height: calc(100vh - 200px);
 }
 
-.left-panel {
+.ma-left-panel {
     flex: 1;
     max-width: 50%;
 }
 
-.input-section {
+.ma-input-section {
     margin-bottom: 2rem;
 }
 
 /* Make textarea taller for better UX */
-.input-section :deep(.ma-input__textarea) {
+.ma-input-section :deep(.ma-input__textarea) {
     min-height: 500px;
     resize: vertical;
 }
 
-.settings-section {
+.ma-settings-section {
     background-color: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
     padding: 1.5rem;
 }
 
-.settings-title {
+.ma-settings-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 1rem;
 }
 
-.ngram-selection {
+.ma-ngram-selection {
     margin-bottom: 1.5rem;
 }
 
-.selection-label {
+.ma-selection-label {
     display: block;
     font-weight: 500;
     color: #374151;
     margin-bottom: 0.75rem;
 }
 
-.ngram-buttons {
+.ma-ngram-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.ngram-button {
+.ma-ngram-button {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -260,126 +250,126 @@ const nGramOptions = getNGramOptions(10)
     cursor: pointer;
 }
 
-.ngram-button-inactive {
+.ma-ngram-button-inactive {
     background-color: #f3f4f6;
     color: #6b7280;
     border-color: #e5e7eb;
 }
 
-.ngram-button-inactive:hover {
+.ma-ngram-button-inactive:hover {
     background-color: #e5e7eb;
     color: #374151;
 }
 
 /* N-gram color classes */
-.ngram-1 {
+.ma-ngram-1 {
     background-color: #dbeafe;
     color: #1d4ed8;
     border-color: #93c5fd;
 }
 
-.ngram-1:hover {
+.ma-ngram-1:hover {
     background-color: #bfdbfe;
 }
 
-.ngram-2 {
+.ma-ngram-2 {
     background-color: #dcfce7;
     color: #15803d;
     border-color: #86efac;
 }
 
-.ngram-2:hover {
+.ma-ngram-2:hover {
     background-color: #bbf7d0;
 }
 
-.ngram-3 {
+.ma-ngram-3 {
     background-color: #f3e8ff;
     color: #7c3aed;
     border-color: #c4b5fd;
 }
 
-.ngram-3:hover {
+.ma-ngram-3:hover {
     background-color: #e9d5ff;
 }
 
-.ngram-4 {
+.ma-ngram-4 {
     background-color: #fee2e2;
     color: #dc2626;
     border-color: #fca5a5;
 }
 
-.ngram-4:hover {
+.ma-ngram-4:hover {
     background-color: #fecaca;
 }
 
-.ngram-5 {
+.ma-ngram-5 {
     background-color: #fef3c7;
     color: #b45309;
     border-color: #fcd34d;
 }
 
-.ngram-5:hover {
+.ma-ngram-5:hover {
     background-color: #fde68a;
 }
 
-.ngram-6 {
+.ma-ngram-6 {
     background-color: #e0e7ff;
     color: #4338ca;
     border-color: #a5b4fc;
 }
 
-.ngram-6:hover {
+.ma-ngram-6:hover {
     background-color: #c7d2fe;
 }
 
-.ngram-7 {
+.ma-ngram-7 {
     background-color: #fce7f3;
     color: #ec4899;
     border-color: #f9a8d4;
 }
 
-.ngram-7:hover {
+.ma-ngram-7:hover {
     background-color: #fbcfe8;
 }
 
-.ngram-8 {
+.ma-ngram-8 {
     background-color: #ccfbf1;
     color: #0f766e;
     border-color: #5eead4;
 }
 
-.ngram-8:hover {
+.ma-ngram-8:hover {
     background-color: #99f6e4;
 }
 
-.ngram-9 {
+.ma-ngram-9 {
     background-color: #fed7aa;
     color: #ea580c;
     border-color: #fdba74;
 }
 
-.ngram-9:hover {
+.ma-ngram-9:hover {
     background-color: #fb923c;
 }
 
-.ngram-10 {
+.ma-ngram-10 {
     background-color: #e0f2fe;
     color: #0369a1;
     border-color: #7dd3fc;
 }
 
-.ngram-10:hover {
+.ma-ngram-10:hover {
     background-color: #bae6fd;
 }
 
-.right-panel {
+.ma-right-panel {
     flex: 1;
     max-width: 50%;
     overflow-y: auto;
     max-height: calc(100vh - 200px);
 }
 
-.results-section {
+.ma-results-section {
     background-color: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
@@ -387,7 +377,7 @@ const nGramOptions = getNGramOptions(10)
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.results-header {
+.ma-results-header {
     background-color: #f9fafb;
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
@@ -396,31 +386,31 @@ const nGramOptions = getNGramOptions(10)
     align-items: center;
 }
 
-.results-title {
+.ma-results-title {
     font-size: 1.5rem;
     font-weight: 600;
     color: #1f2937;
     margin: 0;
 }
 
-.results-count {
+.ma-results-count {
     color: #6b7280;
     font-size: 0.875rem;
 }
 
-.results-content {
+.ma-results-content {
     padding: 1.5rem;
 }
 
-.ngram-section {
+.ma-ngram-section {
     margin-bottom: 2rem;
 }
 
-.ngram-section:last-child {
+.ma-ngram-section:last-child {
     margin-bottom: 0;
 }
 
-.ngram-title {
+.ma-ngram-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: #374151;
@@ -429,7 +419,7 @@ const nGramOptions = getNGramOptions(10)
     border-bottom: 2px solid #e5e7eb;
 }
 
-.keywords-container {
+.ma-keywords-container {
     width: 100%;
     background-color: #f9fafb;
     padding: 1rem;
@@ -437,13 +427,13 @@ const nGramOptions = getNGramOptions(10)
     border: 1px solid #e5e7eb;
 }
 
-.empty-ngram {
+.ma-empty-ngram {
     color: #6b7280;
     text-align: center;
     padding: 1rem 0;
 }
 
-.empty-state {
+.ma-empty-state {
     text-align: center;
     padding: 2.5rem 0;
     color: #6b7280;
@@ -452,12 +442,12 @@ const nGramOptions = getNGramOptions(10)
     border: 1px solid #e5e7eb;
 }
 
-.empty-state p {
+.ma-empty-state p {
     font-size: 1.125rem;
     margin: 0;
 }
 
-.initial-state {
+.ma-initial-state {
     text-align: center;
     padding: 2.5rem 0;
     color: #6b7280;
@@ -466,24 +456,24 @@ const nGramOptions = getNGramOptions(10)
     border: 1px solid #e5e7eb;
 }
 
-.initial-content {
+.ma-initial-content {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.initial-icon {
+.ma-initial-icon {
     font-size: 2rem;
     margin-bottom: 1rem;
 }
 
-.initial-content h3 {
+.ma-initial-content h3 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
-.initial-content p {
+.ma-initial-content p {
     font-size: 1.125rem;
     margin: 0;
 }
