@@ -97,34 +97,22 @@ watch(userInput, generateKeywords);
 
 <style lang="scss" scoped>
 .ma-btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    line-height: 1.5;
     border-radius: 0.25rem;
+    border: 1px solid transparent;
     cursor: pointer;
-    text-decoration: none;
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
-}
-
-.ma-btn-secondary {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
+    &.ma-btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
 }
 
 .ma-container {
     margin-top: 5rem;
-    max-width: 100vw;
-    overflow-x: hidden;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
@@ -145,10 +133,7 @@ watch(userInput, generateKeywords);
         .ma-textarea {
             min-height: 100px;
             max-height: 300px;
-            overflow-y: auto;
             width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
             font-size: 1rem;
             padding: 0.375rem 0.75rem;
             border: 1px solid #ced4da;
@@ -162,23 +147,18 @@ watch(userInput, generateKeywords);
         }
         .ma-card-header {
             padding: 0.75rem 1.25rem;
-            margin-bottom: 0;
             background-color: rgba(0,0,0,.03);
             border-bottom: 1px solid rgba(0,0,0,.125);
             .ma-nav {
                 display: flex;
+                list-style: none;
                 padding-left: 0;
                 margin-bottom: 0;
-                list-style: none;
                 .ma-nav-item {
                     margin-bottom: -1px;
                     .ma-nav-link {
-                        display: block;
                         padding: 0.5rem 1rem;
                         cursor: pointer;
-                        &.active {
-                            font-weight: bold;
-                        }
                     }
                 }
             }
@@ -188,23 +168,11 @@ watch(userInput, generateKeywords);
             padding: 0.25em 0.4em;
             font-size: 0.95em;
             font-weight: 600;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
             border-radius: 0.25rem;
             margin: 0.1rem;
             border: 1px solid #e0e0e0;
             background: #f8f9fa;
             color: #333;
-        }
-        .ma-placeholder {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            .ma-placeholder-text {
-                color: #6c757d;
-            }
         }
         .ma-placeholder-text {
             color: #6c757d;
