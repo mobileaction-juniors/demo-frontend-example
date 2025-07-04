@@ -3,6 +3,7 @@ name: Keyword Generator Deploy
 on:
   push:
     branches:
+      - ONB_203_serhat_celik
       - serhat_celik_onboarding
 
 jobs:
