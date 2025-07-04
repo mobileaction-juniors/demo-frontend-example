@@ -8,30 +8,15 @@ const N_GRAM_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const input = ref('');
 const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
-
-const ngramsResult = computed(() => {
-  let words = cleanDescription(input.value)
-    .split(/\s+/)
-    .map(w => w.trim().toLowerCase())
-    .filter(Boolean);
-
-  const stopWords = cleanStopWords(input.value);
-  words = words.filter(w => {
-    if (removeStopWords.value && stopWords.includes(w)) return false;
-    return true;
-  });
-
-  return n_grams.value.map(n => ({
-    n,
-    keywords: getNGrams(words, n)
-  }));
-});
+const ngramsResult = ref([]);
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 
 const inputInfo = computed(() => {
   const cleaned = cleanDescription(input.value);
-  return cleaned.trim().length +' characters, '+ cleaned.trim().split(/\s+/).filter(Boolean).length +' words'
+  const charCount = cleaned.trim().length;
+  const wordCount = cleaned.trim().split(/\s+/).filter(Boolean).length;
+  return charCount +' characters, '+ wordCount +' words'
 })
 
 const removedWords = computed(() => {
@@ -51,6 +36,25 @@ const removedWords = computed(() => {
 
 const clearAll = () => {
     input.value = '';
+    ngramsResult.value = [];
+}
+
+const convert = () => {
+  let words = cleanDescription(input.value)
+    .split(/\s+/)
+    .map(w => w.trim().toLowerCase())
+    .filter(Boolean);
+
+  const stopWords = cleanStopWords(input.value);
+  words = words.filter(w => {
+    if (removeStopWords.value && stopWords.includes(w)) return false;
+    return true;
+  });
+
+  ngramsResult.value = n_grams.value.map(n => ({
+    n,
+    keywords: getNGrams(words, n)
+  }));
 }
 
 function getNGrams(words, n) {
@@ -102,7 +106,10 @@ function onStopWordsToggle(checked) {
              <template #footer>
                <div class="ma-button-container">
                  <div class="ma-description-count">{{ inputInfo }}</div>
-                 <MaButton @click="clearAll" :size="medium" variant="stroke">Clear All</MaButton>
+                 <div class="ma-button-container-right">
+                    <MaButton @click="clearAll" :size="medium" variant="stroke">Clear All</MaButton>
+                    <MaButton @click="convert" :size="medium" variant="stroke" icon="arrow-right">Convert</MaButton>
+                 </div>
                </div>
              </template>
            </MaCard>
@@ -172,211 +179,106 @@ function onStopWordsToggle(checked) {
 
 <style lang="scss" scoped>
 .ma-keywords-generator {
-  /* @apply w-full h-full bg-white p-6 flex flex-col gap-4; */
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
+   @apply w-full h-full bg-white p-6 flex flex-col gap-4; 
   .ma-header {
-    /* @apply w-full h-full bg-white flex flex-col items-start justify-center gap-2; */
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 8px;
-
+     @apply w-full h-full bg-white flex flex-col items-start justify-center gap-2; 
     .ma-title {
-      /* @apply text-4xl font-bold; */
-      font-size: 2.25rem;
-      font-weight: 700;
+      @apply text-4xl font-bold;
     }
     .ma-description {
-      /* @apply text-lg text-gray-500; */
-      font-size: 1.125rem;
-      color: #6b7280;
+      @apply text-lg text-gray-500;
     }
   }
 
   .ma-text-input-container {
-    /* @apply w-full h-[150px] flex flex-col gap-2; */
-    width: 100%;
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    
+    @apply w-full h-[150px] flex flex-col gap-2;    
   }
   
   .ma-description-count {
-    /* @apply text-gray-500 text-sm; */
-    color: #6b7280;
-    font-size: 14px;
+    @apply text-gray-500 text-sm;
   }
   .ma-button-container {
-    /* @apply w-full h-full flex justify-between; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
+    @apply w-full h-full flex justify-between;
+    .ma-button-container-right {
+      @apply flex flex-row gap-2;
+    }
   }
 
   .ma-ngram-container {
-    /* @apply w-full h-full flex flex-col gap-2; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @apply w-full h-full flex flex-col gap-2;
 
     .ma-ngram-item {
-      /* @apply w-full h-full flex flex-col gap-2; */
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      @apply w-full h-full flex flex-col gap-2;
 
       .ma-ngram-item-title {
-        /* @apply text-lg font-bold; */
-        font-size: 1.125rem;
-        font-weight: 700;
+        @apply text-lg font-bold;
 
         .ma-ngram-item-title-count {
-          /* @apply bg-gray-100 text-black text-sm px-2 py-1 rounded-full; */
-          background: #f3f4f6;
-          color: #000;
-          font-size: 14px;
-          padding: 4px 8px;
-          border-radius: 9999px;
+          @apply bg-gray-100 text-black text-sm px-2 py-1 rounded-full;
         }
       }
 
       .ma-ngram-item-keywords {
-        /* @apply w-full flex flex-row flex-wrap gap-2; */
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8px;
+        @apply w-full flex flex-row flex-wrap gap-2;
 
         .ma-ngram-item-keyword {
-          /* @apply text-sm text-gray-500; */
-          font-size: 14px;
-          color: #6b7280;
+          @apply text-sm text-gray-500;
         }
 
       }
 
       .ma-divider {
-        /* @apply w-full h-[1px] bg-gray-200; */
-        width: 100%;
-        height: 1px;
-        background: #e5e7eb;
+        @apply w-full h-[1px] bg-gray-200;
       }
     }
   }
 }
 .ma-keyword-generator-layout {
-    /* @apply w-full h-full flex flex-row gap-4; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
+    @apply w-full h-full flex flex-row gap-4;
 
     &-left {
-        /* @apply w-3/4 h-full flex flex-col gap-4; */
-        width: 75%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+        @apply w-3/4 h-full flex flex-col gap-4;
     }
 
     &-right {
-        /* @apply w-1/4 h-full flex flex-col gap-4; */
-        width: 25%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+        @apply w-1/4 h-full flex flex-col gap-4;
     }
 }
 
 .ma-ngram-selection-container {
-    /* @apply w-full h-full grid grid-cols-2 gap-x-4 gap-y-2; */
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 16px;
-    row-gap: 8px;
+    @apply w-full h-full grid grid-cols-2 gap-x-4 gap-y-2;
 
     .ma-ngram-selection-item {
-        /* @apply w-full h-full flex flex-col gap-2; */
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        @apply w-full h-full flex flex-col gap-2;
     }
 }
 
 .badge-stopword {
-    /* @apply bg-gray-200 text-gray-500; */
-    background-color: #e5e7eb;
-    color: #6b7280;
+    @apply bg-gray-200 text-gray-500;
 }
 
 .ma-filtering-options-container {
-    /* @apply w-full h-full flex flex-col gap-2; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @apply w-full h-full flex flex-col gap-2;
 
     .ma-filtering-options-item {
-        /* @apply w-full h-full flex flex-col gap-2; */
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        @apply w-full h-full flex flex-col gap-2;
     }
 }
 
 .ma-ngram-item-keyword-badge {
-  border-color: #000 !important;
-  color: #000 !important;
+  @apply border-black text-black;
 }
 .ma-card {
-  border: 1px solid #e5e7eb;
+  @apply border border-gray-200;
 }
 .ma-text-input {
-      /* @apply w-full h-full; */
-      width: 100%;
-      height: 100%;
+      @apply w-full h-full;
 
       ::v-deep(.ak-input__input) {
-        /* @apply w-full h-full resize-none; */
-        width: 100%;
-        min-height: 150px;
-        resize: none;
+        @apply w-full h-full resize-none min-h-[150px];
       }
 }
 .ma-result-description {
-  /* @apply text-gray-400 text-base italic py-4; */
-  color: #9ca3af;
-  font-size: 14px;
-  font-style: italic;
-  padding: 16px 0;
+  @apply text-gray-400 text-base italic py-4;
 }
 </style>

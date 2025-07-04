@@ -1,6 +1,6 @@
 <script setup>
-import Button from '@/components/Button.vue'
 import { useRouter } from 'vue-router'
+import { MaButton} from '@mobileaction/action-kit'
 
 const router = useRouter();
 
@@ -12,6 +12,6 @@ function goToKeywordGenerator() {
     <div style="text-align: center">
         <h1>Welcome to Onboarding Progress </h1>
         <p>You can see the your first task details via link. Please continue that steps while coding. </p>
-        <Button label="Go to Keyword Generator" @click="goToKeywordGenerator" />
+        <MaButton @click="goToKeywordGenerator" >Go to Keyword Generator</MaButton>
     </div>
 </template>
