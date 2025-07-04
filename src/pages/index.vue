@@ -12,6 +12,6 @@ function goToKeywordGenerator() {
     <div style="text-align: center">
         <h1>Welcome to Onboarding Progress </h1>
         <p>You can see the your first task details via link. Please continue that steps while coding. </p>
-        <MaButton @click="goToKeywordGenerator" >Go to Keyword Generator</MaButton>
+        <MaButton @click="goToKeywordGenerator" variant="stroke" size="large" >Go to Keyword Generator</MaButton>
     </div>
 </template>

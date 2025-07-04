@@ -12,10 +12,11 @@ const ngramsResult = ref([]);
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 
+const cleanedInput = computed(() => cleanDescription(input.value).trim().toLowerCase().split(/\s+/).filter(Boolean));
+
 const inputInfo = computed(() => {
-  const cleaned = cleanDescription(input.value);
-  const charCount = cleaned.trim().length;
-  const wordCount = cleaned.trim().split(/\s+/).filter(Boolean).length;
+  const charCount = input.value.trim().length;
+  const wordCount = cleanedInput.value.length;
   return charCount +' characters, '+ wordCount +' words'
 })
 
@@ -40,10 +41,7 @@ const clearAll = () => {
 }
 
 const convert = () => {
-  let words = cleanDescription(input.value)
-    .split(/\s+/)
-    .map(w => w.trim().toLowerCase())
-    .filter(Boolean);
+  let words = cleanedInput.value;
 
   const stopWords = cleanStopWords(input.value);
   words = words.filter(w => {
