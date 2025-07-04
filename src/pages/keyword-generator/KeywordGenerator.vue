@@ -73,9 +73,9 @@ watch(userInput, generateKeywords);
         <div class="ma-card-content">
             <template v-if="generatedKeywords">
                 <div class="ma-card-header">
-                    <ul class="ma-nav">
-                        <li class="ma-nav-item" v-for="(keywords, ngram) in generatedKeywords" :key="ngram">
-                            <button class="ma-nav-link" :class="{ active: activeTab === ngram }" @click="activeTab = ngram">
+                    <ul class="ma-tabs">
+                        <li class="ma-tab-item" v-for="(keywords, ngram) in generatedKeywords" :key="ngram">
+                            <button class="ma-tab" :class="{ active: activeTab === ngram }" @click="activeTab = ngram">
                                 {{ ngram }} ({{ keywords.length }})
                             </button>
                         </li>
@@ -165,14 +165,14 @@ watch(userInput, generateKeywords);
             margin-bottom: 0;
             background-color: rgba(0,0,0,.03);
             border-bottom: 1px solid rgba(0,0,0,.125);
-            .ma-nav {
+            .ma-tabs {
                 display: flex;
                 padding-left: 0;
                 margin-bottom: 0;
                 list-style: none;
-                .ma-nav-item {
+                .ma-tab-item {
                     margin-bottom: -1px;
-                    .ma-nav-link {
+                    .ma-tab {
                         background: #5d6069;
                         border: 1px solid #e0e0e0;
                         border-radius: 0.25rem;
@@ -182,8 +182,8 @@ watch(userInput, generateKeywords);
                         transition: background 0.2s, color 0.2s;
                         margin-right: 0.5rem;
                     }
-                    .ma-nav-link:hover,
-                    .ma-nav-link.active {
+                    .ma-tab:hover,
+                    .ma-tab.active {
                         background: #224bc9;
                         color: #ffffff;
                         text-decoration: none;
