@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard } from '@mobileaction/action-kit'
+import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaEmpty } from '@mobileaction/action-kit'
 import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription';
 
 const N_GRAM_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -9,6 +9,7 @@ const input = ref('');
 const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
 const ngramsResult = ref([]);
+const isInputDirty = ref(false);
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 
@@ -38,9 +39,19 @@ const removedWords = computed(() => {
 const clearAll = () => {
     input.value = '';
     ngramsResult.value = [];
+    MaNotification.info({
+    "size":"large",
+    "variant":"filled",
+    "title":"Cleared",
+    "description":"All data has been cleared",
+    "type":"info",
+    "duration": 3000,
+    "placement": 'topRight'
+  })
 }
 
 const convert = () => {
+  isInputDirty.value = false;
   let words = cleanedInput.value;
 
   const stopWords = cleanStopWords(input.value);
@@ -53,6 +64,28 @@ const convert = () => {
     n,
     keywords: getNGrams(words, n)
   }));
+
+  if (filteredNgramsResult.value.length > 0) {
+    MaNotification.success({
+    "size":"large",
+    "variant":"filled",
+    "title":"Keywords generated successfully",
+    "description":filteredNgramsResult.value.length + " keywords generated",
+    "type":"success",
+    "duration": 3000,
+    "placement": 'topRight'
+  })
+  } else {
+    MaNotification.error({
+    "size":"large",
+    "variant":"filled",
+    "title":"No keywords generated",
+    "description":"Input is empty or contains only stop words",
+    "type":"error",
+    "duration": 3000,
+    "placement": 'topRight'
+    })
+  }
 }
 
 function getNGrams(words, n) {
@@ -74,6 +107,7 @@ function onNgramToggle(ngram, checked) {
 
 function onStopWordsToggle(checked) {
   removeStopWords.value = checked;
+  isInputDirty.value = true;
 }
 
 </script>
@@ -99,21 +133,31 @@ function onStopWordsToggle(checked) {
                  :value="input"
                  @update:value="input = $event"
                  size="large"
+                 @change="isInputDirty = true"
                />
              </template>
              <template #footer>
                <div class="ma-button-container">
                  <div class="ma-description-count">{{ inputInfo }}</div>
                  <div class="ma-button-container-right">
-                    <MaButton @click="clearAll" :size="medium" variant="stroke">Clear All</MaButton>
-                    <MaButton @click="convert" :size="medium" variant="stroke" icon="arrow-right">Convert</MaButton>
-                 </div>
+                    <MaTooltip mouseEnterDelay=200>
+                      <template #title>
+                        Clear all data
+                      </template>
+                      <MaButton :size="medium" variant="stroke" :disabled="!input.trim()" @click="clearAll">Clear</MaButton>
+                    </MaTooltip>
+                    <MaTooltip mouseEnterDelay=200>
+                      <template #title>
+                        Extract keywords
+                      </template>
+                        <MaButton :size="medium" :variant="isInputDirty ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputDirty" :color="isInputDirty ? 'green' : 'dark'" @click="convert">Convert</MaButton>
+                    </MaTooltip>
+                  </div>
                </div>
              </template>
            </MaCard>
         <MaCard class="ma-card" title="Keywords" description="Generated keywords from your text.">
-            <div v-if="!input.trim()" class="ma-result-description">Waiting for your input</div>
-            <div v-else-if="filteredNgramsResult.length > 0" class="ma-ngram-container">
+            <div v-if="filteredNgramsResult.length > 0" class="ma-ngram-container">
                 <div class="ma-ngram-item" v-for="ngram in filteredNgramsResult" :key="ngram.n">
                     <div class="ma-ngram-item-title">
                         {{ ngram.n }}-gram <span class="ma-ngram-item-title-count">{{ ngram.keywords.length }}</span>
@@ -132,7 +176,7 @@ function onStopWordsToggle(checked) {
                     <div class="ma-divider"/>
                 </div>
             </div>
-            <div v-else class="ma-result-description">No keywords generated</div>
+            <div v-else class="ma-result-description"><MaEmpty description="No keywords generated" animation="no-data-found" size="medium" /></div>
         </MaCard>
         </div>
         <div class="ma-keyword-generator-layout-right">
@@ -150,12 +194,20 @@ function onStopWordsToggle(checked) {
             </MaCard>
             <MaCard class="ma-card" title="Filtering Options" description="Configure how keywords are filtered">
                 <div class="ma-filtering-options-container"> 
+                    <MaTooltip>
+                    <template #title>
+                      Stop words are not useful for keyword generation
+                    </template>
+                    <template #description>
+                      E.g. "a", "an", "the", "and", "is", "in", "of", "for"...
+                    </template>
                     <MaCheckbox
                       :checked="removeStopWords"
                       @change="checked => onStopWordsToggle(checked)"
                       >
                       Remove common stop words
-                    </MaCheckbox>                    
+                    </MaCheckbox> 
+                    </MaTooltip>                   
                     <div v-if="removedWords.length > 0" class="font-semibold">Filtered Words</div>
                     <div class="flex flex-wrap gap-2">
                         <MaBadge
@@ -177,7 +229,7 @@ function onStopWordsToggle(checked) {
 
 <style lang="scss" scoped>
 .ma-keywords-generator {
-   @apply w-full h-full bg-white p-6 flex flex-col gap-4; 
+   @apply w-full h-full bg-white flex flex-col gap-4; 
   .ma-header {
      @apply w-full h-full bg-white flex flex-col items-start justify-center gap-2; 
     .ma-title {
