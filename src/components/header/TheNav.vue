@@ -8,17 +8,17 @@ const router = useRouter();
 const tabs = [
   {
     label: 'Home',
-    icon: 'tick-circle',
+    icon: 'rocket',
     route: '/',
   },
   {
     label: 'Keyword Generator',
-    icon: 'tick-circle',
+    icon: 'microscope-bold',
     route: '/keyword-generator',
   },
   {
     label: 'Keyword Density',
-    icon: 'tick-circle',
+    icon: 'info',
     route: '/keyword-density',
   },
 ];
