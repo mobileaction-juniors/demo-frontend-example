@@ -10,17 +10,17 @@ const goToHome = () => {
 </script>
 
 <template>
-    <div class="not-found-container">
+    <div class="ma-not-found-container">
         <MaAnimation name="404-page" :width="400" :height="200"/>
-        <p class="not-found-text">Page not found</p>
+        <p class="ma-not-found-text">Page not found</p>
         <MaButton @click="goToHome">Go to Home</MaButton>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.not-found-container {
+.ma-not-found-container {
     @apply w-full h-full flex flex-col items-center justify-center gap-4;
-    .not-found-text {
+    .ma-not-found-text {
         @apply text-lg;       
     }
 }

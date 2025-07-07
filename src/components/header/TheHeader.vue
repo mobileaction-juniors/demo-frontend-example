@@ -3,13 +3,13 @@
 </script>
 
 <template>
-    <header class="header-container">
+    <header class="ma-header-container">
         <TheNav/>
     </header>
 </template>
 
 <style lang="css" scoped>
-.header-container {
-    @apply w-full min-h-16 flex justify-center items-center bg-white;
+.ma-header-container {
+    @apply w-full min-h-16 flex justify-center items-center bg-white sticky top-0 z-10;
 }
 </style>

@@ -9,7 +9,7 @@ const input = ref('');
 const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
 const ngramsResult = ref([]);
-const isInputDirty = ref(false);
+const isInputChanged = ref(false);
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 
@@ -51,7 +51,7 @@ const clearAll = () => {
 }
 
 const convert = () => {
-  isInputDirty.value = false;
+  isInputChanged.value = false;
   let words = cleanedInput.value;
 
   const stopWords = cleanStopWords(input.value);
@@ -103,12 +103,12 @@ function onNgramToggle(ngram, checked) {
   } else if (!checked) {
     n_grams.value = n_grams.value.filter(n => n != ngram);
   }
-  isInputDirty.value = true;
+  convert();
 }
 
 function onStopWordsToggle(checked) {
   removeStopWords.value = checked;
-  isInputDirty.value = true;
+  convert();
 }
 
 </script>
@@ -134,7 +134,7 @@ function onStopWordsToggle(checked) {
                  :value="input"
                  @update:value="input = $event"
                  size="large"
-                 @change="isInputDirty = true"
+                 @change="isInputChanged = true"
                />
              </template>
              <template #footer>
@@ -151,7 +151,7 @@ function onStopWordsToggle(checked) {
                       <template #title>
                         Extract keywords
                       </template>
-                        <MaButton :size="medium" :variant="isInputDirty ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputDirty" :color="isInputDirty ? 'green' : 'dark'" @click="convert">Convert</MaButton>
+                        <MaButton :size="medium" :variant="isInputChanged ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputChanged" :color="isInputChanged ? 'green' : 'dark'" @click="convert">Convert</MaButton>
                     </MaTooltip>
                   </div>
                </div>
@@ -214,7 +214,7 @@ function onStopWordsToggle(checked) {
                         <MaBadge
                           v-for="word in removedWords"
                           :key="word.text"
-                          class="badge-stopword"
+                          class="ma-badge-stopword"
                           size="large"
                           variant="basic"
                         >
@@ -304,7 +304,7 @@ function onStopWordsToggle(checked) {
     }
 }
 
-.badge-stopword {
+.ma-badge-stopword {
     @apply bg-gray-200 text-gray-500;
 }
 

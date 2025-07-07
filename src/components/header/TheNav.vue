@@ -1,40 +1,23 @@
 <script setup>
-import { MaTabs2, MaTabPane2 } from '@mobileaction/action-kit';
+import { MaTabs2 as MaTabs, MaTabPane2 as MaTabPane } from '@mobileaction/action-kit';
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
+import tabs from '@/constants/HeaderTabs';
 
 const router = useRouter();
-
-const tabs = [
-  {
-    label: 'Home',
-    icon: 'rocket',
-    route: '/',
-  },
-  {
-    label: 'Keyword Generator',
-    icon: 'microscope-bold',
-    route: '/keyword-generator',
-  },
-  {
-    label: 'Keyword Density',
-    icon: 'info',
-    route: '/keyword-density',
-  },
-];
 
 const handleSelectTab = (route) => {
   router.push(route);
 };
 
 const activeTab = computed(() => {
-  return tabs.find(tab => tab.route === router.currentRoute.value.path)?.label;
+  return tabs.find(tab => tab.route == router.currentRoute.value.path)?.label;
 });
 
 </script>
 
 <template>
-  <MaTabs2 v-model:active-key="activeTab" class="nav-container">
-    <MaTabPane2 v-for="tab in tabs" :key="tab.label" :tab-key="tab.label" :type="line" :title="tab.label" :icon="tab.icon" v-on:select-tab="handleSelectTab(tab.route)" />
-  </MaTabs2>
+  <MaTabs v-model:active-key="activeTab" class="nav-container">
+    <MaTabPane v-for="tab in tabs" :key="tab.label" :tab-key="tab.label" :type="line" :title="tab.label" :icon="tab.icon" v-on:select-tab="handleSelectTab(tab.route)" />
+  </MaTabs>
 </template>

@@ -3,5 +3,8 @@
 @tailwind utilities;
 
 body {
-  @apply overflow-y-scroll w-full min-h-full h-full;
+  @apply overflow-y-scroll w-full min-h-screen;
+}
+#app {
+  @apply w-full min-h-screen;
 }
