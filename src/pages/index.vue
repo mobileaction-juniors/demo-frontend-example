@@ -1,10 +1,113 @@
 <script setup>
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+const navigateToKeywordGenerator = () => {
+  router.push('/keyword-generator')
+}
 </script>
+
 <template>
-    <div style="text-align: center">
-        <h1>Welcome to Onboarding Progress </h1>
-        <p>You can see the your first task details via link. Please continue that steps while coding. </p>
-        <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank"> Implement First Front-End Task </a>
+    <div class="ma-container">
+        <div class="ma-header">
+            <h1 class="ma-title">Welcome to Onboarding Progress</h1>
+            <p class="ma-subtitle">You can see your first task details via link. Please continue those steps while coding.</p>
+        </div>
+        
+        <div class="ma-main-layout">
+            <div class="ma-left-panel">
+                <div class="ma-settings-section">
+                    <h2 class="ma-settings-title">Getting Started</h2>
+                    <p class="text-gray-600 mb-6">
+                        Welcome to the Mobile Action onboarding project! This is your starting point for exploring the various features and components.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-800 mb-2">First Task</h3>
+                            <p class="text-blue-700 text-sm mb-3">
+                                Review the implementation details for your first front-end task.
+                            </p>
+                            <a 
+                                href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" 
+                                target="_blank"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                View Task Details
+                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ma-right-panel">
+                <div class="ma-results-section">
+                    <div class="ma-results-header">
+                        <h2 class="ma-results-title">Available Tools</h2>
+                    </div>
+                    <div class="ma-results-content">
+                        <div class="space-y-6">
+                            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Keyword Generator</h3>
+                                        <p class="text-gray-600 mb-4">
+                                            Generate SEO-optimized keywords using advanced n-gram analysis. Create comprehensive keyword lists for your content strategy.
+                                        </p>
+                                        <button 
+                                            @click="navigateToKeywordGenerator"
+                                            class="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors shadow-sm hover:shadow-md"
+                                        >
+                                            Launch Keyword Generator
+                                            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Analytics Dashboard</h3>
+                                        <p class="text-gray-600 mb-4">
+                                            View detailed analytics and performance metrics for your SEO campaigns and keyword strategies.
+                                        </p>
+                                        <button 
+                                            class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm hover:shadow-md opacity-50 cursor-not-allowed"
+                                            disabled
+                                        >
+                                            Coming Soon
+                                            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
