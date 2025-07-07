@@ -42,13 +42,13 @@ const clearAll = () => {
     input.value = '';
     ngramsResult.value = [];
     MaNotification.info({
-    "size":"large",
-    "variant":"filled",
-    "title":"Cleared",
-    "description":"All data has been cleared",
-    "type":"info",
-    "duration": 3000,
-    "placement": 'topRight'
+    size: "large",
+    variant: "filled",
+    title: "Cleared",
+    description: "All data has been cleared",
+    type: "info",
+    duration: 3000,
+    placement: 'topRight'
   })
 }
 
@@ -73,23 +73,23 @@ const convert = () => {
 
   if (filteredNgramsResult.value.length > 0) {
     MaNotification.success({
-    "size":"large",
-    "variant":"filled",
-    "title":"Keywords generated successfully",
-    "description":filteredNgramsResult.value.length + " keywords generated",
-    "type":"success",
-    "duration": 3000,
-    "placement": 'topRight'
+    size:"large",
+    variant:"filled",
+    title:"Keywords generated successfully",
+    description:filteredNgramsResult.value.length + " keywords generated",
+    type:"success",
+    duration: 3000,
+    placement: 'topRight'
   })
   } else {
     MaNotification.error({
-    "size":"large",
-    "variant":"filled",
-    "title":"No keywords generated",
-    "description":"Input is empty or contains only stop words",
-    "type":"error",
-    "duration": 3000,
-    "placement": 'topRight'
+    size:"large",
+    variant:"filled",
+    title:"No keywords generated",
+    description:"Input is empty or contains only stop words",
+    type:"error",
+    duration: 3000,
+    placement: 'topRight'
     })
   }
 }

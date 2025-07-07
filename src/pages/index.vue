@@ -3,7 +3,7 @@
 import { MaButton } from '@mobileaction/action-kit';
 
 const handleClick = () => {
-    window.location.href = "https://mobileaction.atlassian.net/wiki/spaces/Engineerin/pages/1456243369/Implement+Your+First+Task+-+FrontEnd";
+    window.open("https://mobileaction.atlassian.net/wiki/spaces/Engineerin/pages/1456243369/Implement+Your+First+Task+-+FrontEnd", "_blank");
 }
 
 </script>
