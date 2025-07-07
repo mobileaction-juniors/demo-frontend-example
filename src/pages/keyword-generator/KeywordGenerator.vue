@@ -10,6 +10,8 @@ const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
 const ngramsResult = ref([]);
 const isInputChanged = ref(false);
+const currentInput  = ref('');
+const currentCleanedInput = ref('');
 
 const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
 
@@ -23,13 +25,13 @@ const inputInfo = computed(() => {
 
 const removedWords = computed(() => {
   const words = Array.from(new Set(
-    input.value
+    currentInput.value
       .split(/\s+/)
       .map(w => w.trim().toLowerCase())
       .filter(Boolean)
   ));
   return words
-    .filter(word => removeStopWords.value && cleanStopWords(input.value).includes(word))
+    .filter(word => removeStopWords.value && cleanStopWords(currentInput.value).includes(word))
     .map(word => ({
       text: word,
       isStop: true,
@@ -52,6 +54,8 @@ const clearAll = () => {
 
 const convert = () => {
   isInputChanged.value = false;
+  currentInput.value = input.value;
+
   let words = cleanedInput.value;
 
   const stopWords = cleanStopWords(input.value);
@@ -59,6 +63,8 @@ const convert = () => {
     if (removeStopWords.value && stopWords.includes(w)) return false;
     return true;
   });
+
+  currentCleanedInput.value = words;
 
   ngramsResult.value = n_grams.value.map(n => ({
     n,
@@ -88,6 +94,13 @@ const convert = () => {
   }
 }
 
+const convertDynamic = () => {
+  ngramsResult.value = n_grams.value.map(n => ({
+    n,
+    keywords: getNGrams(currentCleanedInput.value, n)
+  }));
+}
+
 function getNGrams(words, n) {
   if (words.length < n) return [];
   const result = [];
@@ -103,12 +116,12 @@ function onNgramToggle(ngram, checked) {
   } else if (!checked) {
     n_grams.value = n_grams.value.filter(n => n != ngram);
   }
-  convert();
+  convertDynamic();
 }
 
 function onStopWordsToggle(checked) {
   removeStopWords.value = checked;
-  convert();
+  convertDynamic();
 }
 
 </script>
