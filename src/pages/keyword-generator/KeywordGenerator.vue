@@ -13,7 +13,11 @@ const isInputChanged = ref(false);
 const currentInput  = ref('');
 const currentCleanedInput = ref('');
 
-const filteredNgramsResult = computed(() => ngramsResult.value.filter(ngram => ngram.keywords.length > 0));
+const filteredNgramsResult = computed(() =>
+  ngramsResult.value
+    .filter(ngram => ngram.keywords.length > 0)
+    .sort((a, b) => a.n - b.n)
+);
 
 const cleanedInput = computed(() => cleanDescription(input.value).trim().toLowerCase().split(/\s+/).filter(Boolean));
 
