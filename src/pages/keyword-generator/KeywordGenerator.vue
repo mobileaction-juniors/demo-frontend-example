@@ -103,6 +103,7 @@ function onNgramToggle(ngram, checked) {
   } else if (!checked) {
     n_grams.value = n_grams.value.filter(n => n != ngram);
   }
+  isInputDirty.value = true;
 }
 
 function onStopWordsToggle(checked) {
