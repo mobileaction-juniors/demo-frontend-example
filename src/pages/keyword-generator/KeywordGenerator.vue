@@ -93,7 +93,6 @@ const nGramOptions = getNGramOptions(10)
                         @click="generateKeywords"
                         :disabled="!inputText.trim()"
                         class="ma-generate-button"
-                        style="margin-top: 0.75rem; margin-left: auto; margin-right: auto; display: block;"
                     >
                         Generate Keywords
                     </ma-button>
@@ -184,12 +183,7 @@ const nGramOptions = getNGramOptions(10)
 @import "tailwindcss";
 
 .ma-container {
-    @apply max-w-6xl mx-auto p-3 sm:p-5 font-sans h-screen flex flex-col;
-    /* Responsive height */
-    @media (max-width: 1023px) {
-        height: auto;
-        min-height: 100vh;
-    }
+    @apply max-w-6xl mx-auto p-3 sm:p-5 font-sans h-screen lg:h-screen h-auto min-h-screen lg:min-h-0 flex flex-col;
 }
 
 .ma-header {
@@ -205,29 +199,19 @@ const nGramOptions = getNGramOptions(10)
 }
 
 .ma-main-layout {
-    @apply flex flex-col lg:flex-row gap-4 lg:gap-6 flex-1 min-h-0;
-    @media (max-width: 1023px) {
-        flex: none;
-        min-height: auto;
-    }
+    @apply flex flex-col lg:flex-row gap-4 lg:gap-6 flex-1 min-h-0 lg:flex-1 flex-none lg:min-h-0 min-h-auto;
 }
 
 .ma-left-panel {
     @apply mx-auto w-full lg:w-2/5 flex flex-col space-y-4 overflow-y-auto;
     max-height: calc(100vh - 200px);
-    @media (max-width: 1023px) {
-        max-height: none;
-        min-height: auto;
-    }
+    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
 }
 
 .ma-right-panel {
     @apply mx-auto w-full lg:w-3/5 flex flex-col space-y-4;
     max-height: calc(100vh - 200px);
-    @media (max-width: 1023px) {
-        max-height: none;
-        min-height: auto;
-    }
+    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
 }
 
 /* Custom scrollbar styling */
