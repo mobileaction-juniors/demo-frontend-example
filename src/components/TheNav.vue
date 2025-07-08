@@ -30,7 +30,7 @@ function goKeywordGenerator() {
     </nav>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .ma-navbar {
     position: fixed;
     top: 0;
@@ -45,30 +45,33 @@ function goKeywordGenerator() {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.ma-nav-buttons {
-    display: inline-flex;
-    align-items: center;
-    font-weight: 500;
-    text-align: center;
-    white-space: nowrap;
-    user-select: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 0.75rem 1.5rem;
-    font-size: 0.95rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    color: white;
-    background: rgba(255, 255, 255, 0.15);
-    margin-right: 1rem;
-    transition: all 0.2s ease;
-}
-.ma-nav-buttons:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-1px);
-}
-.ma-nav-buttons.active {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
+
+    .ma-nav-buttons {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+        user-select: none;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        color: white;
+        background: rgba(255, 255, 255, 0.15);
+        margin-right: 1rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        &.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+    }
 }
 </style>
