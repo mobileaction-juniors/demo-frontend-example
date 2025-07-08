@@ -10,8 +10,7 @@ const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
 const ngramsResult = ref([]);
 const isInputChanged = ref(false);
-const currentInput  = ref('');
-const currentCleanedInput = ref('');
+
 
 const filteredNgramsResult = computed(() =>
   ngramsResult.value
@@ -27,20 +26,6 @@ const inputInfo = computed(() => {
   return charCount +' characters, '+ wordCount +' words'
 })
 
-const removedWords = computed(() => {
-  const words = Array.from(new Set(
-    currentInput.value
-      .split(/\s+/)
-      .map(w => w.trim().toLowerCase())
-      .filter(Boolean)
-  ));
-  return words
-    .filter(word => removeStopWords.value && cleanStopWords(currentInput.value).includes(word))
-    .map(word => ({
-      text: word,
-      isStop: true,
-    }));
-});
 
 const clearAll = () => {
     input.value = '';
@@ -58,7 +43,6 @@ const clearAll = () => {
 
 const convert = () => {
   isInputChanged.value = false;
-  currentInput.value = input.value;
 
   let words = cleanedInput.value;
 
@@ -67,8 +51,6 @@ const convert = () => {
     if (removeStopWords.value && stopWords.includes(w)) return false;
     return true;
   });
-
-  currentCleanedInput.value = words;
 
   ngramsResult.value = n_grams.value.map(n => ({
     n,
@@ -98,13 +80,6 @@ const convert = () => {
   }
 }
 
-const convertDynamic = () => {
-  ngramsResult.value = n_grams.value.map(n => ({
-    n,
-    keywords: getNGrams(currentCleanedInput.value, n)
-  }));
-}
-
 function getNGrams(words, n) {
   if (words.length < n) return [];
   const result = [];
@@ -120,12 +95,12 @@ function onNgramToggle(ngram, checked) {
   } else if (!checked) {
     n_grams.value = n_grams.value.filter(n => n != ngram);
   }
-  convertDynamic();
+  isInputChanged.value = true;
 }
 
 function onStopWordsToggle(checked) {
   removeStopWords.value = checked;
-  convertDynamic();
+  isInputChanged.value = true;
 }
 
 </script>
@@ -153,6 +128,20 @@ function onStopWordsToggle(checked) {
                  size="large"
                  @change="isInputChanged = true"
                />
+               <MaTooltip>
+                    <template #title>
+                      Stop words are not useful for keyword generation
+                    </template>
+                    <template #description>
+                      E.g. "a", "an", "the", "and", "is", "in", "of", "for"...
+                    </template>
+                    <MaCheckbox
+                      :checked="removeStopWords"
+                      @change="checked => onStopWordsToggle(checked)"
+                      >
+                      Remove common stop words
+                    </MaCheckbox> 
+                </MaTooltip>
              </template>
              <template #footer>
                <div class="ma-button-container">
@@ -168,7 +157,7 @@ function onStopWordsToggle(checked) {
                       <template #title>
                         Extract keywords
                       </template>
-                        <MaButton :size="medium" :variant="isInputChanged ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputChanged" :color="isInputChanged ? 'green' : 'dark'" @click="convert">Convert</MaButton>
+                        <MaButton :size="medium" :variant="isInputChanged ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputChanged" :color="isInputChanged ? 'green' : 'dark'" @click="convert">Apply</MaButton>
                     </MaTooltip>
                   </div>
                </div>
@@ -208,36 +197,6 @@ function onStopWordsToggle(checked) {
                     >
                       {{ngram}}-gram
                     </MaCheckbox>
-                </div>
-            </MaCard>
-            <MaCard class="ma-card" title="Filtering Options" description="Configure how keywords are filtered">
-                <div class="ma-filtering-options-container"> 
-                    <MaTooltip>
-                    <template #title>
-                      Stop words are not useful for keyword generation
-                    </template>
-                    <template #description>
-                      E.g. "a", "an", "the", "and", "is", "in", "of", "for"...
-                    </template>
-                    <MaCheckbox
-                      :checked="removeStopWords"
-                      @change="checked => onStopWordsToggle(checked)"
-                      >
-                      Remove common stop words
-                    </MaCheckbox> 
-                    </MaTooltip>                   
-                    <div v-if="removedWords.length > 0" class="font-semibold">Filtered Words</div>
-                    <div class="flex flex-wrap gap-2">
-                        <MaBadge
-                          v-for="word in removedWords"
-                          :key="word.text"
-                          class="ma-badge-stopword"
-                          size="large"
-                          variant="basic"
-                        >
-                          {{ word.text }}
-                        </MaBadge>
-                    </div>
                 </div>
             </MaCard>
         </div>
