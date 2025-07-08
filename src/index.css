@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply overflow-y-scroll w-full min-h-screen;
+}
+#app {
+  @apply w-full min-h-screen;
+}
