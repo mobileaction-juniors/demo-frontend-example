@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator.js';
 import TheNav from '../../components/TheNav.vue';
-import { MaInput, MaButton, MaCheckbox, MaBadge } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCheckbox} from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const selectedNGrams = ref([1, 2, 3]);
