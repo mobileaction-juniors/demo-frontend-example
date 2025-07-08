@@ -123,11 +123,15 @@ const clearInput = () => {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        max-width: calc(100% - 2rem);
+        padding-right: 1rem;
 
         .ma-text-input {
             :deep(.ak-input__input) {
-                min-height: 150px;
                 resize: none;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
             }
         }
 
