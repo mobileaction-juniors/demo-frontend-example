@@ -2,9 +2,8 @@
 import { ref, computed, watch } from 'vue'
 import { 
   generateKeywords as generateKeywordsUtil, 
-  getNGramOptions, 
-  getNGramClass 
-} from '@/utils/keywordGenerator.js'
+  getNGramOptions
+} from '@/utils/keywordGenerator'
 import { MaInput, MaTagInput, MaButton } from "@mobileaction/action-kit"
 
 
@@ -23,19 +22,16 @@ const keywordTags = computed(() => {
 
 // Generates keywords from input text
 const generateKeywords = () => {
+  if (!inputText.value.trim()) {
+    return
+  }
+  
   const keywords = generateKeywordsUtil(
     inputText.value,
     selectedNGrams.value
   )
   
   generatedKeywords.value = keywords
-}
-
-// Manual keyword generation function
-const generateKeywordsOnDemand = () => {
-  if (inputText.value.trim()) {
-    generateKeywords()
-  }
 }
 
 
@@ -90,18 +86,17 @@ const nGramOptions = getNGramOptions(10)
                     />
                     
                     <!-- Generate Keywords Button -->
-                    <div class="ma-generate-button-container">
-                        <ma-button
-                            color="dark"
-                            icon="poker-cards-bulk"
-                            variant="filled"
-                            @click="generateKeywordsOnDemand"
-                            :disabled="!inputText.trim()"
-                            class="ma-generate-button"
-                        >
-                            Generate Keywords
-                        </ma-button>
-                    </div>
+                    <ma-button
+                        color="dark"
+                        icon="poker-cards-bulk"
+                        variant="filled"
+                        @click="generateKeywords"
+                        :disabled="!inputText.trim()"
+                        class="ma-generate-button"
+                        style="margin-top: 0.75rem; margin-left: auto; margin-right: auto; display: block;"
+                    >
+                        Generate Keywords
+                    </ma-button>
                 </div>
 
                 <!-- Settings Section -->
@@ -118,8 +113,9 @@ const nGramOptions = getNGramOptions(10)
                                 @click="toggleNGram(n)"
                                 :class="[
                                     'ma-ngram-button',
-                                    selectedNGrams.includes(n) ? getNGramClass(n) : 'ma-ngram-button-inactive'
+                                    selectedNGrams.includes(n) ? 'ma-ngram-active' : 'ma-ngram-button-inactive'
                                 ]"
+                                :data-ngram="n"
                             >
                                 {{ n }}-gram
                             </button>
@@ -183,3 +179,188 @@ const nGramOptions = getNGramOptions(10)
         </div>
     </div>
 </template> 
+
+<style>
+@import "tailwindcss";
+
+.ma-container {
+    @apply max-w-6xl mx-auto p-3 sm:p-5 font-sans h-screen flex flex-col;
+    /* Responsive height */
+    @media (max-width: 1023px) {
+        height: auto;
+        min-height: 100vh;
+    }
+}
+
+.ma-header {
+    @apply text-center mb-6 flex-shrink-0;
+}
+
+.ma-title {
+    @apply text-2xl sm:text-3xl font-semibold text-gray-800 mb-2;
+}
+
+.ma-subtitle {
+    @apply text-sm sm:text-base text-gray-600;
+}
+
+.ma-main-layout {
+    @apply flex flex-col lg:flex-row gap-4 lg:gap-6 flex-1 min-h-0;
+    @media (max-width: 1023px) {
+        flex: none;
+        min-height: auto;
+    }
+}
+
+.ma-left-panel {
+    @apply mx-auto w-full lg:w-2/5 flex flex-col space-y-4 overflow-y-auto;
+    max-height: calc(100vh - 200px);
+    @media (max-width: 1023px) {
+        max-height: none;
+        min-height: auto;
+    }
+}
+
+.ma-right-panel {
+    @apply mx-auto w-full lg:w-3/5 flex flex-col space-y-4;
+    max-height: calc(100vh - 200px);
+    @media (max-width: 1023px) {
+        max-height: none;
+        min-height: auto;
+    }
+}
+
+/* Custom scrollbar styling */
+.ma-left-panel,
+.ma-right-panel {
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        @apply bg-slate-100 rounded;
+    }
+    &::-webkit-scrollbar-thumb {
+        @apply bg-slate-400 rounded;
+        &:hover {
+            @apply bg-slate-500;
+        }
+    }
+}
+
+.ma-input-section {
+    @apply bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-200;
+}
+
+.ma-generate-button-container {
+    @apply mt-3 flex justify-center;
+}
+
+.ma-generate-button {
+    @apply min-w-[140px] sm:min-w-[180px];
+}
+
+.ma-settings-section {
+    @apply bg-white border border-gray-200 rounded-xl p-3 sm:p-4;
+}
+
+.ma-settings-title {
+    @apply text-lg font-semibold text-gray-800 mb-3;
+}
+
+.ma-ngram-selection {
+    @apply mb-4;
+}
+
+.ma-selection-label {
+    @apply block font-medium text-gray-700 mb-2;
+}
+
+.ma-ngram-buttons {
+    @apply flex flex-wrap gap-2;
+}
+
+.ma-ngram-button {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2;
+}
+
+.ma-ngram-button-inactive {
+    @apply bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200 hover:text-gray-700;
+}
+
+/* N-gram color classes - using data attributes for dynamic styling */
+.ma-ngram-active[data-ngram="1"] { @apply bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200; }
+.ma-ngram-active[data-ngram="2"] { @apply bg-green-100 text-green-700 border-green-300 hover:bg-green-200; }
+.ma-ngram-active[data-ngram="3"] { @apply bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200; }
+.ma-ngram-active[data-ngram="4"] { @apply bg-red-100 text-red-700 border-red-300 hover:bg-red-200; }
+.ma-ngram-active[data-ngram="5"] { @apply bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200; }
+.ma-ngram-active[data-ngram="6"] { @apply bg-indigo-100 text-indigo-700 border-indigo-300 hover:bg-indigo-200; }
+.ma-ngram-active[data-ngram="7"] { @apply bg-pink-100 text-pink-400 border-pink-200 hover:bg-pink-100; }
+.ma-ngram-active[data-ngram="8"] { @apply bg-teal-100 text-teal-700 border-teal-300 hover:bg-teal-200; }
+.ma-ngram-active[data-ngram="9"] { @apply bg-orange-100 text-orange-700 border-orange-300 hover:bg-orange-200; }
+.ma-ngram-active[data-ngram="10"] { @apply bg-sky-100 text-sky-700 border-sky-300 hover:bg-sky-200; }
+
+.ma-results-section {
+    @apply bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col h-full;
+}
+
+.ma-results-header {
+    @apply bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0;
+}
+
+.ma-results-title {
+    @apply text-xl font-semibold text-gray-800 m-0;
+}
+
+.ma-results-count {
+    @apply text-gray-500 text-sm;
+}
+
+.ma-results-content {
+    @apply p-4 sm:p-6 flex-1 overflow-y-auto min-h-0;
+}
+
+.ma-ngram-section {
+    @apply mb-8 last:mb-0;
+}
+
+.ma-ngram-title {
+    @apply text-xl font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200;
+}
+
+.ma-keywords-container {
+    @apply w-full bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200;
+}
+
+.ma-keyword-tag-input {
+    @apply w-full;
+}
+
+.ma-empty-ngram {
+    @apply text-gray-500 text-center py-4;
+}
+
+.ma-empty-state {
+    @apply text-center py-10 text-gray-500 bg-gray-50 rounded-xl border border-gray-200;
+    p {
+        @apply text-lg m-0;
+    }
+}
+
+.ma-initial-state {
+    @apply text-center py-16 bg-gray-50 rounded-xl border border-gray-200;
+}
+
+.ma-initial-content {
+    @apply space-y-4;
+    h3 {
+        @apply text-2xl font-semibold text-gray-800;
+    }
+    p {
+        @apply text-gray-600 max-w-md mx-auto;
+    }
+}
+
+.ma-initial-icon {
+    @apply text-6xl mb-4;
+}
+</style> 
