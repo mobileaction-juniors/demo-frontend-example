@@ -1,0 +1,3 @@
+const defaultText = "Serhat always knew he wanted to build things. From a young age, Serhat spent hours exploring computers, fixing devices, and writing code. At university, Serhat studied computer science and took every chance to join tech-related projects. During his internships, Serhat learned how real-world software is built, and Serhat contributed to several backend systems. Serhat is not only passionate about programming but also enjoys solving problems with a creative approach. In every challenge, Serhat remains calm, focused, and eager to learn. Serhat believes that working with innovative teams helps him grow. That’s why Serhat is excited to join a company where learning and contribution go hand in hand.";
+
+export default defaultText;

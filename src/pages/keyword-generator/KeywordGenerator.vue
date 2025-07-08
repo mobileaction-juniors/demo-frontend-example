@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaEmpty } from '@mobileaction/action-kit'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaEmpty, MaModal } from '@mobileaction/action-kit'
 import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription';
 
 const N_GRAM_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -10,7 +10,10 @@ const n_grams = ref([1, 2, 3]);
 const removeStopWords = ref(true);
 const ngramsResult = ref([]);
 const isInputChanged = ref(false);
+const showModal = ref(false);
+const windowWidth = ref(window.innerWidth);
 
+const isMobile = computed(() => windowWidth.value <= 768);
 
 const filteredNgramsResult = computed(() =>
   ngramsResult.value
@@ -103,6 +106,22 @@ function onStopWordsToggle(checked) {
   isInputChanged.value = true;
 }
 
+function onModalOk() {
+  convert();
+  showModal.value = false;
+}
+
+function handleResize() {
+  windowWidth.value = window.innerWidth;
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
+
 </script>
 
 <template>
@@ -165,6 +184,9 @@ function onStopWordsToggle(checked) {
              </template>
            </MaCard>
         <MaCard class="ma-card" title="Keywords" description="Generated keywords from your text.">
+          <template #headerActions>
+            <MaButton v-if="isMobile" :size="medium" variant="stroke" @click="showModal = true">Choose n-grams</MaButton>
+          </template>
             <div v-if="filteredNgramsResult.length > 0" class="ma-ngram-container">
                 <div class="ma-ngram-item" v-for="ngram in filteredNgramsResult" :key="ngram.n">
                     <div class="ma-ngram-item-title">
@@ -187,7 +209,7 @@ function onStopWordsToggle(checked) {
             <div v-else class="ma-result-description"><MaEmpty description="No keywords generated" animation="no-data-found" size="medium" /></div>
         </MaCard>
         </div>
-        <div class="ma-keyword-generator-layout-right">
+        <div v-if="!isMobile" class="ma-keyword-generator-layout-right">
             <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
                 <div class="ma-ngram-selection-container">
                     <MaCheckbox
@@ -202,6 +224,19 @@ function onStopWordsToggle(checked) {
                 </div>
             </MaCard>
         </div>
+        <MaModal :visible="showModal" title="N-gram Selection" :width="360" closable=true okText="Apply" @ok="onModalOk" @closed="showModal = false">
+                <div class="ma-ngram-selection-container">
+                    <MaCheckbox
+                      v-for="ngram in N_GRAM_OPTIONS"
+                      :key="ngram"
+                      :checked="n_grams.includes(ngram)"
+                      @change="checked => onNgramToggle(ngram, checked)"
+                      class="ma-ngram-checkbox"
+                    >
+                      {{ngram}}-gram
+                    </MaCheckbox>
+                </div>
+        </MaModal>
         </div>
     </div>
 </template>
@@ -264,13 +299,16 @@ function onStopWordsToggle(checked) {
 }
 .ma-keyword-generator-layout {
     @apply w-full h-full flex flex-row gap-4;
+    @apply max-md:flex-col;
 
     &-left {
         @apply w-3/4 h-full flex flex-col gap-4;
+        @apply max-md:w-full;
     }
 
     &-right {
         @apply w-1/4 h-full flex flex-col gap-4;
+        @apply max-md:w-full;
     }
 }
 
