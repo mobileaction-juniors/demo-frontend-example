@@ -2,10 +2,10 @@
 import { ref, computed, watch } from 'vue'
 import { 
   generateKeywords as generateKeywordsUtil, 
-  getNGramOptions, 
-  getNGramClass 
-} from '@/utils/keywordGenerator.js'
-import { MaInput, MaTagInput } from "@mobileaction/action-kit"
+  getNGramOptions
+} from '@/utils/keywordGenerator'
+import { MaInput, MaTagInput, MaButton } from "@mobileaction/action-kit"
+
 
 
 const inputText = ref('')
@@ -22,6 +22,10 @@ const keywordTags = computed(() => {
 
 // Generates keywords from input text
 const generateKeywords = () => {
+  if (!inputText.value.trim()) {
+    return
+  }
+  
   const keywords = generateKeywordsUtil(
     inputText.value,
     selectedNGrams.value
@@ -63,8 +67,8 @@ const nGramOptions = getNGramOptions(10)
 <template>
     <div class="ma-container">
         <div class="ma-header">
-            <h1 class="title">Keyword Generator</h1>
-            <p class="subtitle">Generate n-gram keywords from application descriptions</p>
+            <h1 class="ma-title">Keyword Generator</h1>
+            <p class="ma-subtitle">Generate n-gram keywords from application descriptions</p>
         </div>
 
         <div class="ma-main-layout">
@@ -78,9 +82,20 @@ const nGramOptions = getNGramOptions(10)
                         title="Application Description"
                         size="large"
                         placeholder="Enter application description here... (e.g., Facebook helps you connect and share with the people in your life.)"
-                        hintText="Text will be automatically cleaned and keywords generated as you type"
-                        @update:value="generateKeywords"
+                        hintText="Enter your text and click the Generate Keywords button to create n-gram keywords"
                     />
+                    
+                    <!-- Generate Keywords Button -->
+                    <ma-button
+                        color="dark"
+                        icon="poker-cards-bulk"
+                        variant="filled"
+                        @click="generateKeywords"
+                        :disabled="!inputText.trim()"
+                        class="ma-generate-button"
+                    >
+                        Generate Keywords
+                    </ma-button>
                 </div>
 
                 <!-- Settings Section -->
@@ -97,8 +112,9 @@ const nGramOptions = getNGramOptions(10)
                                 @click="toggleNGram(n)"
                                 :class="[
                                     'ma-ngram-button',
-                                    selectedNGrams.includes(n) ? getNGramClass(n) : 'ma-ngram-button-inactive'
+                                    selectedNGrams.includes(n) ? 'ma-ngram-active' : 'ma-ngram-button-inactive'
                                 ]"
+                                :data-ngram="n"
                             >
                                 {{ n }}-gram
                             </button>
@@ -161,322 +177,174 @@ const nGramOptions = getNGramOptions(10)
             </div>
         </div>
     </div>
-</template>
+</template> 
 
-<style scoped>
+<style>
+@import "tailwindcss";
+
 .ma-container {
-    max-width: 90rem;
-    margin: 0 auto;
-    padding: 1.25rem;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    @apply max-w-6xl mx-auto p-3 sm:p-5 font-sans h-screen lg:h-screen h-auto min-h-screen lg:min-h-0 flex flex-col;
 }
 
 .ma-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
+    @apply text-center mb-6 flex-shrink-0;
 }
 
 .ma-title {
-    font-size: 2.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
+    @apply text-2xl sm:text-3xl font-semibold text-gray-800 mb-2;
 }
 
 .ma-subtitle {
-    font-size: 1.125rem;
-    color: #4b5563;
+    @apply text-sm sm:text-base text-gray-600;
 }
 
 .ma-main-layout {
-    display: flex;
-    gap: 2rem;
-    min-height: calc(100vh - 200px);
+    @apply flex flex-col lg:flex-row gap-4 lg:gap-6 flex-1 min-h-0 lg:flex-1 flex-none lg:min-h-0 min-h-auto;
 }
 
 .ma-left-panel {
-    flex: 1;
-    max-width: 50%;
-}
-
-.ma-input-section {
-    margin-bottom: 2rem;
-}
-
-/* Make textarea taller for better UX */
-.ma-input-section :deep(.ma-input__textarea) {
-    min-height: 500px;
-    resize: vertical;
-}
-
-.ma-settings-section {
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-}
-
-.ma-settings-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 1rem;
-}
-
-.ma-ngram-selection {
-    margin-bottom: 1.5rem;
-}
-
-.ma-selection-label {
-    display: block;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.75rem;
-}
-
-.ma-ngram-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.ma-ngram-button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    border: 2px solid;
-    cursor: pointer;
-}
-
-.ma-ngram-button-inactive {
-    background-color: #f3f4f6;
-    color: #6b7280;
-    border-color: #e5e7eb;
-}
-
-.ma-ngram-button-inactive:hover {
-    background-color: #e5e7eb;
-    color: #374151;
-}
-
-/* N-gram color classes */
-.ma-ngram-1 {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-    border-color: #93c5fd;
-}
-
-.ma-ngram-1:hover {
-    background-color: #bfdbfe;
-}
-
-.ma-ngram-2 {
-    background-color: #dcfce7;
-    color: #15803d;
-    border-color: #86efac;
-}
-
-.ma-ngram-2:hover {
-    background-color: #bbf7d0;
-}
-
-.ma-ngram-3 {
-    background-color: #f3e8ff;
-    color: #7c3aed;
-    border-color: #c4b5fd;
-}
-
-.ma-ngram-3:hover {
-    background-color: #e9d5ff;
-}
-
-.ma-ngram-4 {
-    background-color: #fee2e2;
-    color: #dc2626;
-    border-color: #fca5a5;
-}
-
-.ma-ngram-4:hover {
-    background-color: #fecaca;
-}
-
-.ma-ngram-5 {
-    background-color: #fef3c7;
-    color: #b45309;
-    border-color: #fcd34d;
-}
-
-.ma-ngram-5:hover {
-    background-color: #fde68a;
-}
-
-.ma-ngram-6 {
-    background-color: #e0e7ff;
-    color: #4338ca;
-    border-color: #a5b4fc;
-}
-
-.ma-ngram-6:hover {
-    background-color: #c7d2fe;
-}
-
-.ma-ngram-7 {
-    background-color: #fce7f3;
-    color: #ec4899;
-    border-color: #f9a8d4;
-}
-
-.ma-ngram-7:hover {
-    background-color: #fbcfe8;
-}
-
-.ma-ngram-8 {
-    background-color: #ccfbf1;
-    color: #0f766e;
-    border-color: #5eead4;
-}
-
-.ma-ngram-8:hover {
-    background-color: #99f6e4;
-}
-
-.ma-ngram-9 {
-    background-color: #fed7aa;
-    color: #ea580c;
-    border-color: #fdba74;
-}
-
-.ma-ngram-9:hover {
-    background-color: #fb923c;
-}
-
-.ma-ngram-10 {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border-color: #7dd3fc;
-}
-
-.ma-ngram-10:hover {
-    background-color: #bae6fd;
+    @apply mx-auto w-full lg:w-2/5 flex flex-col space-y-4 overflow-y-auto;
+    max-height: calc(100vh - 200px);
+    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
 }
 
 .ma-right-panel {
-    flex: 1;
-    max-width: 50%;
-    overflow-y: auto;
+    @apply mx-auto w-full lg:w-3/5 flex flex-col space-y-4;
     max-height: calc(100vh - 200px);
+    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
 }
 
+/* Custom scrollbar styling */
+.ma-left-panel,
+.ma-right-panel {
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        @apply bg-slate-100 rounded;
+    }
+    &::-webkit-scrollbar-thumb {
+        @apply bg-slate-400 rounded;
+        &:hover {
+            @apply bg-slate-500;
+        }
+    }
+}
+
+.ma-input-section {
+    @apply bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-200;
+}
+
+.ma-generate-button-container {
+    @apply mt-3 flex justify-center;
+}
+
+.ma-generate-button {
+    @apply min-w-[140px] sm:min-w-[180px];
+}
+
+.ma-settings-section {
+    @apply bg-white border border-gray-200 rounded-xl p-3 sm:p-4;
+}
+
+.ma-settings-title {
+    @apply text-lg font-semibold text-gray-800 mb-3;
+}
+
+.ma-ngram-selection {
+    @apply mb-4;
+}
+
+.ma-selection-label {
+    @apply block font-medium text-gray-700 mb-2;
+}
+
+.ma-ngram-buttons {
+    @apply flex flex-wrap gap-2;
+}
+
+.ma-ngram-button {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2;
+}
+
+.ma-ngram-button-inactive {
+    @apply bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200 hover:text-gray-700;
+}
+
+/* N-gram color classes - using data attributes for dynamic styling */
+.ma-ngram-active[data-ngram="1"] { @apply bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200; }
+.ma-ngram-active[data-ngram="2"] { @apply bg-green-100 text-green-700 border-green-300 hover:bg-green-200; }
+.ma-ngram-active[data-ngram="3"] { @apply bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200; }
+.ma-ngram-active[data-ngram="4"] { @apply bg-red-100 text-red-700 border-red-300 hover:bg-red-200; }
+.ma-ngram-active[data-ngram="5"] { @apply bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200; }
+.ma-ngram-active[data-ngram="6"] { @apply bg-indigo-100 text-indigo-700 border-indigo-300 hover:bg-indigo-200; }
+.ma-ngram-active[data-ngram="7"] { @apply bg-pink-100 text-pink-400 border-pink-200 hover:bg-pink-100; }
+.ma-ngram-active[data-ngram="8"] { @apply bg-teal-100 text-teal-700 border-teal-300 hover:bg-teal-200; }
+.ma-ngram-active[data-ngram="9"] { @apply bg-orange-100 text-orange-700 border-orange-300 hover:bg-orange-200; }
+.ma-ngram-active[data-ngram="10"] { @apply bg-sky-100 text-sky-700 border-sky-300 hover:bg-sky-200; }
+
 .ma-results-section {
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    @apply bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col h-full;
 }
 
 .ma-results-header {
-    background-color: #f9fafb;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @apply bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0;
 }
 
 .ma-results-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0;
+    @apply text-xl font-semibold text-gray-800 m-0;
 }
 
 .ma-results-count {
-    color: #6b7280;
-    font-size: 0.875rem;
+    @apply text-gray-500 text-sm;
 }
 
 .ma-results-content {
-    padding: 1.5rem;
+    @apply p-4 sm:p-6 flex-1 overflow-y-auto min-h-0;
 }
 
 .ma-ngram-section {
-    margin-bottom: 2rem;
-}
-
-.ma-ngram-section:last-child {
-    margin-bottom: 0;
+    @apply mb-8 last:mb-0;
 }
 
 .ma-ngram-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+    @apply text-xl font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200;
 }
 
 .ma-keywords-container {
-    width: 100%;
-    background-color: #f9fafb;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #e5e7eb;
+    @apply w-full bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200;
+}
+
+.ma-keyword-tag-input {
+    @apply w-full;
 }
 
 .ma-empty-ngram {
-    color: #6b7280;
-    text-align: center;
-    padding: 1rem 0;
+    @apply text-gray-500 text-center py-4;
 }
 
 .ma-empty-state {
-    text-align: center;
-    padding: 2.5rem 0;
-    color: #6b7280;
-    background-color: #f9fafb;
-    border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
-}
-
-.ma-empty-state p {
-    font-size: 1.125rem;
-    margin: 0;
+    @apply text-center py-10 text-gray-500 bg-gray-50 rounded-xl border border-gray-200;
+    p {
+        @apply text-lg m-0;
+    }
 }
 
 .ma-initial-state {
-    text-align: center;
-    padding: 2.5rem 0;
-    color: #6b7280;
-    background-color: #f9fafb;
-    border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    @apply text-center py-16 bg-gray-50 rounded-xl border border-gray-200;
 }
 
 .ma-initial-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @apply space-y-4;
+    h3 {
+        @apply text-2xl font-semibold text-gray-800;
+    }
+    p {
+        @apply text-gray-600 max-w-md mx-auto;
+    }
 }
 
 .ma-initial-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    @apply text-6xl mb-4;
 }
-
-.ma-initial-content h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.ma-initial-content p {
-    font-size: 1.125rem;
-    margin: 0;
-}
-
-
-</style>
+</style> 
