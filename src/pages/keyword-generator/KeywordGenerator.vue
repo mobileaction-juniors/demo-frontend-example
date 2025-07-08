@@ -1,58 +1,44 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { cleanDescription } from '../../utils/CleanDescription.js';
+import { ref, computed } from 'vue';
+import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator.js';
 import TheNav from '../../components/TheNav.vue';
+import { MaInput, MaButton, MaCheckbox, MaBadge } from '@mobileaction/action-kit';
 
-const userInput = ref('');
-const generatedKeywords = ref(null);
-const activeTab = ref('1-gram');
+const inputText = ref('');
+const selectedNGrams = ref([1, 2, 3]);
+const generatedKeywords = ref({});
+const eliminateUnwanted = ref(true);
 
-const currentKeywords = computed(() => {
-    return generatedKeywords.value ? generatedKeywords.value[activeTab.value] : [];
+const nGramOptions = getNGramOptions();
+
+const keywordTags = computed(() => {
+    return selectedNGrams.value.reduce((acc, n) => {
+        const key = `${n}-gram`;
+        acc[key] = generatedKeywords.value[key] || [];
+        return acc;
+    }, {});
 });
 
-function generateKeywords() {
-    const words = getCleanedWords(userInput.value);
-    const ngramSizes = [1, 2, 3];
-    const ngramMaps = generateNgramMaps(words, ngramSizes);
-    generatedKeywords.value = formatNgramResults(ngramMaps, ngramSizes);
-}
+const generateKeywordsFromInput = () => {
+    const keywords = generateKeywords(inputText.value, selectedNGrams.value, eliminateUnwanted.value);
+    generatedKeywords.value = keywords;
+};
 
-function getCleanedWords(input) {
-    const cleaned = cleanDescription(input);
-    return cleaned.split(/\s+/).filter(word => word);
-}
-
-function generateNgramMaps(words, ngramSizes) {
-    const ngramMaps = {};
-    ngramSizes.forEach(n => ngramMaps[n + '-gram'] = new Map());
-    for (let n of ngramSizes) {
-        for (let i = 0; i <= words.length - n; i++) {
-            const ngram = words.slice(i, i + n).join(' ');
-            const map = ngramMaps[n + '-gram'];
-            map.set(ngram, (map.get(ngram) || 0) + 1);
-        }
+const toggleNGram = (n) => {
+    const index = selectedNGrams.value.indexOf(n);
+    if (index > -1) {
+        selectedNGrams.value.splice(index, 1);
+    } else {
+        selectedNGrams.value.push(n);
+        selectedNGrams.value.sort((a, b) => a - b);
     }
-    return ngramMaps;
-}
+    generateKeywordsFromInput();
+};
 
-function formatNgramResults(ngramMaps, ngramSizes) {
-    const result = {};
-    for (let n of ngramSizes) {
-        result[n + '-gram'] = Array.from(ngramMaps[n + '-gram'].entries())
-            .sort(([, countA], [, countB]) => countB - countA)
-            .map(([keyword, count]) => ({ keyword, count }));
-    }
-    return result;
-}
-
-function clearInput() {
-    userInput.value = '';
-    generatedKeywords.value = null;
-}
-
-watch(userInput, generateKeywords);
-
+const clearInput = () => {
+    inputText.value = '';
+    generatedKeywords.value = {};
+};
 </script>
 
 <template>
@@ -60,33 +46,53 @@ watch(userInput, generateKeywords);
     <div class="ma-container">
         <div class="ma-card-content">
             <h5 class="ma-card-title">Keyword Generator</h5>
-            <textarea
-                v-model="userInput"
-                class="ma-textarea"
-                rows="5"
+            <MaInput
+                v-model:value="inputText"
+                @update:value="generateKeywordsFromInput"
+                type="textarea"
                 placeholder="Paste your app description here..."
-            ></textarea>
-            <div class="ma-buttons">
-                <button @click="clearInput" class="ma-btn ma-btn-secondary">Clear</button>
+                size="large"
+                rows="10"
+                class="ma-text-input"
+            />
+            <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
+            <div class="ma-eliminate-toggle-row">
+                <MaCheckbox
+                    v-model:checked="eliminateUnwanted"
+                    @update:checked="generateKeywordsFromInput"
+                >
+                    Hide unwanted words
+                </MaCheckbox>
+            </div>
+            <div class="ma-ngram-grid">
+                <MaButton
+                    v-for="n in nGramOptions"
+                    :key="n"
+                    class="ma-ngram-btn"
+                    @click="toggleNGram(n)"
+                    size="small"
+                    :style="selectedNGrams.includes(n) ? 'background: #7fc0b7; border-color: #7fc0b7; color: white;' : 'background: transparent; border-color: #7fc0b7; color: #7fc0b7;'"
+                >
+                    {{ n }}-gram
+                </MaButton>
             </div>
         </div>
         <div class="ma-card-content">
-            <template v-if="generatedKeywords">
-                <div class="ma-card-header">
-                    <ul class="ma-tabs">
-                        <li class="ma-tab-item" v-for="(keywords, ngram) in generatedKeywords" :key="ngram">
-                            <button class="ma-tab" :class="{ active: activeTab === ngram }" @click="activeTab = ngram">
-                                {{ ngram }} ({{ keywords.length }})
-                            </button>
-                        </li>
-                    </ul>
+            <template v-if="Object.keys(keywordTags).length && selectedNGrams.length">
+                <div v-for="ngram in Object.keys(keywordTags)" :key="ngram" class="ma-ngram-section">
+                    <h6 class="ma-ngram-heading">{{ ngram }}</h6>
+                    <div v-if="keywordTags[ngram].length" class="ma-keywords-container">
+                        <div
+                            v-for="item in keywordTags[ngram]"
+                            :key="item.keyword"
+                            class="ma-keyword-item"
+                        >
+                            <span class="ma-keyword-text">{{ item.keyword }}</span>
+                            <span class="ma-keyword-count">({{ item.count }})</span>
+                        </div>
+                    </div>
+                    <p v-else class="ma-placeholder-text">No keywords found for this n-gram.</p>
                 </div>
-                <div v-if="currentKeywords.length">
-                    <span v-for="item in currentKeywords" :key="item.keyword" class="ma-badge">
-                        {{ item.keyword }} ({{ item.count }})
-                    </span>
-                </div>
-                <p v-else class="ma-placeholder-text">No keywords found for this n-gram.</p>
             </template>
             <template v-else>
                 <p class="ma-placeholder-text">Keywords will appear here once generated.</p>
@@ -96,38 +102,15 @@ watch(userInput, generateKeywords);
 </template>
 
 <style lang="scss" scoped>
-.ma-btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    text-decoration: none;
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.ma-btn-secondary {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
 .ma-container {
-    margin-top: 5rem;
-    max-width: 100vw;
+    margin-top: 3.5rem;
+    max-width: 100%;
+    width: 100%;
     overflow-x: hidden;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    box-sizing: border-box;
     .ma-card-content {
         border: 1px solid #ccc;
         border-radius: 0.25rem;
@@ -142,81 +125,98 @@ watch(userInput, generateKeywords);
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
-        .ma-textarea {
-            min-height: 100px;
-            max-height: 300px;
-            overflow-y: auto;
+        .ma-text-input {
+            width: 100%;
+            max-width: 100%;
+            min-height: 200px;
+            box-sizing: border-box;
+        }
+        
+        .ma-text-input :deep(.ak-input) {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+        }
+        
+        .ma-text-input :deep(.ak-input__input) {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+            resize: none;
+            min-height: 150px;
+        }
+        .ma-ngram-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 0.5rem;
+            margin: 0.5rem 0 0.5rem 0;
+            width: 100%;
+            max-width: 400px;
+            align-self: flex-start;
+        }
+        .ma-ngram-btn {
+            overflow: hidden;
+            text-overflow: ellipsis;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
-            font-size: 1rem;
-            padding: 0.375rem 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
         }
-        .ma-buttons {
-            margin-top: 1rem;
+        .ma-ngram-section {
+            margin-bottom: 1.5rem;
         }
-        .ma-card-header {
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 0;
-            background-color: rgba(0,0,0,.03);
-            border-bottom: 1px solid rgba(0,0,0,.125);
-            .ma-tabs {
-                display: flex;
-                padding-left: 0;
-                margin-bottom: 0;
-                list-style: none;
-                .ma-tab-item {
-                    margin-bottom: -1px;
-                    .ma-tab {
-                        background: #5d6069;
-                        border: 1px solid #e0e0e0;
-                        border-radius: 0.25rem;
-                        color: #ffffff;
-                        padding: 0.5rem 1rem;
-                        cursor: pointer;
-                        transition: background 0.2s, color 0.2s;
-                        margin-right: 0.5rem;
-                    }
-                    .ma-tab:hover,
-                    .ma-tab.active {
-                        background: #224bc9;
-                        color: #ffffff;
-                        text-decoration: none;
-                    }
-                }
-            }
-        }
-        .ma-badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 0.95em;
+        .ma-ngram-heading {
+            font-size: 1.1rem;
             font-weight: 600;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            border-radius: 0.25rem;
-            margin: 0.1rem;
-            border: 1px solid #e0e0e0;
-            background: #f8f9fa;
-            color: #333;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
         }
-        .ma-placeholder {
+        .ma-keywords-container {
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        
+        .ma-keyword-item {
+            display: inline-flex;
             align-items: center;
-            height: 100%;
-            .ma-placeholder-text {
-                color: #6c757d;
-            }
+            background: #7fc0b7;
+            border: 1px solid #7fc0b7;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            margin: 0.125rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .ma-keyword-item:hover {
+            background: #6fa8a1;
+            border-color: #6fa8a1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ma-keyword-text {
+            color: white;
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-right: 0.25rem;
+        }
+        
+        .ma-keyword-count {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            font-size: 0.75rem;
         }
         .ma-placeholder-text {
             color: #6c757d;
         }
+        .ma-eliminate-toggle-row {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
     }
 }
+
 </style>
