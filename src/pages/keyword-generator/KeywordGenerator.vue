@@ -128,7 +128,7 @@ function onStopWordsToggle(checked) {
                  size="large"
                  @change="isInputChanged = true"
                />
-               <MaTooltip>
+               <MaTooltip class="ma-ngram-checkbox">
                     <template #title>
                       Stop words are not useful for keyword generation
                     </template>
@@ -138,6 +138,7 @@ function onStopWordsToggle(checked) {
                     <MaCheckbox
                       :checked="removeStopWords"
                       @change="checked => onStopWordsToggle(checked)"
+                      class="ma-ngram-checkbox"
                       >
                       Remove common stop words
                     </MaCheckbox> 
@@ -194,6 +195,7 @@ function onStopWordsToggle(checked) {
                       :key="ngram"
                       :checked="n_grams.includes(ngram)"
                       @change="checked => onNgramToggle(ngram, checked)"
+                      class="ma-ngram-checkbox"
                     >
                       {{ngram}}-gram
                     </MaCheckbox>
@@ -307,5 +309,8 @@ function onStopWordsToggle(checked) {
 }
 .ma-result-description {
   @apply text-gray-400 text-base italic py-4;
+}
+.ma-ngram-checkbox {
+  @apply w-auto inline-flex;
 }
 </style>
