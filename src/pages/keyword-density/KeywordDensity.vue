@@ -37,39 +37,66 @@ const inputInfo = computed(() => {
   return charCount +' characters, '+ wordCount +' words'
 })
 
+function getFilteredWords(input, removeStopWordsFlag) {
+  let words = cleanDescription(input).trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const stopWords = cleanStopWords(input);
+  if (removeStopWordsFlag) {
+    words = words.filter(w => !stopWords.includes(w));
+  }
+  return words;
+}
+
+function getFrequencyMap(words) {
+  return words.reduce((acc, w) => {
+    acc[w] = (acc[w] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function getMostFrequentWords(freqMap) {
+  const uniqueKeywords = Object.keys(freqMap);
+  let mostFrequentCount = 0;
+  uniqueKeywords.forEach(k => {
+    if (freqMap[k] > mostFrequentCount) {
+      mostFrequentCount = freqMap[k];
+    }
+  });
+  const mostFrequentWords = uniqueKeywords.filter(k => freqMap[k] === mostFrequentCount && mostFrequentCount > 0);
+  return { mostFrequentWords, mostFrequentCount, uniqueKeywords };
+}
+
+function getHighestDensity(mostFrequentCount, wordCount) {
+  return wordCount > 0 ? ((mostFrequentCount / wordCount) * 100).toFixed(1) : '0.0';
+}
+
 function analyzeKeywords(showNotification = true) {
     isInputChanged.value = false;
-    let words = cleanedInput.value;
-    const stopWords = cleanStopWords(input.value);
-    if (removeStopWords.value) {
-        words = words.filter(w => !stopWords.includes(w));
-    }
+
+    const words = getFilteredWords(input.value, removeStopWords.value);
+    
     const charCount = input.value.trim().length;
     const wordCount = words.length;
-    freqMap.value = words.reduce((acc, w) => {
-        acc[w] = (acc[w] || 0) + 1;
-        return acc;
-    }, {});
-    uniqueKeywords.value = Object.keys(freqMap.value);
+
+    freqMap.value = getFrequencyMap(words);
+    
+    const { mostFrequentWords, mostFrequentCount, uniqueKeywords: uniqueKeys } = getMostFrequentWords(freqMap.value);
+    
+    uniqueKeywords.value = uniqueKeys;
+    
     const uniqueCount = uniqueKeywords.value.length;
-    let mostFrequent = '';
-    let mostFrequentCount = 0;
-    uniqueKeywords.value.forEach(k => {
-        if (freqMap.value[k] > mostFrequentCount) {
-        mostFrequent = k;
-        mostFrequentCount = freqMap.value[k];
-        }
-    });
-    const highestDensity = wordCount > 0 ? ((mostFrequentCount / wordCount) * 100).toFixed(1) : '0.0';
+    const highestDensity = getHighestDensity(mostFrequentCount, wordCount);
+    
     stats.value = {
         charCount,
         wordCount,
         uniqueCount,
-        mostFrequent,
+        mostFrequent: mostFrequentWords,
         highestDensity,
     };
+    
     updateTableData(wordCount);
     copied.value = false;
+    
     if (showNotification) {
       MaNotification.success({
         size: "large",
@@ -92,6 +119,7 @@ function updateTableData(wordCount = stats.value.wordCount) {
         }))
         .sort((a, b) => b.count - a.count)
         .slice((currentPage.value - 1) * perPage.value, currentPage.value * perPage.value);
+    currentPage.value = 1;
 }
 
 const clearAll = () => {
@@ -287,7 +315,12 @@ onMounted(() => {
                 </div>
                 <template #footer>
                 <div class="ma-stats-list">
-                  <div class="ma-stats-row"><span>Most Frequent</span><span><MaBadge v-if="stats.mostFrequent">{{ stats.mostFrequent }}</MaBadge></span></div>
+                  <div class="ma-stats-row"><span>Most Frequent</span><span>
+                      <div v-if="stats.mostFrequent && stats.mostFrequent.length" class="ma-most-frequent-badges">
+                        <MaBadge v-for="word in stats.mostFrequent" :key="word">{{ word }}</MaBadge>
+                      </div>
+                    </span>
+                  </div>
                   <div class="ma-stats-row"><span>Highest Density</span><span><MaBadge>{{ stats.highestDensity }}%</MaBadge></span></div>
                 </div>
                 </template>
@@ -378,6 +411,9 @@ onMounted(() => {
       }
     }
   }
+}
+.ma-most-frequent-badges {
+  @apply flex flex-row gap-2;
 }
 .ma-stats-list {
   @apply flex flex-col gap-2 mt-2;
