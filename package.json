@@ -10,15 +10,18 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@mobileaction/action-kit": "^1.52.0",
+    "@mobileaction/action-kit": "1.51.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
+    "postcss": "^8.5.6",
     "sass": "^1.89.2",
+    "tailwindcss": "^4.1.11",
     "vite": "^5.3.1"
   }
 }

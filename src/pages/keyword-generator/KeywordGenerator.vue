@@ -71,7 +71,7 @@ const clearInput = () => {
                             :key="n"
                             @click="toggleNGram(n)"
                             size="small"
-                            :variant="selectedNGrams.includes(n) ? 'primary' : 'stroke'"
+                            :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
                         >
                             {{ n }}-gram
                         </MaButton>
