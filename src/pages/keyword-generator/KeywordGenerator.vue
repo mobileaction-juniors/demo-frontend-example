@@ -183,7 +183,7 @@ const nGramOptions = getNGramOptions(10)
 @import "tailwindcss";
 
 .ma-container {
-    @apply max-w-6xl mx-auto p-3 sm:p-5 font-sans h-screen lg:h-screen h-auto min-h-screen lg:min-h-0 flex flex-col;
+    @apply w-full h-screen font-sans flex flex-col p-4;
 }
 
 .ma-header {
@@ -203,15 +203,11 @@ const nGramOptions = getNGramOptions(10)
 }
 
 .ma-left-panel {
-    @apply mx-auto w-full lg:w-2/5 flex flex-col space-y-4 overflow-y-auto;
-    max-height: calc(100vh - 200px);
-    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
+    @apply w-full lg:w-2/5 flex flex-col space-y-4 overflow-y-auto h-full;
 }
 
 .ma-right-panel {
-    @apply mx-auto w-full lg:w-3/5 flex flex-col space-y-4;
-    max-height: calc(100vh - 200px);
-    @apply lg:max-h-[calc(100vh-200px)] max-h-none lg:min-h-0 min-h-auto;
+    @apply w-full lg:w-3/5 flex flex-col space-y-4 h-full overflow-hidden;
 }
 
 /* Custom scrollbar styling */
@@ -284,7 +280,7 @@ const nGramOptions = getNGramOptions(10)
 .ma-ngram-active[data-ngram="10"] { @apply bg-sky-100 text-sky-700 border-sky-300 hover:bg-sky-200; }
 
 .ma-results-section {
-    @apply bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col h-full;
+    @apply bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col h-full min-h-0;
 }
 
 .ma-results-header {
@@ -300,7 +296,7 @@ const nGramOptions = getNGramOptions(10)
 }
 
 .ma-results-content {
-    @apply p-4 sm:p-6 flex-1 overflow-y-auto min-h-0;
+    @apply p-4 sm:p-6 flex-1 overflow-y-auto min-h-0 flex flex-col;
 }
 
 .ma-ngram-section {
