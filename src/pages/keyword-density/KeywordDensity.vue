@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 import { MaInput, MaButton, MaSelect, MaPagination, MaProgress, MaSelect2, MaToggle } from "@mobileaction/action-kit"
+import { useKeywordAnalysis } from '../../utils/useKeywordAnalysis'
 
-// Props to receive static text from parent
+
 const props = defineProps({
   staticText: {
     type: String,
@@ -10,183 +11,43 @@ const props = defineProps({
   }
 })
 
-// Reactive data
-const inputText = ref('')
-const selectedKeywords = ref([])
-const analysisResults = ref([])
-const isAnalyzing = ref(false)
-const analysisMode = ref('specific') // 'specific' or 'all'
-
-// Pagination data
-const currentPage = ref(1)
-const perPage = ref(10)
-
-// Analysis mode options
-const analysisModeOptions = [
-  {
-    value: 'specific',
-    label: 'Choose your keywords'
-  },
-  {
-    value: 'all',
-    label: 'All keywords with density'
-  }
-]
-
-// Keyword options (will be populated from text analysis)
-const keywordOptions = ref([])
-
-// Computed properties
-const hasResults = computed(() => analysisResults.value.length > 0)
-const totalWords = computed(() => {
-  if (!inputText.value.trim()) return 0
-  return inputText.value.toLowerCase().match(/\b\w+\b/g)?.length || 0
-})
-
-// Pagination computed properties
-const totalItems = computed(() => analysisResults.value.length)
-const totalPages = computed(() => Math.ceil(totalItems.value / perPage.value))
-const paginatedResults = computed(() => {
-  // Ensure currentPage is within valid bounds
-  const validCurrentPage = Math.min(Math.max(1, currentPage.value), totalPages.value || 1)
-  if (validCurrentPage !== currentPage.value) {
-    currentPage.value = validCurrentPage
-  }
+// Use the composable
+const {
+  // Reactive state
+  inputText,
+  selectedKeywords,
+  analysisResults,
+  isAnalyzing,
+  analysisMode,
+  currentPage,
+  perPage,
+  keywordOptions,
+  analysisModeOptions,
   
-  const startIndex = (validCurrentPage - 1) * perPage.value
-  const endIndex = startIndex + perPage.value
-  return analysisResults.value.slice(startIndex, endIndex)
-})
+  // Computed properties
+  hasResults,
+  totalWords,
+  totalItems,
+  totalPages,
+  paginatedResults,
+  
+  // Methods
+  analyzeKeywords,
+  clearResults,
+  handlePerPageChange,
+  handleCurrentPageChange,
+  initialize
+} = useKeywordAnalysis(props.staticText)
 
-// Watch for perPage changes and adjust currentPage if needed
-const handlePerPageChange = (newPerPage) => {
-  perPage.value = newPerPage
-  // If current page would be out of bounds with new perPage, reset to page 1
-  if (currentPage.value > Math.ceil(totalItems.value / newPerPage)) {
-    currentPage.value = 1
-  }
-}
-
-// Watch for currentPage changes to ensure it stays within bounds
-const handleCurrentPageChange = (newPage) => {
-  if (newPage >= 1 && newPage <= totalPages.value) {
-    currentPage.value = newPage
-  }
-}
-
-// Initialize with static text on component mount
 onMounted(() => {
-  inputText.value = props.staticText
-  updateKeywordOptions()
+  initialize(props.staticText)
 })
-
-// Watch for text changes to update keyword options
-watch(inputText, () => {
-  updateKeywordOptions()
-})
-
-// Update keyword options when text changes
-const updateKeywordOptions = () => {
-  if (!inputText.value.trim()) {
-    keywordOptions.value = []
-    return
-  }
-
-  // Get all unique words from the text
-  const textWords = inputText.value.toLowerCase().match(/\b\w+\b/g) || []
-  const uniqueWords = [...new Set(textWords)]
-  
-  // Convert to options format with unique values
-  keywordOptions.value = uniqueWords.map(word => ({
-    value: word,
-    label: word
-  }))
-}
-
-// Analyze keywords in the text
-const analyzeKeywords = () => {
-  if (!inputText.value.trim()) {
-    return
-  }
-
-  // For specific mode, require selected keywords
-  if (analysisMode.value === 'specific' && selectedKeywords.value.length === 0) {
-    return
-  }
-
-  isAnalyzing.value = true
-
-  // Get all words from text
-  const textWords = inputText.value.toLowerCase().match(/\b\w+\b/g) || []
-  const wordCount = textWords.length
-
-  let keywords = []
-
-  if (analysisMode.value === 'specific') {
-    // Use selected keywords from the dropdown
-    keywords = Array.isArray(selectedKeywords.value) ? selectedKeywords.value : []
-  } else {
-    // For 'all' mode, get all unique words from the text
-    const uniqueWords = [...new Set(textWords)]
-    // Filter out common stop words and short words
-    const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'her', 'its', 'our', 'their'])
-    
-    keywords = uniqueWords.filter(word => 
-      word.length > 2 && 
-      !stopWords.has(word) && 
-      !/^\d+$/.test(word) // Filter out pure numbers
-    )
-  }
-
-  if (keywords.length === 0) {
-    isAnalyzing.value = false
-    return
-  }
-
-  // Count keyword occurrences
-  const results = keywords.map(keyword => {
-    const regex = new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
-    const matches = inputText.value.match(regex) || []
-    const count = matches.length
-    const percentage = wordCount > 0 ? ((count / wordCount) * 100).toFixed(2) : 0
-
-    return {
-      keyword: keyword,
-      count: count,
-      percentage: parseFloat(percentage),
-      matches: matches
-    }
-  })
-
-  // Sort by count (descending)
-  results.sort((a, b) => b.count - a.count)
-
-  // Store all results (no limit for 'all' mode)
-  analysisResults.value = results
-  
-  // Reset to first page when new analysis is performed
-  currentPage.value = 1
-  
-  isAnalyzing.value = false
-}
-
-// Clear results
-const clearResults = () => {
-  analysisResults.value = []
-  currentPage.value = 1
-  perPage.value = 10 // Reset to default
-  if (analysisMode.value === 'specific') {
-    selectedKeywords.value = []
-  }
-}
-
-
 </script>
 
 <template>
   <div class="ma-container">
     <div class="ma-header">
-      <h1 class="ma-title">Keyword Analyzer</h1>
+      <h1 class="ma-title">Keyword Density</h1>
       <p class="ma-subtitle">Analyze keyword frequency and percentage in your text</p>
     </div>
 
@@ -399,7 +260,7 @@ const clearResults = () => {
 @import "tailwindcss";
 
 .ma-container {
-  @apply w-full h-screen font-sans p-3 sm:p-5 flex flex-col;
+  @apply w-full min-h-screen font-sans p-3 sm:p-5 flex flex-col ;
 }
 
 .ma-header {
@@ -415,15 +276,15 @@ const clearResults = () => {
 }
 
 .ma-main-layout {
-  @apply flex flex-col lg:flex-row gap-6 flex-1 min-h-0 overflow-hidden;
+  @apply flex flex-col lg:flex-row gap-6 lg:h-screen;
 }
 
 .ma-left-panel {
-  @apply lg:w-1/2 space-y-6 ;
+  @apply lg:w-1/2 space-y-6 lg:overflow-y-auto;
 }
 
 .ma-right-panel {
-  @apply lg:w-1/2 flex flex-col min-h-0;
+  @apply lg:w-1/2 flex flex-col lg:h-full;
 }
 
 .ma-input-section {
@@ -586,10 +447,12 @@ const clearResults = () => {
     @apply flex-col;
   }
   
-  .ma-left-panel,
-  .ma-right-panel {
-    @apply w-full flex-shrink-0;
+  .ma-left-panel {
+    @apply w-full;
   }
   
+  .ma-right-panel {
+    @apply w-full;
+  }
 }
 </style> 
