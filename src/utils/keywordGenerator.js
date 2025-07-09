@@ -1,4 +1,4 @@
-import { cleanDescription, cleanStopWords } from './CleanDescription.js';
+import { cleanDescription, cleanStopWords } from './CleanDescription';
 
 export function generateKeywords(inputText, selectedNGrams, eliminateUnwanted = true) {
     if (!inputText.trim()) {
