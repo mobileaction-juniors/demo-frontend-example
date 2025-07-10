@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted } from 'vue'
-import { MaInput, MaButton, MaSelect, MaPagination, MaProgress, MaSelect2, MaToggle } from "@mobileaction/action-kit"
+import { onMounted, computed } from 'vue'
+import { MaInput, MaButton, MaSelect, MaPagination, MaProgress, MaSelect2, MaIcon } from "@mobileaction/action-kit"
 import { useKeywordAnalysis } from '../../utils/useKeywordAnalysis'
 
 
@@ -38,6 +38,13 @@ const {
   handleCurrentPageChange,
   initialize
 } = useKeywordAnalysis(props.staticText)
+
+// Computed property for button disabled state
+const isAnalyzeButtonDisabled = computed(() => {
+  return !inputText.value.trim() || 
+         (analysisMode.value === 'specific' && selectedKeywords.value.length === 0) || 
+         isAnalyzing.value
+})
 
 onMounted(() => {
   initialize(props.staticText)
@@ -99,7 +106,7 @@ onMounted(() => {
             icon="poker-cards-bulk"
             variant="filled"
             @click="analyzeKeywords"
-            :disabled="!inputText.trim() || (analysisMode === 'specific' && selectedKeywords.length === 0) || isAnalyzing"
+            :disabled="isAnalyzeButtonDisabled"
             class="ma-analyze-button"
           >
             {{ isAnalyzing ? 'Analyzing...' : (analysisMode === 'specific' ? 'Analyze Keywords' : 'Analyze All Keywords') }}
@@ -170,7 +177,15 @@ onMounted(() => {
                     class="ma-table-row"
                   >
                     <td class="ma-table-cell ma-keyword-cell">
-                      <span class="ma-keyword-text">{{ result.keyword }}</span>
+                      <div class="ma-keywords-container">
+                        <span 
+                          v-for="(keyword, keywordIndex) in result.keywords" 
+                          :key="keywordIndex"
+                          class="ma-keyword-badge"
+                        >
+                          {{ keyword }}
+                        </span>
+                      </div>
                     </td>
                     <td class="ma-table-cell ma-count-cell">
                       <span class="ma-count-badge">{{ result.count }}</span>
@@ -208,20 +223,20 @@ onMounted(() => {
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Most Frequent:</span>
                   <span class="ma-summary-value">
-                    {{ analysisResults[0]?.keyword || 'N/A' }} 
+                    {{ analysisResults[0]?.keywords?.join(', ') || 'N/A' }} 
                     ({{ analysisResults[0]?.count || 0 }} times)
                   </span>
                 </div>
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Total Occurrences:</span>
                   <span class="ma-summary-value">
-                    {{ analysisResults.reduce((sum, result) => sum + result.count, 0) }}
+                    {{ analysisResults.reduce((sum, result) => sum + (result.count * result.keywords.length), 0) }}
                   </span>
                 </div>
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Average Percentage:</span>
                   <span class="ma-summary-value">
-                    {{ (analysisResults.reduce((sum, result) => sum + result.percentage, 0) / analysisResults.length).toFixed(2) }}%
+                    {{ (analysisResults.length === 0 ? 0 : (analysisResults.reduce((sum, result) => sum + (result.percentage * result.keywords.length), 0) / analysisResults.reduce((sum, result) => sum + result.keywords.length, 0)).toFixed(2)) }}%
                   </span>
                 </div>
               </div>
@@ -241,7 +256,7 @@ onMounted(() => {
         <!-- Initial State -->
         <div v-else class="ma-initial-state">
           <div class="ma-initial-content">
-            <div class="ma-initial-icon">📊</div>
+            <ma-icon name="flag-tr" size="large" />
             <h3>Ready to Analyze Keywords</h3>
             <p v-if="analysisMode === 'specific'">
               Select keywords from the left panel and click "Analyze Keywords" to see frequency and percentage data.
@@ -369,6 +384,14 @@ onMounted(() => {
 
 .ma-keyword-cell {
   @apply font-medium text-gray-800;
+}
+
+.ma-keywords-container {
+  @apply flex flex-wrap gap-2;
+}
+
+.ma-keyword-badge {
+  @apply inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium;
 }
 
 .ma-count-cell {

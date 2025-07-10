@@ -1,4 +1,5 @@
 import { ref, computed, watch } from 'vue'
+import { regex, splitRegex, filterArr } from '../cleanupResources'
 
 export function useKeywordAnalysis(staticText = '') {
   const inputText = ref('')
@@ -9,6 +10,19 @@ export function useKeywordAnalysis(staticText = '') {
   const currentPage = ref(1)
   const perPage = ref(10)
   const keywordOptions = ref([])
+
+  const stopWords = new Set(filterArr)
+
+  const cleanText = (text) => {
+    let cleaned = text.replace(regex, ' ')
+    cleaned = cleaned.replace(splitRegex, ' ')
+    cleaned = cleaned.toLowerCase().trim()
+    cleaned = cleaned.replace(/\s+/g, ' ')
+    
+    // Split into words and filter out stop words
+    const words = cleaned.split(' ').filter(word => word.length > 0)
+    return words.filter(word => !stopWords.has(word))
+  }
 
   const analysisModeOptions = [
     {
@@ -26,7 +40,7 @@ export function useKeywordAnalysis(staticText = '') {
   
   const totalWords = computed(() => {
     if (!inputText.value.trim()) return 0
-    return inputText.value.toLowerCase().match(/\b\w+\b/g)?.length || 0
+    return cleanText(inputText.value).length
   })
 
   const totalItems = computed(() => analysisResults.value.length)
@@ -51,7 +65,7 @@ export function useKeywordAnalysis(staticText = '') {
       return
     }
 
-    const textWords = inputText.value.toLowerCase().match(/\b\w+\b/g) || []
+    const textWords = cleanText(inputText.value)
     const uniqueWords = [...new Set(textWords)]
     
     keywordOptions.value = uniqueWords.map(word => ({
@@ -72,7 +86,7 @@ export function useKeywordAnalysis(staticText = '') {
 
     isAnalyzing.value = true
 
-    const textWords = inputText.value.toLowerCase().match(/\b\w+\b/g) || []
+    const textWords = cleanText(inputText.value)
     const wordCount = textWords.length
 
     let keywords = []
@@ -89,23 +103,41 @@ export function useKeywordAnalysis(staticText = '') {
       return
     }
 
-    const results = keywords.map(keyword => {
-      const regex = new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
-      const matches = inputText.value.match(regex) || []
-      const count = matches.length
+    const keywordResults = keywords.map(keyword => {
+      // Count occurrences in cleaned text
+      const count = textWords.filter(word => word === keyword).length
       const percentage = wordCount > 0 ? ((count / wordCount) * 100).toFixed(2) : 0
 
       return {
         keyword: keyword,
         count: count,
         percentage: parseFloat(percentage),
-        matches: matches
       }
     })
 
-    results.sort((a, b) => b.count - a.count)
+    // Group keywords by count
+    const countGroups = {}
+    keywordResults.forEach(result => {
+      const countKey = result.count
+      if (!countGroups[countKey]) {
+        countGroups[countKey] = {
+          count: result.count,
+          percentage: result.percentage,
+          keywords: []
+        }
+      }
+      countGroups[countKey].keywords.push(result.keyword)
+    })
 
-    analysisResults.value = results
+    // Convert to array and sort by count descending, then keywords alphabetically
+    const groupedResults = Object.values(countGroups)
+      .map(group => ({
+        ...group,
+        keywords: group.keywords.sort()
+      }))
+      .sort((a, b) => b.count - a.count)
+
+    analysisResults.value = groupedResults
     currentPage.value = 1
     isAnalyzing.value = false
   }
@@ -144,7 +176,6 @@ export function useKeywordAnalysis(staticText = '') {
   })
 
   return {
-
     inputText,
     selectedKeywords,
     analysisResults,
@@ -155,14 +186,12 @@ export function useKeywordAnalysis(staticText = '') {
     keywordOptions,
     analysisModeOptions,
     
-
     hasResults,
     totalWords,
     totalItems,
     totalPages,
     paginatedResults,
     
-
     updateKeywordOptions,
     analyzeKeywords,
     clearResults,

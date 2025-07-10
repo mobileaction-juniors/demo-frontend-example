@@ -4,7 +4,7 @@ import {
   generateKeywords as generateKeywordsUtil, 
   getNGramOptions
 } from '@/utils/keywordGenerator'
-import { MaInput, MaTagInput, MaButton } from "@mobileaction/action-kit"
+import { MaInput, MaTagInput, MaButton, MaIcon } from "@mobileaction/action-kit"
 
 
 
@@ -169,7 +169,7 @@ const nGramOptions = getNGramOptions(10)
                 <!-- Initial State -->
                 <div v-else class="ma-initial-state">
                     <div class="ma-initial-content">
-                        <div class="ma-initial-icon">📝</div>
+                        <ma-icon name="google" size="lg" class="ma-google-icon"/>
                         <h3>Ready to Generate Keywords</h3>
                         <p>Enter an application description in the left panel to start generating n-gram keywords.</p>
                     </div>
@@ -327,20 +327,24 @@ const nGramOptions = getNGramOptions(10)
 }
 
 .ma-initial-state {
-    @apply text-center py-16 bg-gray-50 rounded-xl border border-gray-200;
+    @apply text-center py-16 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center h-full;
 }
 
 .ma-initial-content {
-    @apply space-y-4;
+    @apply space-y-4 flex flex-col items-center;
     h3 {
         @apply text-2xl font-semibold text-gray-800;
     }
     p {
-        @apply text-gray-600 max-w-md mx-auto;
+        @apply text-gray-600 max-w-md mx-auto text-center;
     }
 }
 
 .ma-initial-icon {
     @apply text-6xl mb-4;
+}
+
+.ma-google-icon {
+    @apply text-center;
 }
 </style> 

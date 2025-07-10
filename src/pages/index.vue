@@ -1,7 +1,6 @@
 <script setup>
 import { MaLinkButton, MaAnimation} from "@mobileaction/action-kit"
 
-// No navigation functions needed since tabs are in header
 </script>
 
 <template>
@@ -10,13 +9,13 @@ import { MaLinkButton, MaAnimation} from "@mobileaction/action-kit"
       <h1 class="ma-title">Welcome to Onboarding Progress</h1>
       
       <p class="ma-subtitle">You can see your first task details via link. Please continue those steps while coding.</p>
-      <MaLinkButton 
-      color="blue" 
-      size="medium"
-      class="ma-link-button"
-      href="https://mobileaction.atlassian.net/wiki/spaces/Engineerin/pages/1456243369/Implement+Your+First+Task+-+FrontEnd">
-      Task Details
-      </MaLinkButton>
+      <ma-link-button
+        color="blue" 
+        size="medium"
+        class="ma-link-button"
+        href="https://mobileaction.atlassian.net/wiki/spaces/Engineerin/pages/1456243369/Implement+Your+First+Task+-+FrontEnd">
+        Task Details
+      </ma-link-button>
       
     </div>
     
