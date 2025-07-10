@@ -250,9 +250,9 @@ onMounted(() => {
         <div class="ma-keyword-generator-layout-right">
             <MaCard class="ma-card" title="Analysis Statistics" description="Overview of your text analysis">
                 <div class="ma-stats-list">
-                    <div class="ma-stats-row"><span>Total Words</span><span><MaBadge>{{ stats.wordCount }}</MaBadge></span></div>
-                    <div class="ma-stats-row"><span>Unique Keywords</span><span><MaBadge>{{ stats.uniqueCount }}</MaBadge></span></div>
-                    <div class="ma-stats-row"><span>Characters</span><span><MaBadge>{{ stats.charCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Total Words</span><span><MaBadge class="ma-badge">{{ stats.wordCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Unique Keywords</span><span><MaBadge class="ma-badge">{{ stats.uniqueCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Characters</span><span><MaBadge class="ma-badge">{{ stats.charCount }}</MaBadge></span></div>
                 </div>
                 <template #footer>
                 <div class="ma-stats-list">
@@ -262,7 +262,7 @@ onMounted(() => {
                       </div>
                     </span>
                   </div>
-                  <div class="ma-stats-row"><span>Highest Density</span><span><MaBadge>{{ stats.highestDensity }}%</MaBadge></span></div>
+                  <div class="ma-stats-row"><span>Highest Density</span><span><MaBadge class="ma-badge">{{ stats.highestDensity }}%</MaBadge></span></div>
                 </div>
                 </template>
             </MaCard>
@@ -273,96 +273,181 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .ma-keywords-density {
-   @apply w-full h-full bg-white flex flex-col gap-4; 
+  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4;
+  @apply sm:gap-4 sm:p-6;
+  @apply lg:p-8;
+  
   .ma-header {
-     @apply w-full h-full bg-white flex flex-col items-start justify-center gap-2; 
+    @apply w-full flex flex-col items-start justify-center gap-2 mb-4;
+    @apply sm:mb-6;
+    
     .ma-title {
-      @apply text-4xl font-bold;
+      @apply text-2xl font-bold text-gray-900;
+      @apply sm:text-3xl;
+      @apply lg:text-4xl;
     }
+    
     .ma-description {
-      @apply text-lg text-gray-500;
+      @apply text-sm text-gray-600 leading-relaxed;
+      @apply sm:text-base;
+      @apply lg:text-lg;
     }
   }
+  
   .ma-description-count {
-    @apply text-gray-500 text-sm;
+    @apply text-xs text-gray-500;
+    @apply sm:text-sm;
   }
+  
   .ma-button-container {
-    @apply w-full h-full flex justify-between;
+    @apply w-full flex flex-col gap-3;
+    @apply sm:flex-row sm:justify-between sm:items-center;
+    
     .ma-button-container-right {
-      @apply flex flex-row gap-2;
+      @apply flex flex-col gap-2 w-full;
+      @apply sm:flex-row sm:w-auto;
     }
   }
 }
+
 .ma-keyword-generator-layout {
-    @apply w-full h-full flex flex-row gap-4;
-    @apply max-md:flex-col;
-    &-left {
-        @apply w-3/4 h-full flex flex-col gap-4;
-        @apply max-md:w-full;
-    }
-    &-right {
-        @apply w-1/4 h-full flex flex-col gap-4;
-        @apply max-md:w-full;
-    }
+  @apply w-full flex flex-col gap-4;
+  @apply lg:flex-row lg:gap-6;
+  
+  &-left {
+    @apply w-full flex flex-col gap-4;
+    @apply lg:w-3/4;
+  }
+  
+  &-right {
+    @apply w-full flex flex-col gap-4;
+    @apply lg:w-1/4;
+  }
 }
+
 .ma-card {
-  @apply border border-gray-200;
+  @apply border border-gray-200 rounded-lg;
 }
+
 .ma-text-input {
-      @apply w-full h-full;
-      ::v-deep(.ak-input__input) {
-        @apply w-full h-full resize-none min-h-[150px];
-      }
+  @apply w-full;
+  
+  ::v-deep(.ak-input__input) {
+    @apply w-full resize-none min-h-[120px];
+    @apply sm:min-h-[150px];
+  }
 }
+
 .ma-keyword-density-table {
-  @apply w-full mx-auto overflow-x-auto;
+  @apply w-full overflow-x-auto;
+  @apply -mx-4 sm:mx-0;
+  
   .ma-table {
-    @apply w-full text-sm;
+    @apply w-full text-xs;
+    @apply sm:text-sm;
+    
     .ma-thead {
       @apply border-b border-gray-200 text-gray-500;
+      
       .ma-th {
-        @apply py-2 px-2 text-left font-medium;
+        @apply py-2 px-1 text-left font-medium whitespace-nowrap;
+        @apply sm:px-2;
+        
+        &:nth-child(1) { @apply w-1/4; }
+        &:nth-child(2) { @apply w-1/6; }
+        &:nth-child(3) { @apply w-1/6; }
+        &:nth-child(4) { @apply w-1/3; }
       }
     }
+    
     .ma-tbody {
       .ma-tr {
         @apply border-b border-gray-100 hover:bg-gray-50;
+        
         .ma-td {
-          @apply py-2 px-2;
+          @apply py-2 px-1;
+          @apply sm:px-2;
         }
+        
         .ma-keyword-badge {
           @apply inline-block border-black text-black;
         }
+        
         .ma-density-text {
-          @apply font-semibold;
+          @apply font-semibold text-xs;
+          @apply sm:text-sm;
         }
+        
         .ma-bar-container {
-          @apply flex items-center gap-2;
+          @apply flex items-center gap-1;
+          @apply sm:gap-2;
+          
           .ma-bar-background {
-            @apply relative w-24 h-2 bg-gray-100 rounded-full overflow-hidden;
+            @apply relative w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden;
+            @apply sm:w-20 sm:h-2;
+            @apply lg:w-24;
+            
             .ma-bar-fill {
-              @apply absolute left-0 top-0 h-2 bg-blue-500 rounded-full;
-              transition: width 0.3s;
+              @apply absolute left-0 top-0 h-1.5 bg-blue-500 rounded-full;
+              @apply sm:h-2;
+              transition: width 0.3s ease;
             }
           }
+          
           .ma-bar-label {
-            @apply text-xs text-gray-500;
+            @apply text-xs text-gray-500 whitespace-nowrap;
           }
         }
       }
     }
   }
 }
+
 .ma-most-frequent-badges {
-  @apply flex flex-row gap-2;
+  @apply flex flex-wrap gap-1;
+  @apply sm:gap-2;
 }
+
 .ma-stats-list {
   @apply flex flex-col gap-2 mt-2;
+  
+  .ma-stats-row {
+    @apply flex flex-col gap-1;
+    @apply sm:flex-row sm:justify-between sm:items-center sm:gap-2;
+    
+  }
 }
-.ma-stats-row {
-  @apply flex flex-row justify-between items-center text-base;
-}
+
 .ma-ngram-checkbox {
-  @apply w-auto inline-flex;
+  @apply w-full;
+  @apply sm:w-auto sm:inline-flex;
+}
+
+@media (max-width: 640px) {
+  .ma-keyword-density-table {
+    .ma-table {
+      .ma-thead {
+        .ma-th {
+          &:nth-child(3) {
+            @apply hidden sm:table-cell;
+          }
+        }
+      }
+      
+      .ma-tbody {
+        .ma-tr {
+          .ma-td {
+            &:nth-child(3) {
+              @apply hidden sm:table-cell;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.ma-badge{
+  @apply inline-block;
 }
 </style>

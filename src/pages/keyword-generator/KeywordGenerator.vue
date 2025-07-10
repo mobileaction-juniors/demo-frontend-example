@@ -243,52 +243,69 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .ma-keywords-generator {
-   @apply w-full h-full bg-white flex flex-col gap-4; 
+  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4;
+  @apply sm:gap-4 sm:p-6;
+  @apply lg:p-8;
+  
   .ma-header {
-     @apply w-full h-full bg-white flex flex-col items-start justify-center gap-2; 
+    @apply w-full flex flex-col items-start justify-center gap-2 mb-4;
+    @apply sm:mb-6;
+    
     .ma-title {
-      @apply text-4xl font-bold;
+      @apply text-2xl font-bold text-gray-900;
+      @apply sm:text-3xl;
+      @apply lg:text-4xl;
     }
+    
     .ma-description {
-      @apply text-lg text-gray-500;
+      @apply text-sm text-gray-600 leading-relaxed;
+      @apply sm:text-base;
+      @apply lg:text-lg;
     }
   }
 
   .ma-text-input-container {
-    @apply w-full h-[150px] flex flex-col gap-2;    
+    @apply w-full flex flex-col gap-2;
+    @apply sm:min-h-[150px];
   }
   
   .ma-description-count {
-    @apply text-gray-500 text-sm;
+    @apply text-xs text-gray-500;
+    @apply sm:text-sm;
   }
+  
   .ma-button-container {
-    @apply w-full h-full flex justify-between;
+    @apply w-full flex flex-col gap-3;
+    @apply sm:flex-row sm:justify-between sm:items-center;
+    
     .ma-button-container-right {
-      @apply flex flex-row gap-2;
+      @apply flex flex-col gap-2 w-full;
+      @apply sm:flex-row sm:w-auto;
     }
   }
 
   .ma-ngram-container {
-    @apply w-full h-full flex flex-col gap-2;
+    @apply w-full flex flex-col gap-3;
+    @apply sm:gap-4;
 
     .ma-ngram-item {
-      @apply w-full h-full flex flex-col gap-2;
+      @apply w-full flex flex-col gap-2;
+      @apply sm:gap-3;
 
       .ma-ngram-item-title {
-        @apply text-lg font-bold;
+        @apply text-base font-bold text-gray-900;
+        @apply sm:text-lg;
+        @apply lg:text-xl;
 
         .ma-ngram-item-title-count {
-          @apply bg-gray-100 text-black text-sm px-2 py-1 rounded-full;
+          @apply bg-gray-100 text-black text-xs px-2 py-1 rounded-full;
+          @apply sm:text-sm;
         }
       }
 
       .ma-ngram-item-keywords {
-        @apply w-full flex flex-row flex-wrap gap-2;
-
-        .ma-ngram-item-keyword {
-          @apply text-sm text-gray-500;
-        }
-
+        @apply w-full flex flex-wrap gap-1;
+        @apply sm:gap-2;
       }
 
       .ma-divider {
@@ -297,58 +314,71 @@ onUnmounted(() => {
     }
   }
 }
+
 .ma-keyword-generator-layout {
-    @apply w-full h-full flex flex-row gap-4;
-    @apply max-md:flex-col;
+  @apply w-full flex flex-col gap-4;
+  @apply lg:flex-row lg:gap-6;
 
-    &-left {
-        @apply w-3/4 h-full flex flex-col gap-4;
-        @apply max-md:w-full;
-    }
+  &-left {
+    @apply w-full flex flex-col gap-4;
+    @apply lg:w-3/4;
+  }
 
-    &-right {
-        @apply w-1/4 h-full flex flex-col gap-4;
-        @apply max-md:w-full;
-    }
+  &-right {
+    @apply w-full flex flex-col gap-4;
+    @apply lg:w-1/4;
+  }
 }
 
 .ma-ngram-selection-container {
-    @apply w-full h-full grid grid-cols-2 gap-x-4 gap-y-2;
+  @apply w-full grid grid-cols-1 gap-3;
+  @apply sm:grid-cols-2 sm:gap-4;
 
-    .ma-ngram-selection-item {
-        @apply w-full h-full flex flex-col gap-2;
-    }
+  .ma-ngram-selection-item {
+    @apply w-full flex flex-col gap-2;
+  }
 }
 
 .ma-badge-stopword {
-    @apply bg-gray-200 text-gray-500;
+  @apply bg-gray-200 text-gray-500;
 }
 
 .ma-filtering-options-container {
-    @apply w-full h-full flex flex-col gap-2;
+  @apply w-full flex flex-col gap-3;
+  @apply sm:gap-4;
 
-    .ma-filtering-options-item {
-        @apply w-full h-full flex flex-col gap-2;
-    }
+  .ma-filtering-options-item {
+    @apply w-full flex flex-col gap-2;
+  }
 }
 
 .ma-ngram-item-keyword-badge {
-  @apply border-black text-black;
+  @apply border-black text-black text-xs;
+  @apply sm:text-sm;
 }
-.ma-card {
-  @apply border border-gray-200;
-}
-.ma-text-input {
-      @apply w-full h-full;
 
-      ::v-deep(.ak-input__input) {
-        @apply w-full h-full resize-none min-h-[150px];
-      }
+.ma-card {
+  @apply border border-gray-200 rounded-lg shadow-sm;
+  @apply sm:shadow-md;
 }
+
+.ma-text-input {
+  @apply w-full;
+  
+  ::v-deep(.ak-input__input) {
+    @apply w-full resize-none min-h-[120px];
+    @apply sm:min-h-[150px];
+  }
+}
+
 .ma-result-description {
-  @apply text-gray-400 text-base italic py-4;
+  @apply text-gray-400 text-sm italic py-3;
+  @apply sm:text-base sm:py-4;
 }
+
 .ma-ngram-checkbox {
-  @apply w-auto inline-flex;
+  @apply w-full;
+  @apply sm:w-auto sm:inline-flex;
 }
+
 </style>
