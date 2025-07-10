@@ -9,16 +9,14 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
         <MaCard class="ma-tool-card">
             <template #default>
                 <div class="ma-tool-content">
-                    <div class="ma-tool-icon">
-                        <MaIcon name="table-list" size="xxlarge" />
-                    </div>
+                    <MaIcon name="table-list" size="xl" class="ma-tool-icon" />
                     <h3 class="ma-tool-title">Keyword Generator</h3>
                     <p class="ma-tool-desc">Generate n-gram keywords from text</p>
                     <MaLinkButton 
                         href="/keyword-generator"
                         size="medium"
                         variant="primary"
-                        :icon="{ name: 'arrow-right', size: 'small' }"
+                        icon="arrow-right"
                         class="ma-tool-button"
                     >
                         Open Tool
@@ -30,13 +28,11 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
         <MaCard class="ma-tool-card ma-tool-card-placeholder">
             <template #default>
                 <div class="ma-tool-content">
-                    <div class="ma-tool-icon">
-                        <MaIcon name="chart-bar" size="xxlarge" />
-                    </div>
+                    <MaIcon name="chart-bar" size="xl" class="ma-tool-icon" />
                     <h3 class="ma-tool-title">Keyword Density</h3>
                     <p class="ma-tool-desc">Analyze keyword density in your content</p>
                     <MaButton 
-                        size="medium"
+                        size="small"
                         variant="stroke"
                         class="ma-tool-button"
                         disabled
@@ -63,13 +59,10 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
 .ma-tool-card {
     width: 100%;
     max-width: 400px;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     
     &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
     }
     
     &.ma-tool-card-placeholder {
@@ -85,13 +78,14 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
 .ma-tool-content {
     text-align: center;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .ma-tool-icon {
     margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: #14b8a6;
 }
 
@@ -111,8 +105,6 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
 
 .ma-tool-button {
     width: 100%;
-    border-radius: 12px;
-    font-weight: 600;
 }
 
 @media (min-width: 768px) {

@@ -1,16 +1,35 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
 import { MaButton } from '@mobileaction/action-kit';
+import { computed } from 'vue';
+
+const PAGES = {
+    HOME: '/',
+    KEYWORD_GENERATOR: '/keyword-generator',
+};
 
 const router = useRouter();
 const route = useRoute();
 
 function goHome() {
-    router.push('/');
+    router.push(PAGES.HOME);
 }
 function goKeywordGenerator() {
-    router.push('/keyword-generator');
+    router.push(PAGES.KEYWORD_GENERATOR);
 }
+
+const useNavButtonVariant = (pagePath) => {
+    return computed(() => route.path == pagePath ? 'filled' : 'ghost');
+};
+
+const useNavButtonColor = (pagePath) => {
+    return computed(() => route.path == pagePath ? 'dark' : 'primary');
+};
+
+const homeVariant = useNavButtonVariant(PAGES.HOME);
+const homeColor = useNavButtonColor(PAGES.HOME);
+const keywordGeneratorVariant = useNavButtonVariant(PAGES.KEYWORD_GENERATOR);
+const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
 </script>
 
 <template>
@@ -18,9 +37,9 @@ function goKeywordGenerator() {
         <div class="ma-navbar-container">
             <MaButton
                 @click="goHome"
-                size="large"
-                :variant="route.path == '/' ? 'filled' : 'ghost'"
-                :color="route.path == '/' ? 'dark' : 'primary'"
+                size="medium"
+                :variant="homeVariant"
+                :color="homeColor"
                 icon="menu"
                 class="ma-nav-button"
             >
@@ -28,9 +47,9 @@ function goKeywordGenerator() {
             </MaButton>
             <MaButton
                 @click="goKeywordGenerator"
-                size="large"
-                :variant="route.path == '/keyword-generator' ? 'filled' : 'ghost'"
-                :color="route.path == '/keyword-generator' ? 'dark' : 'primary'"
+                size="medium"
+                :variant="keywordGeneratorVariant"
+                :color="keywordGeneratorColor"
                 icon="list"
                 class="ma-nav-button"
             >
@@ -65,9 +84,4 @@ function goKeywordGenerator() {
     gap: 0.25rem;
 }
 
-.ma-nav-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 </style>

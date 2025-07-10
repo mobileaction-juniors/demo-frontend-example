@@ -16,8 +16,7 @@ import TheHeader from './components/TheHeader.vue';
 <style lang="scss" scoped>
 .ma-app-container { 
     display: flex; 
-    flex-direction: 
-    column; 
+    flex-direction: column; 
     min-height: 100vh; 
 }
 .ma-main-content { 
@@ -25,7 +24,7 @@ import TheHeader from './components/TheHeader.vue';
     display: flex; 
     justify-content: center; 
     align-items: flex-start; 
-    padding: 20px; 
+    padding: 80px 20px 20px 20px; 
 }
 .ma-page-wrapper { 
     width: 100%; 

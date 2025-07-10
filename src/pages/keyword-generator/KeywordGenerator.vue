@@ -20,9 +20,15 @@ const keywordTags = computed(() => {
 });
 
 const generateKeywordsFromInput = () => {
-    const keywords = generateKeywords(inputText.value, selectedNGrams.value, eliminateUnwanted.value);
-    generatedKeywords.value = keywords;
-};
+      try {
+          const keywords = generateKeywords(inputText.value,
+  selectedNGrams.value, eliminateUnwanted.value);
+          generatedKeywords.value = keywords;
+      } catch (error) {
+          console.error('Keyword generation failed:', error);
+      }
+  };
+
 
 const toggleNGram = (n) => {
     const index = selectedNGrams.value.indexOf(n);
@@ -108,7 +114,7 @@ const clearInput = () => {
 
 <style lang="scss" scoped>
 .ma-container {
-    margin-top: 4rem;
+    margin-top: 1rem;
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
@@ -119,7 +125,6 @@ const clearInput = () => {
 .ma-results-card {
     flex: 1;
     min-width: 320px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .ma-input-section {
@@ -208,10 +213,7 @@ const clearInput = () => {
     padding: 2rem 0;
 }
 
-.ma-text-input :deep(.ak-input__input) {
-    resize: none;
+.ma-text-input {
     width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
 }
 </style>
