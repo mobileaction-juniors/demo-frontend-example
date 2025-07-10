@@ -15,16 +15,16 @@ function goKeywordGenerator() {
 </script>
 
 <template>
-    <nav class="navbar">
-        <div class="navbar-container">
+    <nav class="ma-navbar">
+        <div class="ma-navbar-container">
             <MaButton
                 @click="goHome"
                 size="large"
                 :variant="route.path == '/' ? 'filled' : 'ghost'"
                 :color="route.path == '/' ? 'dark' : 'primary'"
-                class="nav-button"
+                class="ma-nav-button"
             >
-                <HomeIcon class="nav-icon" />
+                <HomeIcon class="ma-nav-icon" />
                 Home
             </MaButton>
             <MaButton
@@ -32,9 +32,9 @@ function goKeywordGenerator() {
                 size="large"
                 :variant="route.path == '/keyword-generator' ? 'filled' : 'ghost'"
                 :color="route.path == '/keyword-generator' ? 'dark' : 'primary'"
-                class="nav-button"
+                class="ma-nav-button"
             >
-                <BeakerIcon class="nav-icon" />
+                <BeakerIcon class="ma-nav-icon" />
                 Keyword Generator
             </MaButton>
         </div>
@@ -42,7 +42,7 @@ function goKeywordGenerator() {
 </template>
 
 <style lang="scss" scoped>
-.navbar {
+.ma-navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -57,7 +57,7 @@ function goKeywordGenerator() {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-container {
+.ma-navbar-container {
     width: 100%;
     max-width: 1280px;
     display: flex;
@@ -66,13 +66,13 @@ function goKeywordGenerator() {
     gap: 0.25rem;
 }
 
-.nav-button {
+.ma-nav-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.nav-icon {
+.ma-nav-icon {
     width: 1.25rem;
     height: 1.25rem;
 }

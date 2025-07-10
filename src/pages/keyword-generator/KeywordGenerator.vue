@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator.js';
+import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
 import TheNav from '../../components/TheNav.vue';
 import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty } from '@mobileaction/action-kit';
 
@@ -43,10 +43,10 @@ const clearInput = () => {
 
 <template>
     <TheNav />
-    <div class="keyword-generator-container">
-        <MaCard title="Keyword Generator" description="Enter your text and configure settings to generate n-gram keywords" class="generator-card">
+    <div class="ma-container">
+        <MaCard title="Keyword Generator" description="Enter your text and configure settings to generate n-gram keywords" class="ma-input-card">
             <template #default>
-                <div class="generator-content">
+                <div class="ma-input-section">
                     <MaInput
                         v-model:value="inputText"
                         @update:value="generateKeywordsFromInput"
@@ -56,7 +56,7 @@ const clearInput = () => {
                         rows="10"
                         class="ma-text-input"
                     />
-                    <div class="controls">
+                    <div class="ma-controls">
                         <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
                         <MaCheckbox2
                             v-model:checked="eliminateUnwanted"
@@ -65,7 +65,7 @@ const clearInput = () => {
                             Hide unwanted words
                         </MaCheckbox2>
                     </div>
-                    <div class="ngram-grid">
+                    <div class="ma-ngram-grid">
                         <MaButton
                             v-for="n in nGramOptions"
                             :key="n"
@@ -80,25 +80,25 @@ const clearInput = () => {
             </template>
         </MaCard>
         
-        <MaCard title="Generated Keywords" description="Your processed keywords will appear here" class="results-card">
+        <MaCard title="Generated Keywords" description="Your processed keywords will appear here" class="ma-results-card">
             <template #default>
-                <div v-if="Object.keys(generatedKeywords).length > 0" class="results-content">
-                    <div v-for="ngram in Object.keys(keywordTags)" :key="ngram" class="ngram-section">
-                        <h6 class="ngram-title">{{ ngram }}</h6>
-                        <div v-if="keywordTags[ngram].length" class="keyword-tags">
+                <div v-if="Object.keys(generatedKeywords).length > 0" class="ma-results-content">
+                    <div v-for="ngram in Object.keys(keywordTags)" :key="ngram" class="ma-ngram-section">
+                        <h6 class="ma-ngram-heading">{{ ngram }}</h6>
+                        <div v-if="keywordTags[ngram].length" class="ma-keywords-container">
                             <div
                                 v-for="item in keywordTags[ngram]"
                                 :key="item.keyword"
-                                class="keyword-tag"
+                                class="ma-keyword-item"
                             >
-                                <span class="keyword-text">{{ item.keyword }}</span>
-                                <span class="keyword-count">({{ item.count }})</span>
+                                <span class="ma-keyword-text">{{ item.keyword }}</span>
+                                <span class="ma-keyword-count">({{ item.count }})</span>
                             </div>
                         </div>
-                        <p v-else class="no-keywords">No keywords found for this n-gram.</p>
+                        <p v-else class="ma-placeholder-text">No keywords found for this n-gram.</p>
                     </div>
                 </div>
-                <div v-else class="empty-state">
+                <div v-else class="ma-empty-state">
                     <MaEmpty description="Keywords will appear here once generated" animation="no-data-found" size="medium" />
                 </div>
             </template>
@@ -107,7 +107,7 @@ const clearInput = () => {
 </template>
 
 <style lang="scss" scoped>
-.keyword-generator-container {
+.ma-container {
     margin-top: 4rem;
     display: flex;
     flex-wrap: wrap;
@@ -115,39 +115,39 @@ const clearInput = () => {
     padding: 1rem;
 }
 
-.generator-card,
-.results-card {
+.ma-input-card,
+.ma-results-card {
     flex: 1;
     min-width: 320px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.generator-content {
+.ma-input-section {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
     max-width: 100%;
 }
 
-.controls {
+.ma-controls {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.ngram-grid {
+.ma-ngram-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
     max-width: 24rem;
 }
 
-.results-content {
+.ma-results-content {
     width: 100%;
 }
 
-.ngram-section {
+.ma-ngram-section {
     margin-bottom: 1rem;
     
     &:last-child {
@@ -155,7 +155,7 @@ const clearInput = () => {
     }
 }
 
-.ngram-title {
+.ma-ngram-heading {
     font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
@@ -163,13 +163,13 @@ const clearInput = () => {
     border-bottom: 1px solid #e5e7eb;
 }
 
-.keyword-tags {
+.ma-keywords-container {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.keyword-tag {
+.ma-keyword-item {
     display: inline-flex;
     align-items: center;
     background-color: #14b8a6;
@@ -184,26 +184,26 @@ const clearInput = () => {
     }
 }
 
-.keyword-text {
+.ma-keyword-text {
     color: white;
     font-weight: 500;
     font-size: 0.875rem;
     margin-right: 0.25rem;
 }
 
-.keyword-count {
+.ma-keyword-count {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.75rem;
 }
 
-.no-keywords {
+.ma-placeholder-text {
     color: #6b7280;
     font-size: 0.875rem;
     font-style: italic;
     padding: 0.5rem 0;
 }
 
-.empty-state {
+.ma-empty-state {
     width: 100%;
     padding: 2rem 0;
 }
