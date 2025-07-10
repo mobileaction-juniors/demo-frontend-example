@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
-import { MaButton } from '@mobileaction/action-kit';
-import { HomeIcon, BeakerIcon } from '@heroicons/vue/24/outline';
+import { MaButton, MaIcon } from '@mobileaction/action-kit';
 
 const router = useRouter();
 const route = useRoute();
@@ -24,7 +23,7 @@ function goKeywordGenerator() {
                 :color="route.path == '/' ? 'dark' : 'primary'"
                 class="ma-nav-button"
             >
-                <HomeIcon class="ma-nav-icon" />
+                <MaIcon name="menu" size="small" />
                 Home
             </MaButton>
             <MaButton
@@ -34,7 +33,7 @@ function goKeywordGenerator() {
                 :color="route.path == '/keyword-generator' ? 'dark' : 'primary'"
                 class="ma-nav-button"
             >
-                <BeakerIcon class="ma-nav-icon" />
+                <MaIcon name="table-list" size="small" />
                 Keyword Generator
             </MaButton>
         </div>
@@ -70,10 +69,5 @@ function goKeywordGenerator() {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.ma-nav-icon {
-    width: 1.25rem;
-    height: 1.25rem;
 }
 </style>

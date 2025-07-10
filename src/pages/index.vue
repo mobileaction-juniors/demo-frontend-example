@@ -1,6 +1,6 @@
 <script setup>
 import TheNav from '../components/TheNav.vue';
-import { MaButton, MaCard, MaLinkButton } from '@mobileaction/action-kit';
+import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
 </script>
 
 <template>
@@ -9,13 +9,16 @@ import { MaButton, MaCard, MaLinkButton } from '@mobileaction/action-kit';
         <MaCard class="ma-tool-card">
             <template #default>
                 <div class="ma-tool-content">
-                    <div class="ma-tool-icon">🔤</div>
+                    <div class="ma-tool-icon">
+                        <MaIcon name="table-list" size="xxlarge" />
+                    </div>
                     <h3 class="ma-tool-title">Keyword Generator</h3>
                     <p class="ma-tool-desc">Generate n-gram keywords from text</p>
                     <MaLinkButton 
                         href="/keyword-generator"
                         size="medium"
                         variant="primary"
+                        :icon="{ name: 'arrow-right', size: 'small' }"
                         class="ma-tool-button"
                     >
                         Open Tool
@@ -27,7 +30,9 @@ import { MaButton, MaCard, MaLinkButton } from '@mobileaction/action-kit';
         <MaCard class="ma-tool-card ma-tool-card-placeholder">
             <template #default>
                 <div class="ma-tool-content">
-                    <div class="ma-tool-icon">📊</div>
+                    <div class="ma-tool-icon">
+                        <MaIcon name="chart-bar" size="xxlarge" />
+                    </div>
                     <h3 class="ma-tool-title">Keyword Density</h3>
                     <p class="ma-tool-desc">Analyze keyword density in your content</p>
                     <MaButton 
@@ -83,9 +88,11 @@ import { MaButton, MaCard, MaLinkButton } from '@mobileaction/action-kit';
 }
 
 .ma-tool-icon {
-    font-size: 4rem;
     margin-bottom: 1.5rem;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #14b8a6;
 }
 
 .ma-tool-title {
