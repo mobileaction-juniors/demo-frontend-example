@@ -47,7 +47,6 @@ export const generateNGrams = (words, n) => {
         }
     }
     
-    // Convert to array of objects
     return Array.from(ngramMap.entries())
         .sort(([, countA], [, countB]) => countB - countA)
         .map(([keyword, count]) => ({ keyword, count }));
