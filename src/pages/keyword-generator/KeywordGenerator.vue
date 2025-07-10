@@ -243,69 +243,52 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .ma-keywords-generator {
-  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4;
-  @apply sm:gap-4 sm:p-6;
-  @apply lg:p-8;
+  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4 sm:gap-4 sm:p-6 lg:p-8;
   
   .ma-header {
-    @apply w-full flex flex-col items-start justify-center gap-2 mb-4;
-    @apply sm:mb-6;
+    @apply w-full flex flex-col items-start justify-center gap-2 mb-4 sm:mb-6;
     
     .ma-title {
-      @apply text-2xl font-bold text-gray-900;
-      @apply sm:text-3xl;
-      @apply lg:text-4xl;
+      @apply text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl;
     }
     
     .ma-description {
-      @apply text-sm text-gray-600 leading-relaxed;
-      @apply sm:text-base;
-      @apply lg:text-lg;
+      @apply text-sm text-gray-600 leading-relaxed sm:text-base lg:text-lg;
     }
   }
 
   .ma-text-input-container {
-    @apply w-full flex flex-col gap-2;
-    @apply sm:min-h-[150px];
+    @apply w-full flex flex-col gap-2 sm:min-h-[150px];
   }
   
   .ma-description-count {
-    @apply text-xs text-gray-500;
-    @apply sm:text-sm;
+    @apply text-xs text-gray-500 sm:text-sm;
   }
   
   .ma-button-container {
-    @apply w-full flex flex-col gap-3;
-    @apply sm:flex-row sm:justify-between sm:items-center;
+    @apply w-full flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center;
     
     .ma-button-container-right {
-      @apply flex flex-col gap-2 w-full;
-      @apply sm:flex-row sm:w-auto;
+      @apply flex flex-col gap-2 w-full sm:flex-row sm:w-auto;
     }
   }
 
   .ma-ngram-container {
-    @apply w-full flex flex-col gap-3;
-    @apply sm:gap-4;
+    @apply w-full flex flex-col gap-3 sm:gap-4;
 
     .ma-ngram-item {
-      @apply w-full flex flex-col gap-2;
-      @apply sm:gap-3;
+      @apply w-full flex flex-col gap-2 sm:gap-3;
 
       .ma-ngram-item-title {
-        @apply text-base font-bold text-gray-900;
-        @apply sm:text-lg;
-        @apply lg:text-xl;
+        @apply text-base font-bold text-gray-900 sm:text-lg lg:text-xl;
 
         .ma-ngram-item-title-count {
-          @apply bg-gray-100 text-black text-xs px-2 py-1 rounded-full;
-          @apply sm:text-sm;
+          @apply bg-gray-100 text-black text-xs px-2 py-1 rounded-full sm:text-sm;
         }
       }
 
       .ma-ngram-item-keywords {
-        @apply w-full flex flex-wrap gap-1;
-        @apply sm:gap-2;
+        @apply w-full flex flex-wrap gap-1 sm:gap-2;
       }
 
       .ma-divider {
@@ -316,23 +299,19 @@ onUnmounted(() => {
 }
 
 .ma-keyword-generator-layout {
-  @apply w-full flex flex-col gap-4;
-  @apply lg:flex-row lg:gap-6;
+  @apply w-full flex flex-col gap-4 lg:flex-row lg:gap-6;
 
   &-left {
-    @apply w-full flex flex-col gap-4;
-    @apply lg:w-3/4;
+    @apply w-full flex flex-col gap-4 lg:w-3/4;
   }
 
   &-right {
-    @apply w-full flex flex-col gap-4;
-    @apply lg:w-1/4;
+    @apply w-full flex flex-col gap-4 lg:w-1/4;
   }
 }
 
 .ma-ngram-selection-container {
-  @apply w-full grid grid-cols-1 gap-3;
-  @apply sm:grid-cols-2 sm:gap-4;
+  @apply w-full grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4;
 
   .ma-ngram-selection-item {
     @apply w-full flex flex-col gap-2;
@@ -344,8 +323,7 @@ onUnmounted(() => {
 }
 
 .ma-filtering-options-container {
-  @apply w-full flex flex-col gap-3;
-  @apply sm:gap-4;
+  @apply w-full flex flex-col gap-3 sm:gap-4;
 
   .ma-filtering-options-item {
     @apply w-full flex flex-col gap-2;
@@ -353,32 +331,27 @@ onUnmounted(() => {
 }
 
 .ma-ngram-item-keyword-badge {
-  @apply border-black text-black text-xs;
-  @apply sm:text-sm;
+  @apply border-black text-black text-xs sm:text-sm;
 }
 
 .ma-card {
-  @apply border border-gray-200 rounded-lg shadow-sm;
-  @apply sm:shadow-md;
+  @apply border border-gray-200 rounded-lg shadow-sm sm:shadow-md;
 }
 
 .ma-text-input {
   @apply w-full;
   
   ::v-deep(.ak-input__input) {
-    @apply w-full resize-none min-h-[120px];
-    @apply sm:min-h-[150px];
+    @apply w-full resize-none min-h-[120px] sm:min-h-[150px];
   }
 }
 
 .ma-result-description {
-  @apply text-gray-400 text-sm italic py-3;
-  @apply sm:text-base sm:py-4;
+  @apply text-gray-400 text-sm italic py-3 sm:text-base sm:py-4;
 }
 
 .ma-ngram-checkbox {
-  @apply w-full;
-  @apply sm:w-auto sm:inline-flex;
+  @apply w-full sm:w-auto sm:inline-flex;
 }
 
 </style>

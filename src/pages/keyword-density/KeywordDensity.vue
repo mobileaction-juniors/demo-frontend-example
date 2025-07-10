@@ -273,55 +273,42 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .ma-keywords-density {
-  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4;
-  @apply sm:gap-4 sm:p-6;
-  @apply lg:p-8;
+  @apply w-full min-h-screen bg-white flex flex-col gap-3 p-4 sm:gap-4 sm:p-6 lg:p-8;
   
   .ma-header {
-    @apply w-full flex flex-col items-start justify-center gap-2 mb-4;
-    @apply sm:mb-6;
+    @apply w-full flex flex-col items-start justify-center gap-2 mb-4 sm:mb-6;
     
     .ma-title {
-      @apply text-2xl font-bold text-gray-900;
-      @apply sm:text-3xl;
-      @apply lg:text-4xl;
+      @apply text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl;
     }
     
     .ma-description {
-      @apply text-sm text-gray-600 leading-relaxed;
-      @apply sm:text-base;
-      @apply lg:text-lg;
+      @apply text-sm text-gray-600 leading-relaxed sm:text-base lg:text-lg;
     }
   }
   
   .ma-description-count {
-    @apply text-xs text-gray-500;
-    @apply sm:text-sm;
+    @apply text-xs text-gray-500 sm:text-sm;
   }
   
   .ma-button-container {
-    @apply w-full flex flex-col gap-3;
-    @apply sm:flex-row sm:justify-between sm:items-center;
+    @apply w-full flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center;
     
     .ma-button-container-right {
-      @apply flex flex-col gap-2 w-full;
-      @apply sm:flex-row sm:w-auto;
+      @apply flex flex-col gap-2 w-full sm:flex-row sm:w-auto;
     }
   }
 }
 
 .ma-keyword-generator-layout {
-  @apply w-full flex flex-col gap-4;
-  @apply lg:flex-row lg:gap-6;
+  @apply w-full flex flex-col gap-4 lg:flex-row lg:gap-6;
   
   &-left {
-    @apply w-full flex flex-col gap-4;
-    @apply lg:w-3/4;
+    @apply w-full flex flex-col gap-4 lg:w-3/4;
   }
   
   &-right {
-    @apply w-full flex flex-col gap-4;
-    @apply lg:w-1/4;
+    @apply w-full flex flex-col gap-4 lg:w-1/4;
   }
 }
 
@@ -333,25 +320,21 @@ onMounted(() => {
   @apply w-full;
   
   ::v-deep(.ak-input__input) {
-    @apply w-full resize-none min-h-[120px];
-    @apply sm:min-h-[150px];
+    @apply w-full resize-none min-h-[120px] sm:min-h-[150px];
   }
 }
 
 .ma-keyword-density-table {
-  @apply w-full overflow-x-auto;
-  @apply -mx-4 sm:mx-0;
+  @apply w-full overflow-x-auto -mx-4 sm:mx-0;
   
   .ma-table {
-    @apply w-full text-xs;
-    @apply sm:text-sm;
+    @apply w-full text-xs sm:text-sm;
     
     .ma-thead {
       @apply border-b border-gray-200 text-gray-500;
       
       .ma-th {
-        @apply py-2 px-1 text-left font-medium whitespace-nowrap;
-        @apply sm:px-2;
+        @apply py-2 px-1 text-left font-medium whitespace-nowrap sm:px-2;
         
         &:nth-child(1) { @apply w-1/4; }
         &:nth-child(2) { @apply w-1/6; }
@@ -365,8 +348,7 @@ onMounted(() => {
         @apply border-b border-gray-100 hover:bg-gray-50;
         
         .ma-td {
-          @apply py-2 px-1;
-          @apply sm:px-2;
+          @apply py-2 px-1 sm:px-2;
         }
         
         .ma-keyword-badge {
@@ -374,22 +356,17 @@ onMounted(() => {
         }
         
         .ma-density-text {
-          @apply font-semibold text-xs;
-          @apply sm:text-sm;
+          @apply font-semibold text-xs sm:text-sm;
         }
         
         .ma-bar-container {
-          @apply flex items-center gap-1;
-          @apply sm:gap-2;
+          @apply flex items-center gap-1 sm:gap-2;
           
           .ma-bar-background {
-            @apply relative w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden;
-            @apply sm:w-20 sm:h-2;
-            @apply lg:w-24;
+            @apply relative w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden sm:w-20 sm:h-2 lg:w-24;
             
             .ma-bar-fill {
-              @apply absolute left-0 top-0 h-1.5 bg-blue-500 rounded-full;
-              @apply sm:h-2;
+              @apply absolute left-0 top-0 h-1.5 bg-blue-500 rounded-full sm:h-2;
               transition: width 0.3s ease;
             }
           }
@@ -404,23 +381,20 @@ onMounted(() => {
 }
 
 .ma-most-frequent-badges {
-  @apply flex flex-wrap gap-1;
-  @apply sm:gap-2;
+  @apply flex flex-wrap gap-1 sm:gap-2;
 }
 
 .ma-stats-list {
   @apply flex flex-col gap-2 mt-2;
   
   .ma-stats-row {
-    @apply flex flex-col gap-1;
-    @apply sm:flex-row sm:justify-between sm:items-center sm:gap-2;
+    @apply flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-2;
     
   }
 }
 
 .ma-ngram-checkbox {
-  @apply w-full;
-  @apply sm:w-auto sm:inline-flex;
+  @apply w-full sm:w-auto sm:inline-flex;
 }
 
 @media (max-width: 640px) {
