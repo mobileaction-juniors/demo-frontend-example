@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
-import { MaButton, MaIcon } from '@mobileaction/action-kit';
+import { MaButton } from '@mobileaction/action-kit';
 
 const router = useRouter();
 const route = useRoute();
@@ -21,9 +21,9 @@ function goKeywordGenerator() {
                 size="large"
                 :variant="route.path == '/' ? 'filled' : 'ghost'"
                 :color="route.path == '/' ? 'dark' : 'primary'"
+                :icon="{ name: 'menu', size: 'small' }"
                 class="ma-nav-button"
             >
-                <MaIcon name="menu" size="small" />
                 Home
             </MaButton>
             <MaButton
@@ -31,9 +31,9 @@ function goKeywordGenerator() {
                 size="large"
                 :variant="route.path == '/keyword-generator' ? 'filled' : 'ghost'"
                 :color="route.path == '/keyword-generator' ? 'dark' : 'primary'"
+                :icon="{ name: 'table-list', size: 'small' }"
                 class="ma-nav-button"
             >
-                <MaIcon name="table-list" size="small" />
                 Keyword Generator
             </MaButton>
         </div>
