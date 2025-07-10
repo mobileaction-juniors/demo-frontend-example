@@ -52,36 +52,34 @@ const clearInput = () => {
     <div class="ma-container">
         <MaCard title="Keyword Generator" description="Enter your text and configure settings to generate n-gram keywords" class="ma-input-card">
             <template #default>
-                <div class="ma-input-section">
-                    <MaInput
-                        v-model:value="inputText"
-                        @update:value="generateKeywordsFromInput"
-                        type="textarea"
-                        placeholder="Paste your app description here..."
-                        size="large"
-                        rows="10"
-                        class="ma-text-input"
-                    />
-                    <div class="ma-controls">
-                        <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
-                        <MaCheckbox2
-                            v-model:checked="eliminateUnwanted"
-                            @update:checked="generateKeywordsFromInput"
-                        >
-                            Hide unwanted words
-                        </MaCheckbox2>
-                    </div>
-                    <div class="ma-ngram-grid">
-                        <MaButton
-                            v-for="n in nGramOptions"
-                            :key="n"
-                            @click="toggleNGram(n)"
-                            size="small"
-                            :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
-                        >
-                            {{ n }}-gram
-                        </MaButton>
-                    </div>
+                <MaInput
+                    v-model:value="inputText"
+                    @update:value="generateKeywordsFromInput"
+                    type="textarea"
+                    placeholder="Paste your app description here..."
+                    size="large"
+                    rows="10"
+                    class="ma-text-input"
+                />
+                <div class="ma-controls">
+                    <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
+                    <MaCheckbox2
+                        v-model:checked="eliminateUnwanted"
+                        @update:checked="generateKeywordsFromInput"
+                    >
+                        Hide unwanted words
+                    </MaCheckbox2>
+                </div>
+                <div class="ma-ngram-grid">
+                    <MaButton
+                        v-for="n in nGramOptions"
+                        :key="n"
+                        @click="toggleNGram(n)"
+                        size="small"
+                        :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
+                    >
+                        {{ n }}-gram
+                    </MaButton>
                 </div>
             </template>
         </MaCard>
@@ -127,11 +125,11 @@ const clearInput = () => {
     min-width: 320px;
 }
 
-.ma-input-section {
+/* MaCard default template'i flex column layout sağlıyor */
+.ma-input-card :deep(.ak-card__body) {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    max-width: 100%;
 }
 
 .ma-controls {

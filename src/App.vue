@@ -1,11 +1,9 @@
 <template>
   <div class="ma-app-container">
       <the-header/>
-      <div class="ma-main-content">
-          <div class="ma-page-wrapper">
-              <router-view/>
-          </div>
-      </div>
+      <main class="ma-main-content">
+          <router-view/>
+      </main>
   </div>
 </template>
 
@@ -24,10 +22,8 @@ import TheHeader from './components/TheHeader.vue';
     display: flex; 
     justify-content: center; 
     align-items: flex-start; 
-    padding: 80px 20px 20px 20px; 
-}
-.ma-page-wrapper { 
+    padding: 80px 20px 20px 20px;
     width: 100%; 
     max-width: 1200px; 
-    }
+}
 </style>
