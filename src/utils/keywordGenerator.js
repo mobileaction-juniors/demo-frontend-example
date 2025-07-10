@@ -40,7 +40,11 @@ export const generateNGrams = (words, n) => {
     const ngramMap = new Map();
     for (let i = 0; i <= words.length - n; i++) {
         const ngram = words.slice(i, i + n).join(' ');
-        ngramMap.set(ngram, (ngramMap.get(ngram) || 0) + 1);
+        if (ngramMap.has(ngram)) {
+            ngramMap.set(ngram, ngramMap.get(ngram) + 1);
+        } else {
+            ngramMap.set(ngram, 1);
+        }
     }
     
     // Convert to array of objects
@@ -50,5 +54,9 @@ export const generateNGrams = (words, n) => {
 };
 
 export function getNGramOptions() {
-    return Array.from({ length: 10 }, (_, i) => i + 1);
+    const options = [];
+    for (let i = 1; i <= 10; i++) {
+        options.push(i);
+    }
+    return options;
 }
