@@ -19,11 +19,9 @@ import TheHeader from './components/TheHeader.vue';
 }
 .ma-main-content { 
     flex-grow: 1; 
-    display: flex; 
-    justify-content: center; 
-    align-items: flex-start; 
-    padding: 80px 20px 20px 20px;
     width: 100%; 
     max-width: 1200px; 
+    margin: 0 auto;
+    padding: 80px 20px 20px 20px;
 }
 </style>

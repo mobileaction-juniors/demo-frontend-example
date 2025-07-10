@@ -144,6 +144,7 @@ const clearInput = () => {
     grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
     max-width: 24rem;
+    margin-top: 0.75rem;
 }
 
 .ma-results-content {

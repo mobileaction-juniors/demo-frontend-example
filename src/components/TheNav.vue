@@ -61,10 +61,10 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
 .ma-navbar {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
+    max-width: 1200px;
     background-color: white;
     border-bottom: 1px solid #e5e7eb;
     display: flex;
