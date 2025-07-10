@@ -21,7 +21,7 @@ function goKeywordGenerator() {
                 size="large"
                 :variant="route.path == '/' ? 'filled' : 'ghost'"
                 :color="route.path == '/' ? 'dark' : 'primary'"
-                :icon="{ name: 'menu', size: 'small' }"
+                icon="menu"
                 class="ma-nav-button"
             >
                 Home
@@ -31,7 +31,7 @@ function goKeywordGenerator() {
                 size="large"
                 :variant="route.path == '/keyword-generator' ? 'filled' : 'ghost'"
                 :color="route.path == '/keyword-generator' ? 'dark' : 'primary'"
-                :icon="{ name: 'table-list', size: 'small' }"
+                icon="list"
                 class="ma-nav-button"
             >
                 Keyword Generator
