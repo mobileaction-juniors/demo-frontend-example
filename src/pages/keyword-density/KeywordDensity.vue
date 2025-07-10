@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { MaInput, MaButton, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaBadge, MaEmpty, MaCheckbox2 as MaCheckbox, MaPagination } from '@mobileaction/action-kit'
-import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription';
+import { cleanDescription } from '@/utils/CleanDescription';
+import { useKeywordDensity } from '@/composables/useKeywordDensity';
 
 const props = defineProps({
   defaultText: {
@@ -34,105 +35,45 @@ const cleanedInput = computed(() => cleanDescription(input.value).trim().toLower
 const inputInfo = computed(() => {
   const charCount = input.value.trim().length;
   const wordCount = cleanedInput.value.length;
-  return charCount +' characters, '+ wordCount +' words'
-})
+  return charCount + ' characters, ' + wordCount + ' words';
+});
 
-function getFilteredWords(input, removeStopWordsFlag) {
-  let words = cleanDescription(input).trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const stopWords = cleanStopWords(input);
-  if (removeStopWordsFlag) {
-    words = words.filter(w => !stopWords.includes(w));
-  }
-  return words;
-}
-
-function getFrequencyMap(words) {
-  return words.reduce((acc, w) => {
-    acc[w] = (acc[w] || 0) + 1;
-    return acc;
-  }, {});
-}
-
-function getMostFrequentWords(freqMap) {
-  const uniqueKeywords = Object.keys(freqMap);
-  let mostFrequentCount = 0;
-  uniqueKeywords.forEach(k => {
-    if (freqMap[k] > mostFrequentCount) {
-      mostFrequentCount = freqMap[k];
-    }
-  });
-  const mostFrequentWords = uniqueKeywords.filter(k => freqMap[k] === mostFrequentCount && mostFrequentCount > 0);
-  return { mostFrequentWords, mostFrequentCount, uniqueKeywords };
-}
-
-function getHighestDensity(mostFrequentCount, wordCount) {
-  return wordCount > 0 ? ((mostFrequentCount / wordCount) * 100).toFixed(1) : '0.0';
-}
+const { analyzeKeywords: analyzeKeywordsComposable, updateTableData: updateTableDataComposable } = useKeywordDensity();
 
 function analyzeKeywords(showNotification = true) {
-    isInputChanged.value = false;
-
-    const words = getFilteredWords(input.value, removeStopWords.value);
-    
-    const charCount = input.value.trim().length;
-    const wordCount = words.length;
-
-    freqMap.value = getFrequencyMap(words);
-    
-    const { mostFrequentWords, mostFrequentCount, uniqueKeywords: uniqueKeys } = getMostFrequentWords(freqMap.value);
-    
-    uniqueKeywords.value = uniqueKeys;
-    
-    const uniqueCount = uniqueKeywords.value.length;
-    const highestDensity = getHighestDensity(mostFrequentCount, wordCount);
-    
-    stats.value = {
-        charCount,
-        wordCount,
-        uniqueCount,
-        mostFrequent: mostFrequentWords,
-        highestDensity,
-    };
-    
-    updateTableData(wordCount);
-    copied.value = false;
-    
-    if (showNotification) {
-      MaNotification.success({
-        size: "large",
-        variant: "filled",
-        title: "Analyzed",
-        description: "Keywords analyzed successfully",
-        type: "success",
-        duration: 3000,
-        placement: 'topRight'
-      });
-    }
+  analyzeKeywordsComposable(input, removeStopWords, freqMap, uniqueKeywords, stats, isInputChanged);
+  
+  updateTableData();
+  copied.value = false;
+  
+  if (showNotification) {
+    MaNotification.success({
+      size: "large",
+      variant: "filled",
+      title: "Analyzed",
+      description: "Keywords analyzed successfully",
+      type: "success",
+      duration: 3000,
+      placement: 'topRight'
+    });
+  }
 }
 
-function updateTableData(wordCount = stats.value.wordCount) {
-    tableData.value = uniqueKeywords.value
-        .map(k => ({
-        keyword: k,
-        count: freqMap.value[k],
-        density: wordCount > 0 ? ((freqMap.value[k] / wordCount) * 100).toFixed(1) : '0.0',
-        }))
-        .sort((a, b) => b.count - a.count)
-        .slice((currentPage.value - 1) * perPage.value, currentPage.value * perPage.value);
-    currentPage.value = 1;
+function updateTableData() {
+  tableData.value = updateTableDataComposable(uniqueKeywords, freqMap, stats.value.wordCount, currentPage.value, perPage.value);
 }
 
 const clearAll = () => {
-    input.value = '';
-    tableData.value = [];
-    stats.value = {
-      charCount: 0,
-      wordCount: 0,
-      uniqueCount: 0,
-      mostFrequent: '',
-      highestDensity: '0.0',
-    };
-    MaNotification.info({
+  input.value = '';
+  tableData.value = [];
+  stats.value = {
+    charCount: 0,
+    wordCount: 0,
+    uniqueCount: 0,
+    mostFrequent: '',
+    highestDensity: '0.0',
+  };
+  MaNotification.info({
     size: "large",
     variant: "filled",
     title: "Cleared",
@@ -140,7 +81,7 @@ const clearAll = () => {
     type: "info",
     duration: 3000,
     placement: 'topRight'
-  })
+  });
 }
 
 function copyResults() {
@@ -153,7 +94,7 @@ function copyResults() {
     type: "success",
     duration: 3000,
     placement: 'topRight'
-  })
+  });
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
