@@ -1,4 +1,4 @@
-import { regex, splitRegex, filterArr } from '../cleanupResources.js';
+import { regex, splitRegex, filterArr } from '../cleanupResources';
 
 export function cleanDescription(description) {
     return description.replace(regex, '').replace(splitRegex, ' ').trim().replaceAll('İ', 'i').toLowerCase();
