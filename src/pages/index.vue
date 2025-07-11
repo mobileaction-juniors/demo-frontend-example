@@ -1,10 +1,8 @@
 <script setup>
-import TheNav from '../components/TheNav.vue';
 import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
 </script>
 
 <template>
-    <TheNav />
     <div class="ma-home-container">
         <MaCard class="ma-tool-card">
             <template #default>
@@ -73,38 +71,38 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
             opacity: 0.8;
         }
     }
-}
 
-.ma-tool-content {
-    text-align: center;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+    .ma-tool-content {
+        text-align: center;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 
-.ma-tool-icon {
-    margin-bottom: 1.5rem;
-    color: #14b8a6;
-}
+    .ma-tool-icon {
+        margin-bottom: 1.5rem;
+        color: #14b8a6;
+    }
 
-.ma-tool-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 1rem;
-}
+    .ma-tool-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1rem;
+    }
 
-.ma-tool-desc {
-    font-size: 1rem;
-    color: #718096;
-    margin-bottom: 2rem;
-    line-height: 1.5;
-}
+    .ma-tool-desc {
+        font-size: 1rem;
+        color: #718096;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
 
-.ma-tool-button {
-    width: 100%;
+    .ma-tool-button {
+        width: 100%;
+    }
 }
 
 @media (min-width: 768px) {

@@ -40,7 +40,6 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
             :variant="homeVariant"
             :color="homeColor"
             icon="menu"
-            class="ma-nav-button"
         >
             Home
         </MaButton>
@@ -50,7 +49,6 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
             :variant="keywordGeneratorVariant"
             :color="keywordGeneratorColor"
             icon="list"
-            class="ma-nav-button"
         >
             Keyword Generator
         </MaButton>
@@ -59,12 +57,9 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
 
 <style lang="scss" scoped>
 .ma-navbar {
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
     width: 100%;
-    max-width: 1200px;
     background-color: white;
     border-bottom: 1px solid #e5e7eb;
     display: flex;

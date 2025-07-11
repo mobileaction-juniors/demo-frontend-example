@@ -30,7 +30,8 @@ const cleanText = (text, eliminateUnwanted = true) => {
     
     if (eliminateUnwanted) {
         const stopWords = cleanStopWords(text);
-        words = words.filter(word => !stopWords.includes(word));
+        const stopWordsSet = new Set(stopWords);
+        words = words.filter(word => !stopWordsSet.has(word));
     }
     
     return words;
