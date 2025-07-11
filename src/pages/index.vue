@@ -19,11 +19,13 @@ import { MaLinkButton, MaAnimation} from "@mobileaction/action-kit"
       
     </div>
     
-    <MaAnimation
-      animation="rocket"
-      size="large"
-      class="ma-animation"
-    />
+    <div class="ma-animation-container">
+      <MaAnimation
+        animation="rocket"
+        size="large"
+        
+      />
+    </div>
   </div>
 </template>
 
@@ -50,7 +52,7 @@ import { MaLinkButton, MaAnimation} from "@mobileaction/action-kit"
   @apply w-full mt-4;
 }
 
-.ma-animation {
-  @apply flex-1 flex items-center justify-center min-h-[400px];
+.ma-animation-container {
+  @apply flex-1 flex items-center justify-center;
 }
 </style>

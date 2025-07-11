@@ -1,67 +1,9 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { 
-  generateKeywords as generateKeywordsUtil, 
-  getNGramOptions
-} from '@/utils/keywordGenerator'
+import { computed } from 'vue'
 import { MaInput, MaTagInput, MaButton, MaIcon } from "@mobileaction/action-kit"
+import { keywordGeneratorStore } from '../../stores/KeywordGeneratorStore'
 
-
-
-const inputText = ref('')
-const selectedNGrams = ref([1, 2, 3]) 
-const generatedKeywords = ref({})
-
-const keywordTags = computed(() => {
-  return selectedNGrams.value.reduce((acc, n) => {
-    const key = `${n}-gram`
-    acc[key] = generatedKeywords.value[key] || []
-    return acc
-  }, {})
-})
-
-// Generates keywords from input text
-const generateKeywords = () => {
-  if (!inputText.value.trim()) {
-    return
-  }
-  
-  const keywords = generateKeywordsUtil(
-    inputText.value,
-    selectedNGrams.value
-  )
-  
-  generatedKeywords.value = keywords
-}
-
-
-
-
-
-const toggleNGram = (n) => {
-  const index = selectedNGrams.value.indexOf(n)
-  if (index > -1) {
-    selectedNGrams.value.splice(index, 1)
-  } else {
-    selectedNGrams.value.push(n)
-    selectedNGrams.value.sort((a, b) => a - b)
-  }
-  generateKeywords()
-}
-
-
-const totalKeywords = computed(() => {
-  return Object.values(generatedKeywords.value).reduce((total, keywords) => {
-    return total + keywords.length
-  }, 0)
-})
-
-const hasKeywords = computed(() => {
-  return totalKeywords.value > 0
-})
-
-
-const nGramOptions = getNGramOptions(10)
+const store = keywordGeneratorStore()
 </script>
 
 <template>
@@ -77,10 +19,11 @@ const nGramOptions = getNGramOptions(10)
                 <!-- Input Section -->
                 <div class="ma-input-section">
                     <ma-input
-                        v-model:value="inputText"
+                        v-model:value="store.inputText"
                         type="textarea"
                         title="Application Description"
                         size="large"
+                        inputClass="resize-none h-[200px]"
                         placeholder="Enter application description here... (e.g., Facebook helps you connect and share with the people in your life.)"
                         hintText="Enter your text and click the Generate Keywords button to create n-gram keywords"
                     />
@@ -90,8 +33,8 @@ const nGramOptions = getNGramOptions(10)
                         color="dark"
                         icon="poker-cards-bulk"
                         variant="filled"
-                        @click="generateKeywords"
-                        :disabled="!inputText.trim()"
+                        @click="store.generateKeywords"
+                        :disabled="!store.inputText.trim()"
                         class="ma-generate-button"
                     >
                         Generate Keywords
@@ -107,12 +50,12 @@ const nGramOptions = getNGramOptions(10)
                         <label class="ma-selection-label">Select N-grams to Generate:</label>
                         <div class="ma-ngram-buttons">
                             <button
-                                v-for="n in nGramOptions"
+                                v-for="n in store.nGramOptions"
                                 :key="n"
-                                @click="toggleNGram(n)"
+                                @click="store.toggleNGram(n)"
                                 :class="[
                                     'ma-ngram-button',
-                                    selectedNGrams.includes(n) ? 'ma-ngram-active' : 'ma-ngram-button-inactive'
+                                    store.selectedNGrams.includes(n) ? 'ma-ngram-active' : 'ma-ngram-button-inactive'
                                 ]"
                                 :data-ngram="n"
                             >
@@ -126,27 +69,27 @@ const nGramOptions = getNGramOptions(10)
             <!-- Right Panel: Results -->
             <div class="ma-right-panel">
                 <!-- Results Section -->
-                <div v-if="hasKeywords" class="ma-results-section">
+                <div v-if="store.hasKeywords" class="ma-results-section">
                     <div class="ma-results-header">
                         <h2 class="ma-results-title">Generated Keywords</h2>
                         <div class="ma-results-count">
-                            <span>Total: {{ totalKeywords }} keywords</span>
+                            <span>Total: {{ store.totalKeywords }} keywords</span>
                         </div>
                     </div>
 
                     <div class="ma-results-content">
                         <!-- Dynamic N-gram Sections -->
                         <div 
-                            v-for="n in selectedNGrams" 
+                            v-for="n in store.selectedNGrams" 
                             :key="n"
                             class="ma-ngram-section"
                         >
                             <h3 class="ma-ngram-title">
-                                {{ n }}-gram Keywords ({{ keywordTags[`${n}-gram`]?.length || 0 }})
+                                {{ n }}-gram Keywords ({{ store.keywordTags[`${n}-gram`]?.length || 0 }})
                             </h3>
-                            <div v-if="keywordTags[`${n}-gram`]?.length > 0" class="ma-keywords-container">
+                            <div v-if="store.keywordTags[`${n}-gram`]?.length > 0" class="ma-keywords-container">
                                 <ma-tag-input
-                                    v-model:tags="keywordTags[`${n}-gram`]"
+                                    v-model:tags="store.keywordTags[`${n}-gram`]"
                                     :placeholder="`Add ${n}-gram keywords...`"
                                     prefix-icon="tag"
                                     size="sm"
@@ -162,7 +105,7 @@ const nGramOptions = getNGramOptions(10)
                 </div>
 
                 <!-- Empty State -->
-                <div v-else-if="inputText.trim()" class="ma-empty-state">
+                <div v-else-if="store.inputText.trim()" class="ma-empty-state">
                     <p>No keywords generated. Please enter some text.</p>
                 </div>
 
@@ -228,7 +171,7 @@ const nGramOptions = getNGramOptions(10)
 }
 
 .ma-input-section {
-    @apply bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-200;
+    @apply bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-200 flex flex-col gap-2;
 }
 
 .ma-generate-button-container {

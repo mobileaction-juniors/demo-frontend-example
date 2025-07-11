@@ -40,7 +40,7 @@ export function useKeywordAnalysis(staticText = '') {
   
   const totalWords = computed(() => {
     if (!inputText.value.trim()) return 0
-    return cleanText(inputText.value).length
+    return inputText.value.split(" ").length;
   })
 
   const totalItems = computed(() => analysisResults.value.length)
@@ -78,7 +78,6 @@ export function useKeywordAnalysis(staticText = '') {
     if (!inputText.value.trim()) {
       return
     }
-
 
     if (analysisMode.value === 'specific' && selectedKeywords.value.length === 0) {
       return

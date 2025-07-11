@@ -1,53 +1,27 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { MaInput, MaButton, MaSelect, MaPagination, MaProgress, MaSelect2, MaIcon } from "@mobileaction/action-kit"
-import { useKeywordAnalysis } from '../../utils/useKeywordAnalysis'
-
+import { keywordDensityStore } from '../../stores/KeywordDensityStore'
 
 const props = defineProps({
   staticText: {
     type: String,
-    default: 'This is a sample text for keyword analysis. You can analyze this text to find keywords and their frequency. The analysis will show you how often each keyword appears in the text and what percentage of the total words it represents.'
+    default: ''
   }
 })
 
-// Use the composable
-const {
-  // Reactive state
-  inputText,
-  selectedKeywords,
-  analysisResults,
-  isAnalyzing,
-  analysisMode,
-  currentPage,
-  perPage,
-  keywordOptions,
-  analysisModeOptions,
-  
-  // Computed properties
-  hasResults,
-  totalWords,
-  totalItems,
-  totalPages,
-  paginatedResults,
-  
-  // Methods
-  analyzeKeywords,
-  clearResults,
-  handlePerPageChange,
-  handleCurrentPageChange,
-  initialize
-} = useKeywordAnalysis(props.staticText)
+// Use the Pinia store
+const store = keywordDensityStore()
 
 // Computed property for button disabled state
 const isAnalyzeButtonDisabled = computed(() => {
-  return !inputText.value.trim() || 
-         (analysisMode.value === 'specific' && selectedKeywords.value.length === 0) || 
-         isAnalyzing.value
+  return !store.inputText.trim() || 
+         (store.analysisMode === 'specific' && store.selectedKeywords.length === 0) || 
+         store.isAnalyzing
 })
 
 onMounted(() => {
-  initialize(props.staticText)
+  store.initialize(props.staticText)
 })
 </script>
 
@@ -64,8 +38,8 @@ onMounted(() => {
         <!-- Analysis Mode Selection -->
         <div class="ma-input-section">
           <ma-select
-            v-model:value="analysisMode"
-            :options="analysisModeOptions"
+            v-model:value="store.analysisMode"
+            :options="store.analysisModeOptions"
             title="Analysis Mode"
             placeholder="Choose analysis mode..."
             hintText="Select whether to analyze specific keywords or all keywords in the text"
@@ -75,7 +49,7 @@ onMounted(() => {
         <!-- Text Input Section -->
         <div class="ma-input-section">
           <ma-input
-            v-model:value="inputText"
+            v-model:value="store.inputText"
             type="textarea"
             inputClass="resize-none h-55"
             title="Text to Analyze"
@@ -86,15 +60,15 @@ onMounted(() => {
         </div>
 
         <!-- Keywords Input Section (only for specific mode) -->
-        <div v-if="analysisMode === 'specific'" class="ma-input-section">
+        <div v-if="store.analysisMode === 'specific'" class="ma-input-section">
           <ma-select2
             multiple
-            :options="keywordOptions"
+            :options="store.keywordOptions"
             title="Keywords to Search"
             size="medium"
             placeholder="Select keywords from the text"
             hintText="Select the keywords you want to analyze in the text above"
-            v-model:value="selectedKeywords"
+            v-model:value="store.selectedKeywords"
             
           />
         </div>
@@ -105,19 +79,19 @@ onMounted(() => {
             color="dark"
             icon="poker-cards-bulk"
             variant="filled"
-            @click="analyzeKeywords"
+            @click="store.analyzeKeywords"
             :disabled="isAnalyzeButtonDisabled"
             class="ma-analyze-button"
           >
-            {{ isAnalyzing ? 'Analyzing...' : (analysisMode === 'specific' ? 'Analyze Keywords' : 'Analyze All Keywords') }}
+            {{ store.isAnalyzing ? 'Analyzing...' : (store.analysisMode === 'specific' ? 'Analyze Keywords' : 'Analyze All Keywords') }}
           </ma-button>
 
           <ma-button
             color="light"
             icon="tag"
             variant="outlined"
-            @click="clearResults"
-            :disabled="!hasResults"
+            @click="store.clearResults"
+            :disabled="!store.hasResults"
             class="ma-clear-button"
           >
             Clear Results
@@ -125,16 +99,16 @@ onMounted(() => {
         </div>
 
         <!-- Statistics -->
-        <div v-if="inputText.trim()" class="ma-stats-section">
+        <div v-if="store.inputText.trim()" class="ma-stats-section">
           <h3 class="ma-stats-title">Text Statistics</h3>
           <div class="ma-stats-grid">
             <div class="ma-stat-item">
               <span class="ma-stat-label">Total Words:</span>
-              <span class="ma-stat-value">{{ totalWords }}</span>
+              <span class="ma-stat-value">{{ store.totalWords }}</span>
             </div>
             <div class="ma-stat-item">
               <span class="ma-stat-label">Characters:</span>
-              <span class="ma-stat-value">{{ inputText.length }}</span>
+              <span class="ma-stat-value">{{ store.inputText.length }}</span>
             </div>
           </div>
         </div>
@@ -143,17 +117,17 @@ onMounted(() => {
       <!-- Right Panel: Results -->
       <div class="ma-right-panel">
         <!-- Results Section -->
-        <div v-if="hasResults" class="ma-results-section">
+        <div v-if="store.hasResults" class="ma-results-section">
           <div class="ma-results-header">
             <h2 class="ma-results-title">
-              {{ analysisMode === 'specific' ? 'Analysis Results' : 'All Keywords Analysis' }}
+              {{ store.analysisMode === 'specific' ? 'Analysis Results' : 'All Keywords Analysis' }}
             </h2>
             <div class="ma-results-count">
-              <span v-if="analysisMode === 'specific'">
-                Analyzed {{ totalItems }} keywords (showing page {{ currentPage }} of {{ totalPages || 1 }})
+              <span v-if="store.analysisMode === 'specific'">
+                Analyzed {{ store.totalItems }} keywords (showing page {{ store.currentPage }} of {{ store.totalPages || 1 }})
               </span>
               <span v-else>
-                {{ totalItems }} keywords found (showing page {{ currentPage }} of {{ totalPages || 1 }})
+                {{ store.totalItems }} keywords found (showing page {{ store.currentPage }} of {{ store.totalPages || 1 }})
               </span>
             </div>
           </div>
@@ -166,13 +140,12 @@ onMounted(() => {
                   <tr>
                     <th class="ma-table-header">Keyword</th>
                     <th class="ma-table-header">Count</th>
-                    <th class="ma-table-header">Percentage</th>
-                    <th class="ma-table-header">Frequency</th>
+                    <th class="ma-table-header">Density</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr 
-                    v-for="(result, index) in paginatedResults" 
+                    v-for="(result, index) in store.paginatedResults" 
                     :key="index"
                     class="ma-table-row"
                   >
@@ -190,14 +163,10 @@ onMounted(() => {
                     <td class="ma-table-cell ma-count-cell">
                       <span class="ma-count-badge">{{ result.count }}</span>
                     </td>
-                    <td class="ma-table-cell ma-percentage-cell">
-                      <span class="ma-percentage-text">{{ result.percentage }}%</span>
-                    </td>
                     <td class="ma-table-cell ma-frequency-cell">
                       <ma-progress 
                         :percent="Math.min(result.percentage, 100)" 
                         type="line"
-                        circleSize="xs"
                       />
                     </td>
                   </tr>
@@ -206,13 +175,13 @@ onMounted(() => {
             </div>
 
             <!-- Pagination -->
-            <div v-if="totalItems > 0" class="ma-pagination-section">
+            <div v-if="store.totalItems > 0" class="ma-pagination-section">
               <ma-pagination
-                :current="currentPage"
-                :perPage="perPage"
-                :total-items="totalItems"
-                @update:current="handleCurrentPageChange"
-                @update:perPage="handlePerPageChange"
+                :current="store.currentPage"
+                :perPage="store.perPage"
+                :total-items="store.totalItems"
+                @update:current="store.handleCurrentPageChange"
+                @update:perPage="store.handlePerPageChange"
               />
             </div>
 
@@ -223,20 +192,20 @@ onMounted(() => {
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Most Frequent:</span>
                   <span class="ma-summary-value">
-                    {{ analysisResults[0]?.keywords?.join(', ') || 'N/A' }} 
-                    ({{ analysisResults[0]?.count || 0 }} times)
+                    {{ store.analysisResults[0]?.keywords?.join(', ') || 'N/A' }} 
+                    ({{ store.analysisResults[0]?.count || 0 }} times)
                   </span>
                 </div>
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Total Occurrences:</span>
                   <span class="ma-summary-value">
-                    {{ analysisResults.reduce((sum, result) => sum + (result.count * result.keywords.length), 0) }}
+                    {{ store.analysisResults.reduce((sum, result) => sum + (result.count * result.keywords.length), 0) }}
                   </span>
                 </div>
                 <div class="ma-summary-item">
                   <span class="ma-summary-label">Average Percentage:</span>
                   <span class="ma-summary-value">
-                    {{ (analysisResults.length === 0 ? 0 : (analysisResults.reduce((sum, result) => sum + (result.percentage * result.keywords.length), 0) / analysisResults.reduce((sum, result) => sum + result.keywords.length, 0)).toFixed(2)) }}%
+                    {{ (store.analysisResults.length === 0 ? 0 : (store.analysisResults.reduce((sum, result) => sum + (result.percentage * result.keywords.length), 0) / store.analysisResults.reduce((sum, result) => sum + result.keywords.length, 0)).toFixed(2)) }}%
                   </span>
                 </div>
               </div>
@@ -245,7 +214,7 @@ onMounted(() => {
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="(analysisMode === 'specific' && selectedKeywords.length > 0) && !isAnalyzing" class="ma-empty-state">
+        <div v-else-if="(store.analysisMode === 'specific' && store.selectedKeywords.length > 0) && !store.isAnalyzing" class="ma-empty-state">
           <div class="ma-empty-content">
             <div class="ma-empty-icon">🔍</div>
             <h3>No Keywords Found</h3>
@@ -258,7 +227,7 @@ onMounted(() => {
           <div class="ma-initial-content">
             <ma-icon name="flag-tr" size="large" />
             <h3>Ready to Analyze Keywords</h3>
-            <p v-if="analysisMode === 'specific'">
+            <p v-if="store.analysisMode === 'specific'">
               Select keywords from the left panel and click "Analyze Keywords" to see frequency and percentage data.
             </p>
             <p v-else>
@@ -295,11 +264,11 @@ onMounted(() => {
 }
 
 .ma-left-panel {
-  @apply lg:w-1/2 space-y-6 lg:overflow-y-auto;
+  @apply lg:w-1/3 space-y-6 lg:overflow-y-auto;
 }
 
 .ma-right-panel {
-  @apply lg:w-1/2 flex flex-col lg:h-full;
+  @apply lg:w-2/3 flex flex-col lg:h-full;
 }
 
 .ma-input-section {
@@ -343,7 +312,7 @@ onMounted(() => {
 }
 
 .ma-results-section {
-  @apply bg-white rounded-lg shadow-sm border border-gray-200 flex-1 flex flex-col min-h-0;
+  @apply  bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col;
 }
 
 .ma-results-header {
@@ -359,11 +328,11 @@ onMounted(() => {
 }
 
 .ma-results-content {
-  @apply p-6 flex-1 flex flex-col min-h-0 overflow-hidden;
+  @apply p-6 flex flex-col;
 }
 
 .ma-table-container {
-  @apply overflow-x-auto flex-1 overflow-y-auto;
+  @apply overflow-x-auto overflow-y-auto max-h-[300px];
 }
 
 .ma-results-table {
