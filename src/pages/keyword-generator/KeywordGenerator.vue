@@ -46,7 +46,6 @@ const clearInput = () => {
             <template #default>
                 <MaInput
                     v-model:value="inputText"
-                    @update:value="generateKeywordsFromInput"
                     type="textarea"
                     placeholder="Paste your app description here..."
                     size="large"
@@ -54,6 +53,14 @@ const clearInput = () => {
                     class="ma-text-input"
                 />
                 <div class="ma-controls">
+                    <MaButton 
+                        @click="generateKeywordsFromInput" 
+                        size="medium" 
+                        variant="stroke"
+                        icon="rocket-bulk"
+                    >
+                        Generate Keywords
+                    </MaButton>
                     <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
                     <MaCheckbox2
                         v-model:checked="eliminateUnwanted"
@@ -120,7 +127,7 @@ const clearInput = () => {
         }
 
         .ma-controls {
-            @apply flex items-center gap-4 flex-wrap;
+            @apply flex items-center gap-4 flex-wrap justify-start;
         }
 
         .ma-ngram-grid {
