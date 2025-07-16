@@ -45,76 +45,52 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
 
 <style lang="scss" scoped>
 .ma-home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-    padding: 3rem 1rem;
-    min-height: 80vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    @apply flex flex-col items-center gap-8 p-12 px-4 min-h-[80vh] bg-gradient-to-br from-gray-50 to-gray-200;
 }
 
 .ma-tool-card {
-    width: 100%;
-    max-width: 400px;
-    transition: all 0.3s ease;
+    @apply w-full max-w-sm transition-all duration-300 ease-in-out;
     
     &:hover {
-        transform: translateY(-4px);
+        @apply -translate-y-1;
     }
     
     &.ma-tool-card-placeholder {
-        opacity: 0.7;
+        @apply opacity-70;
         
         &:hover {
-            transform: translateY(-2px);
-            opacity: 0.8;
+            @apply -translate-y-0.5 opacity-80;
         }
     }
 
     .ma-tool-content {
-        text-align: center;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        @apply text-center p-8 flex flex-col justify-center items-center;
     }
 
     .ma-tool-icon {
-        margin-bottom: 1.5rem;
-        color: #14b8a6;
+        @apply mb-6 text-teal-600;
     }
 
     .ma-tool-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 1rem;
+        @apply text-2xl font-semibold text-gray-700 mb-4;
     }
 
     .ma-tool-desc {
-        font-size: 1rem;
-        color: #718096;
-        margin-bottom: 2rem;
-        line-height: 1.5;
+        @apply text-base text-gray-500 mb-8 leading-relaxed;
     }
 
     .ma-tool-button {
-        width: 100%;
+        @apply w-full;
     }
 }
 
 @media (min-width: 768px) {
     .ma-home-container {
-        flex-direction: row;
-        justify-content: center;
-        gap: 3rem;
-        padding: 4rem 2rem;
+        @apply flex-row justify-center gap-12 py-16 px-8;
     }
     
     .ma-tool-card {
-        max-width: 350px;
+        @apply max-w-sm;
     }
 }
 </style>
