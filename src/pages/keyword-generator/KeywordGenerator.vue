@@ -54,10 +54,10 @@ const clearInput = () => {
                 />
                 <div class="ma-controls">
                     <MaButton 
-                        @click="generateKeywordsFromInput" 
                         size="medium" 
                         variant="stroke"
                         icon="rocket-bulk"
+                        @click="generateKeywordsFromInput"
                     >
                         Generate Keywords
                     </MaButton>

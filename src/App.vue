@@ -13,7 +13,7 @@ import TheHeader from './components/TheHeader.vue';
 .ma-app-container { 
     @apply flex flex-col min-h-screen;
     .ma-main-content { 
-        @apply flex-grow w-full mx-auto pt-20 px-5 pb-5;
+        @apply flex-grow w-full mx-auto p-5 pt-20;
     } 
 }
 
