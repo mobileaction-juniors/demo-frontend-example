@@ -11,14 +11,9 @@ import TheHeader from './components/TheHeader.vue';
 
 <style lang="scss" scoped>
 .ma-app-container { 
-    display: flex; 
-    flex-direction: column; 
-    min-height: 100vh;
+    @apply flex flex-col min-h-screen;
     .ma-main-content { 
-        flex-grow: 1; 
-        width: 100%; 
-        margin: 0 auto;
-        padding: 80px 20px 20px 20px;
+        @apply flex-grow w-full mx-auto pt-20 px-5 pb-5;
     } 
 }
 

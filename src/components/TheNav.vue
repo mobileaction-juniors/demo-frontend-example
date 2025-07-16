@@ -57,18 +57,7 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
 
 <style lang="scss" scoped>
 .ma-navbar {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background-color: white;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    gap: 0.25rem;
-    z-index: 50;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    @apply sticky top-0 w-full bg-white border-b border-gray-200 flex justify-start items-center px-6 py-3 gap-1 z-50 shadow-sm;
 }
 
 </style>

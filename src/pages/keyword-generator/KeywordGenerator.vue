@@ -107,87 +107,63 @@ const clearInput = () => {
 
 <style lang="scss" scoped>
 .ma-container {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    padding: 1rem;
+    @apply mt-4 flex flex-wrap gap-6 p-4;
 
     .ma-input-card,
     .ma-results-card {
-        flex: 1;
-        min-width: 320px;
+        @apply flex-1 min-w-80;
     }
 
     .ma-input-card {
         :deep(.ak-card__body) {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
+            @apply flex flex-col gap-5;
         }
 
         .ma-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            @apply flex items-center gap-4 flex-wrap;
         }
 
         .ma-ngram-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.5rem;
-            max-width: 24rem;
-            margin-top: 0.75rem;
+            @apply grid grid-cols-5 gap-2 max-w-96 mt-3;
         }
     }
 
     .ma-results-card {
         .ma-results-content {
-            width: 100%;
+            @apply w-full;
         }
 
         .ma-ngram-section {
-            margin-bottom: 1rem;
+            @apply mb-4;
             
             &:last-child {
-                margin-bottom: 0;
+                @apply mb-0;
             }
         }
 
         .ma-ngram-heading {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
+            @apply text-lg font-semibold mb-3 pb-2 border-b border-gray-200;
         }
 
         .ma-keywords-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            @apply flex flex-wrap gap-2;
         }
 
         .ma-keyword-badge {
-            margin: 0.125rem;
+            @apply m-0.5;
         }
 
         .ma-placeholder-text {
-            color: #6b7280;
-            font-size: 0.875rem;
-            font-style: italic;
-            padding: 0.5rem 0;
+            @apply text-gray-500 text-sm italic py-2;
         }
 
         .ma-empty-state {
-            width: 100%;
-            padding: 2rem 0;
+            @apply w-full py-8;
         }
     }
 
     .ma-text-input {
-        width: 100%;
+        @apply w-full;
     }
 }
 </style>
