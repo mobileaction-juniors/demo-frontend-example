@@ -1,8 +1,7 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { MaInput, MaButton, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaBadge, MaEmpty, MaCheckbox2 as MaCheckbox, MaPagination } from '@mobileaction/action-kit'
-import { cleanDescription } from '@/utils/CleanDescription';
-import { useKeywordDensity } from '@/composables/useKeywordDensity';
+import { onMounted } from 'vue';
+import { MaInput, MaButton, MaCard, MaTooltip2 as MaTooltip, MaBadge, MaEmpty, MaCheckbox2 as MaCheckbox, MaPagination } from '@mobileaction/action-kit'
+import { useKeywordDensityPageStore } from '@/stores/keywordDensityStore';
 
 const props = defineProps({
   defaultText: {
@@ -11,116 +10,11 @@ const props = defineProps({
   },
 });
 
-const PAGINATION_OPTIONS = [10, 20, 50, 100];
-
-const perPage = ref(10);
-const currentPage = ref(1);
-const input = ref('');
-const isInputChanged = ref(false);
-const removeStopWords = ref(true);
-const tableData = ref([]);
-const stats = ref({
-  charCount: 0,
-  wordCount: 0,
-  uniqueCount: 0,
-  mostFrequent: '',
-  highestDensity: '0.0',
-});
-const copied = ref(false);
-const freqMap = ref({});
-const uniqueKeywords = ref([]);
-
-const cleanedInput = computed(() => cleanDescription(input.value).trim().toLowerCase().split(/\s+/).filter(Boolean));
-
-const inputInfo = computed(() => {
-  const charCount = input.value.trim().length;
-  const wordCount = cleanedInput.value.length;
-  return charCount + ' characters, ' + wordCount + ' words';
-});
-
-const { analyzeKeywords: analyzeKeywordsComposable, updateTableData: updateTableDataComposable } = useKeywordDensity();
-
-function analyzeKeywords(showNotification = true) {
-  analyzeKeywordsComposable(input, removeStopWords, freqMap, uniqueKeywords, stats, isInputChanged);
-  
-  updateTableData();
-  copied.value = false;
-  
-  if (showNotification) {
-    MaNotification.success({
-      size: "large",
-      variant: "filled",
-      title: "Analyzed",
-      description: "Keywords analyzed successfully",
-      type: "success",
-      duration: 3000,
-      placement: 'topRight'
-    });
-  }
-}
-
-function updateTableData() {
-  tableData.value = updateTableDataComposable(uniqueKeywords, freqMap, stats.value.wordCount, currentPage.value, perPage.value);
-}
-
-const clearAll = () => {
-  input.value = '';
-  tableData.value = [];
-  stats.value = {
-    charCount: 0,
-    wordCount: 0,
-    uniqueCount: 0,
-    mostFrequent: '',
-    highestDensity: '0.0',
-  };
-  MaNotification.info({
-    size: "large",
-    variant: "filled",
-    title: "Cleared",
-    description: "All data has been cleared",
-    type: "info",
-    duration: 3000,
-    placement: 'topRight'
-  });
-}
-
-function copyResults() {
-  navigator.clipboard.writeText(JSON.stringify(tableData.value));
-  MaNotification.success({
-    size: "large",
-    variant: "filled",
-    title: "Copied",
-    description: "Results copied to clipboard",
-    type: "success",
-    duration: 3000,
-    placement: 'topRight'
-  });
-  copied.value = true;
-  setTimeout(() => {
-    copied.value = false;
-  }, 5000);
-}
-
-function onStopWordsToggle(checked) {
-  removeStopWords.value = checked;
-  isInputChanged.value = true;
-}
-
-function onPageChange(page) {
-  currentPage.value = page;
-  updateTableData();
-}
-
-function onPerPageChange(value) {
-  perPage.value = value;
-  currentPage.value = 1;
-  updateTableData();
-}
+const store = useKeywordDensityPageStore();
 
 onMounted(() => {
   if (props.defaultText && props.defaultText.trim().length > 0) {
-    input.value = props.defaultText;
-    analyzeKeywords(false);
+    store.setDefaultText(props.defaultText);
   }
 });
 
@@ -144,10 +38,10 @@ onMounted(() => {
                         class="ma-text-input"
                         type="textarea"
                         placeholder="Enter your text here"
-                        :value="input"
-                        @update:value="input = $event"
+                        :value="store.input"
+                        @update:value="store.input = $event"
                         size="large"
-                        @change="isInputChanged = true"
+                        @change="store.isInputChanged = true"
                     />
                     <MaTooltip class="ma-ngram-checkbox">
                         <template #title>
@@ -157,8 +51,8 @@ onMounted(() => {
                             E.g. "a", "an", "the", "and", "is", "in", "of", "for"...
                         </template>
                         <MaCheckbox
-                            :checked="removeStopWords"
-                            @change="checked => onStopWordsToggle(checked)"
+                            :checked="store.removeStopWords"
+                            @change="checked => store.onStopWordsToggle(checked)"
                             class="ma-ngram-checkbox"
                             >
                             Remove common stop words
@@ -167,36 +61,36 @@ onMounted(() => {
                 </template>
                 <template #footer>
                     <div class="ma-button-container">
-                        <div class="ma-description-count">{{ inputInfo }}</div>
+                        <div class="ma-description-count">{{ store.inputInfo }}</div>
                         <div class="ma-button-container-right">
                             <MaTooltip mouseEnterDelay=200>
                             <template #title>
                                 Clear all data
                             </template>
-                            <MaButton :size="medium" variant="stroke" :disabled="!input.trim()" @click="clearAll">Clear</MaButton>
+                            <MaButton :size="medium" variant="stroke" :disabled="!store.input.trim()" @click="store.clearAll">Clear</MaButton>
                             </MaTooltip>
                             <MaTooltip mouseEnterDelay=200>
                             <template #title>
                                 Analyze keywords
                             </template>
-                                <MaButton :size="medium" :variant="isInputChanged ? 'filled' : 'stroke'" icon="favorite-chart" :disabled="!input.trim() && !isInputChanged" :color="isInputChanged ? 'green' : 'dark'" @click="analyzeKeywords">Analyze Keywords</MaButton>
+                                <MaButton :size="medium" :variant="store.isInputChanged ? 'filled' : 'stroke'" icon="favorite-chart" :disabled="!store.input.trim() && !store.isInputChanged" :color="store.isInputChanged ? 'green' : 'dark'" @click="store.analyzeKeywords">Analyze Keywords</MaButton>
                             </MaTooltip>
                         </div>
                     </div>
                 </template>
             </MaCard>
-            <MaCard class="ma-card" title="Keyword Analysis Results" :description="stats.uniqueCount + ' unique keywords found in ' + stats.wordCount + ' total words'">
+            <MaCard class="ma-card" title="Keyword Analysis Results" :description="store.stats.uniqueCount + ' unique keywords found in ' + store.stats.wordCount + ' total words'">
                 <template #headerActions>
                     <MaButton
                       :size="medium"
-                      :variant="copied ? 'lighter' : 'stroke'"
-                      :icon="copied ? 'check' : 'clipboard'"
-                      @click="copyResults"
+                      :variant="store.copied ? 'lighter' : 'stroke'"
+                      :icon="store.copied ? 'check' : 'clipboard'"
+                      @click="store.copyResults"
                     >
                       Copy Results
                     </MaButton>
                 </template>
-                <div v-if="tableData.length > 0" class="ma-keyword-density-table">
+                <div v-if="store.tableData.length > 0" class="ma-keyword-density-table">
                     <table class="ma-table">
                         <thead class="ma-thead">
                             <tr>
@@ -207,7 +101,7 @@ onMounted(() => {
                             </tr>
                         </thead>
                         <tbody class="ma-tbody">
-                            <tr v-for="row in tableData" :key="row.keyword" class="ma-tr">
+                            <tr v-for="row in store.tableData" :key="row.keyword" class="ma-tr">
                             <td class="ma-td">
                                 <MaBadge 
                                 class="ma-keyword-badge" 
@@ -235,14 +129,14 @@ onMounted(() => {
                 <MaEmpty v-else description="No keywords found" animation="no-data-found" size="medium" />
                 <template #footer>
                     <MaPagination
-                        v-if="stats.uniqueCount > 0"
+                        v-if="store.stats.uniqueCount > 0"
                         rounded=true
-                        :options="PAGINATION_OPTIONS"
-                        :current="currentPage"
-                        :perPage="perPage"
-                        :totalItems="stats.uniqueCount"
-                        @change="onPageChange"
-                        @update:perPage="onPerPageChange"
+                        :options="store.PAGINATION_OPTIONS"
+                        :current="store.currentPage"
+                        :perPage="store.perPage"
+                        :totalItems="store.stats.uniqueCount"
+                        @change="store.onPageChange"
+                        @update:perPage="store.onPerPageChange"
                     />
                 </template>
             </MaCard>
@@ -250,19 +144,19 @@ onMounted(() => {
         <div class="ma-keyword-generator-layout-right">
             <MaCard class="ma-card" title="Analysis Statistics" description="Overview of your text analysis">
                 <div class="ma-stats-list">
-                    <div class="ma-stats-row"><span>Total Words</span><span><MaBadge class="ma-badge">{{ stats.wordCount }}</MaBadge></span></div>
-                    <div class="ma-stats-row"><span>Unique Keywords</span><span><MaBadge class="ma-badge">{{ stats.uniqueCount }}</MaBadge></span></div>
-                    <div class="ma-stats-row"><span>Characters</span><span><MaBadge class="ma-badge">{{ stats.charCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Total Words</span><span><MaBadge class="ma-badge">{{ store.stats.wordCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Unique Keywords</span><span><MaBadge class="ma-badge">{{ store.stats.uniqueCount }}</MaBadge></span></div>
+                    <div class="ma-stats-row"><span>Characters</span><span><MaBadge class="ma-badge">{{ store.stats.charCount }}</MaBadge></span></div>
                 </div>
                 <template #footer>
                 <div class="ma-stats-list">
                   <div class="ma-stats-row"><span>Most Frequent</span><span>
-                      <div v-if="stats.mostFrequent && stats.mostFrequent.length" class="ma-most-frequent-badges">
-                        <MaBadge v-for="word in stats.mostFrequent" :key="word">{{ word }}</MaBadge>
+                      <div v-if="store.stats.mostFrequent && store.stats.mostFrequent.length" class="ma-most-frequent-badges">
+                        <MaBadge v-for="word in store.stats.mostFrequent" :key="word">{{ word }}</MaBadge>
                       </div>
                     </span>
                   </div>
-                  <div class="ma-stats-row"><span>Highest Density</span><span><MaBadge class="ma-badge">{{ stats.highestDensity }}%</MaBadge></span></div>
+                  <div class="ma-stats-row"><span>Highest Density</span><span><MaBadge class="ma-badge">{{ store.stats.highestDensity }}%</MaBadge></span></div>
                 </div>
                 </template>
             </MaCard>

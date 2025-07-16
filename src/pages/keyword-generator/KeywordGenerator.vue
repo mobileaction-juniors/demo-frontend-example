@@ -1,118 +1,12 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard, MaNotification, MaTooltip2 as MaTooltip, MaEmpty, MaModal } from '@mobileaction/action-kit'
-import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription';
+import { onMounted, onUnmounted } from 'vue';
+import { MaInput, MaCheckbox2 as MaCheckbox, MaButton, MaBadge, MaCard, MaTooltip2 as MaTooltip, MaEmpty, MaModal } from '@mobileaction/action-kit'
+import { useKeywordGeneratorPageStore } from '@/stores/keywordGeneratorStore';
 
-const N_GRAM_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-const input = ref('');
-const n_grams = ref([1, 2, 3]);
-const removeStopWords = ref(true);
-const ngramsResult = ref([]);
-const isInputChanged = ref(false);
-const showModal = ref(false);
-const windowWidth = ref(window.innerWidth);
-
-const isMobile = computed(() => windowWidth.value <= 768);
-
-const filteredNgramsResult = computed(() =>
-  ngramsResult.value
-    .filter(ngram => ngram.keywords.length > 0)
-    .sort((a, b) => a.n - b.n)
-);
-
-const cleanedInput = computed(() => cleanDescription(input.value).trim().toLowerCase().split(/\s+/).filter(Boolean));
-
-const inputInfo = computed(() => {
-  const charCount = input.value.trim().length;
-  const wordCount = cleanedInput.value.length;
-  return charCount +' characters, '+ wordCount +' words'
-})
-
-
-const clearAll = () => {
-    input.value = '';
-    ngramsResult.value = [];
-    MaNotification.info({
-    size: "large",
-    variant: "filled",
-    title: "Cleared",
-    description: "All data has been cleared",
-    type: "info",
-    duration: 3000,
-    placement: 'topRight'
-  })
-}
-
-const convert = () => {
-  isInputChanged.value = false;
-
-  let words = cleanedInput.value;
-
-  const stopWords = cleanStopWords(input.value);
-  words = words.filter(w => {
-    if (removeStopWords.value && stopWords.includes(w)) return false;
-    return true;
-  });
-
-  ngramsResult.value = n_grams.value.map(n => ({
-    n,
-    keywords: getNGrams(words, n)
-  }));
-
-  if (filteredNgramsResult.value.length > 0) {
-    MaNotification.success({
-    size:"large",
-    variant:"filled",
-    title:"Keywords generated successfully",
-    description:filteredNgramsResult.value.length + " keywords generated",
-    type:"success",
-    duration: 3000,
-    placement: 'topRight'
-  })
-  } else {
-    MaNotification.error({
-    size:"large",
-    variant:"filled",
-    title:"No keywords generated",
-    description:"Input is empty or contains only stop words",
-    type:"error",
-    duration: 3000,
-    placement: 'topRight'
-    })
-  }
-}
-
-function getNGrams(words, n) {
-  if (words.length < n) return [];
-  const result = [];
-  for (let i = 0; i <= words.length - n; i++) {
-    result.push(words.slice(i, i + n).join(' '));
-  }
-  return Array.from(new Set(result));
-}
-
-function onNgramToggle(ngram, checked) {
-  if (checked && !n_grams.value.includes(ngram)) {
-    n_grams.value.push(ngram);
-  } else if (!checked) {
-    n_grams.value = n_grams.value.filter(n => n != ngram);
-  }
-  isInputChanged.value = true;
-}
-
-function onStopWordsToggle(checked) {
-  removeStopWords.value = checked;
-  isInputChanged.value = true;
-}
-
-function onModalOk() {
-  convert();
-  showModal.value = false;
-}
+const store = useKeywordGeneratorPageStore();
 
 function handleResize() {
-  windowWidth.value = window.innerWidth;
+  store.handleResize();
 }
 
 onMounted(() => {
@@ -142,10 +36,10 @@ onUnmounted(() => {
                  class="ma-text-input"
                  type="textarea"
                  placeholder="Enter your text here"
-                 :value="input"
-                 @update:value="input = $event"
+                 :value="store.input"
+                 @update:value="store.input = $event"
                  size="large"
-                 @change="isInputChanged = true"
+                 @change="store.isInputChanged = true"
                />
                <MaTooltip class="ma-ngram-checkbox">
                     <template #title>
@@ -155,8 +49,8 @@ onUnmounted(() => {
                       E.g. "a", "an", "the", "and", "is", "in", "of", "for"...
                     </template>
                     <MaCheckbox
-                      :checked="removeStopWords"
-                      @change="checked => onStopWordsToggle(checked)"
+                      :checked="store.removeStopWords"
+                      @change="checked => store.onStopWordsToggle(checked)"
                       class="ma-ngram-checkbox"
                       >
                       Remove common stop words
@@ -165,19 +59,19 @@ onUnmounted(() => {
              </template>
              <template #footer>
                <div class="ma-button-container">
-                 <div class="ma-description-count">{{ inputInfo }}</div>
+                 <div class="ma-description-count">{{ store.inputInfo }}</div>
                  <div class="ma-button-container-right">
                     <MaTooltip mouseEnterDelay=200>
                       <template #title>
                         Clear all data
                       </template>
-                      <MaButton :size="medium" variant="stroke" :disabled="!input.trim()" @click="clearAll">Clear</MaButton>
+                      <MaButton :size="medium" variant="stroke" :disabled="!store.input.trim()" @click="store.clearAll">Clear</MaButton>
                     </MaTooltip>
                     <MaTooltip mouseEnterDelay=200>
                       <template #title>
                         Extract keywords
                       </template>
-                        <MaButton :size="medium" :variant="isInputChanged ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!input.trim() && !isInputChanged" :color="isInputChanged ? 'green' : 'dark'" @click="convert">Apply</MaButton>
+                        <MaButton :size="medium" :variant="store.isInputChanged ? 'filled' : 'stroke'" icon="arrow-right" :disabled="!store.input.trim() && !store.isInputChanged" :color="store.isInputChanged ? 'green' : 'dark'" @click="store.convert">Apply</MaButton>
                     </MaTooltip>
                   </div>
                </div>
@@ -185,10 +79,10 @@ onUnmounted(() => {
            </MaCard>
         <MaCard class="ma-card" title="Keywords" description="Generated keywords from your text.">
           <template #headerActions>
-            <MaButton v-if="isMobile" :size="medium" variant="stroke" @click="showModal = true">Choose n-grams</MaButton>
+            <MaButton v-if="store.isMobile" :size="medium" variant="stroke" @click="store.showModal = true">Choose n-grams</MaButton>
           </template>
-            <div v-if="filteredNgramsResult.length > 0" class="ma-ngram-container">
-                <div class="ma-ngram-item" v-for="ngram in filteredNgramsResult" :key="ngram.n">
+            <div v-if="store.filteredNgramsResult.length > 0" class="ma-ngram-container">
+                <div class="ma-ngram-item" v-for="ngram in store.filteredNgramsResult" :key="ngram.n">
                     <div class="ma-ngram-item-title">
                         {{ ngram.n }}-gram <span class="ma-ngram-item-title-count">{{ ngram.keywords.length }}</span>
                     </div>
@@ -209,14 +103,14 @@ onUnmounted(() => {
             <div v-else class="ma-result-description"><MaEmpty description="No keywords generated" animation="no-data-found" size="medium" /></div>
         </MaCard>
         </div>
-        <div v-if="!isMobile" class="ma-keyword-generator-layout-right">
+        <div v-if="!store.isMobile" class="ma-keyword-generator-layout-right">
             <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
                 <div class="ma-ngram-selection-container">
                     <MaCheckbox
-                      v-for="ngram in N_GRAM_OPTIONS"
+                      v-for="ngram in store.N_GRAM_OPTIONS"
                       :key="ngram"
-                      :checked="n_grams.includes(ngram)"
-                      @change="checked => onNgramToggle(ngram, checked)"
+                      :checked="store.n_grams.includes(ngram)"
+                      @change="checked => store.onNgramToggle(ngram, checked)"
                       class="ma-ngram-checkbox"
                     >
                       {{ngram}}-gram
@@ -224,13 +118,13 @@ onUnmounted(() => {
                 </div>
             </MaCard>
         </div>
-        <MaModal :visible="showModal" title="N-gram Selection" :width="360" closable=true okText="Apply" @ok="onModalOk" @closed="showModal = false">
+        <MaModal :visible="store.showModal" title="N-gram Selection" :width="360" closable=true okText="Apply" @ok="store.onModalOk" @closed="store.showModal = false">
                 <div class="ma-ngram-selection-container">
                     <MaCheckbox
-                      v-for="ngram in N_GRAM_OPTIONS"
+                      v-for="ngram in store.N_GRAM_OPTIONS"
                       :key="ngram"
-                      :checked="n_grams.includes(ngram)"
-                      @change="checked => onNgramToggle(ngram, checked)"
+                      :checked="store.n_grams.includes(ngram)"
+                      @change="checked => store.onNgramToggle(ngram, checked)"
                       class="ma-ngram-checkbox"
                     >
                       {{ngram}}-gram
@@ -335,7 +229,7 @@ onUnmounted(() => {
 }
 
 .ma-card {
-  @apply border border-gray-200 rounded-lg shadow-sm sm:shadow-md;
+  @apply border border-gray-200 rounded-lg;
 }
 
 .ma-text-input {
