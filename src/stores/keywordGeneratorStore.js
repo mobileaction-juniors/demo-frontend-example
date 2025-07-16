@@ -1,136 +1,150 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import { MaNotification } from '@mobileaction/action-kit'
 import { cleanDescription, cleanStopWords } from '@/utils/CleanDescription'
 
-export const useKeywordGeneratorPageStore = defineStore('keywordGeneratorPage', {
-  state: () => ({
-    N_GRAM_OPTIONS: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    input: '',
-    n_grams: [1, 2, 3],
-    removeStopWords: true,
-    isInputChanged: false,
-    showModal: false,
+export const useKeywordGeneratorPageStore = defineStore('keywordGeneratorPage', () => {
+  const N_GRAM_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const input = ref('')
+  const n_grams = ref([1, 2, 3])
+  const removeStopWords = ref(true)
+  const isInputChanged = ref(false)
+  const showModal = ref(false)
+  const ngramsResult = ref([])
+  const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 
-    ngramsResult: [],
+  const isMobile = computed(() => windowWidth.value <= 768)
 
-    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 0
-  }),
+  const cleanedInput = computed(() =>
+    cleanDescription(input.value)
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+  )
 
-  getters: {
-    isMobile: s => s.windowWidth <= 768,
+  const inputInfo = computed(() => {
+    const cleaned = cleanDescription(input.value)
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+    return `${input.value.trim().length} characters, ${cleaned.length} words`
+  })
 
-    cleanedInput: s =>
-      cleanDescription(s.input)
-        .trim()
-        .toLowerCase()
-        .split(/\s+/)
-        .filter(Boolean),
+  const filteredNgramsResult = computed(() =>
+    ngramsResult.value
+      .filter(r => r.keywords.length)
+      .sort((a, b) => a.n - b.n)
+  )
 
-    inputInfo: (s) => {
-      const cleanedInput = cleanDescription(s.input)
-        .trim()
-        .toLowerCase()
-        .split(/\s+/)
-        .filter(Boolean);
-      return `${s.input.trim().length} characters, ${cleanedInput.length} words`;
-    },
+  function getNGrams(words, n) {
+    if (words.length < n) return []
+    const result = []
+    for (let i = 0; i <= words.length - n; i++) {
+      result.push(words.slice(i, i + n).join(' '))
+    }
+    return Array.from(new Set(result))
+  }
 
-    filteredNgramsResult: s =>
-      s.ngramsResult
-        .filter(r => r.keywords.length)
-        .sort((a, b) => a.n - b.n)
-  },
+  function convert() {
+    isInputChanged.value = false
 
-  actions: {
-    getNGrams(words, n) {
-      if (words.length < n) return [];
-      const result = [];
-      for (let i = 0; i <= words.length - n; i++) {
-        result.push(words.slice(i, i + n).join(' '));
-      }
-      return Array.from(new Set(result));
-    },
-    
-    convert() {
-      this.isInputChanged = false
+    let words = [...cleanedInput.value]
 
-      let words = [...this.cleanedInput]
+    if (removeStopWords.value) {
+      const stopWords = cleanStopWords(input.value)
+      words = words.filter(w => !stopWords.includes(w))
+    }
 
-      if (this.removeStopWords) {
-        const stopWords = cleanStopWords(this.input)
-        words = words.filter(w => !stopWords.includes(w))
-      }
+    ngramsResult.value = n_grams.value.map(n => ({
+      n,
+      keywords: getNGrams(words, n)
+    }))
 
-      this.ngramsResult = this.n_grams.map(n => ({
-        n,
-        keywords: this.getNGrams(words, n)
-      }))
-
-      if (this.filteredNgramsResult.length) {
-        MaNotification.success({
-          size: 'large',
-          variant: 'filled',
-          title: 'Keywords generated',
-          description:
-            this.filteredNgramsResult.length + ' groups generated successfully',
-          type: 'success',
-          duration: 3000,
-          placement: 'topRight'
-        })
-      } else {
-        MaNotification.error({
-          size: 'large',
-          variant: 'filled',
-          title: 'No keywords',
-          description: 'Input is empty or contains only stop words',
-          type: 'error',
-          duration: 3000,
-          placement: 'topRight'
-        })
-      }
-    },
-
-    clearAll() {
-      this.$patch({
-        input: '',
-        ngramsResult: [],
-        isInputChanged: false
-      })
-
-      MaNotification.info({
+    if (filteredNgramsResult.value.length) {
+      MaNotification.success({
         size: 'large',
         variant: 'filled',
-        title: 'Cleared',
-        description: 'All data has been cleared',
-        type: 'info',
+        title: 'Keywords generated',
+        description:
+          filteredNgramsResult.value.length + ' groups generated successfully',
+        type: 'success',
         duration: 3000,
         placement: 'topRight'
       })
-    },
+    } else {
+      MaNotification.error({
+        size: 'large',
+        variant: 'filled',
+        title: 'No keywords',
+        description: 'Input is empty or contains only stop words',
+        type: 'error',
+        duration: 3000,
+        placement: 'topRight'
+      })
+    }
+  }
 
-    onNgramToggle(ngram, checked) {
-      if (checked && !this.n_grams.includes(ngram)) {
-        this.n_grams.push(ngram)
-      } else if (!checked) {
-        this.n_grams = this.n_grams.filter(n => n !== ngram)
-      }
-      this.isInputChanged = true
-    },
+  function clearAll() {
+    input.value = ''
+    ngramsResult.value = []
+    isInputChanged.value = false
 
-    onStopWordsToggle(checked) {
-      this.removeStopWords = checked
-      this.isInputChanged = true
-    },
+    MaNotification.info({
+      size: 'large',
+      variant: 'filled',
+      title: 'Cleared',
+      description: 'All data has been cleared',
+      type: 'info',
+      duration: 3000,
+      placement: 'topRight'
+    })
+  }
 
-    onModalOk() {
-      this.convert()
-      this.showModal = false
-    },
+  function onNgramToggle(ngram, checked) {
+    if (checked && !n_grams.value.includes(ngram)) {
+      n_grams.value.push(ngram)
+    } else if (!checked) {
+      n_grams.value = n_grams.value.filter(n => n !== ngram)
+    }
+    isInputChanged.value = true
+  }
 
-    handleResize() {
-      this.windowWidth =
-        typeof window !== 'undefined' ? window.innerWidth : this.windowWidth
-    },
+  function onStopWordsToggle(checked) {
+    removeStopWords.value = checked
+    isInputChanged.value = true
+  }
 
+  function onModalOk() {
+    convert()
+    showModal.value = false
+  }
+
+  function handleResize() {
+    windowWidth.value =
+      typeof window !== 'undefined' ? window.innerWidth : windowWidth.value
+  }
+
+  return {
+    N_GRAM_OPTIONS,
+    input,
+    n_grams,
+    removeStopWords,
+    isInputChanged,
+    showModal,
+    ngramsResult,
+    windowWidth,
+    isMobile,
+    cleanedInput,
+    inputInfo,
+    filteredNgramsResult,
+    getNGrams,
+    convert,
+    clearAll,
+    onNgramToggle,
+    onStopWordsToggle,
+    onModalOk,
+    handleResize
   }
 })
