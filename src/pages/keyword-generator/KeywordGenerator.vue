@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
 import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge } from '@mobileaction/action-kit';
 
@@ -7,6 +7,14 @@ const inputText = ref('');
 const selectedNGrams = ref([1, 2, 3]);
 const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
+const shouldHighlight = ref(false);
+
+// Store last generation state to compare
+const lastGenerationState = ref({
+    text: '',
+    ngrams: [],
+    unwanted: true
+});
 
 const keywordTags = computed(() => {
     return selectedNGrams.value.reduce((acc, n) => {
@@ -20,6 +28,14 @@ const generateKeywordsFromInput = () => {
     const keywords = generateKeywords(inputText.value,
     selectedNGrams.value, eliminateUnwanted.value);
     generatedKeywords.value = keywords;
+    shouldHighlight.value = false;
+    
+    // Update last generation state
+    lastGenerationState.value = {
+        text: inputText.value,
+        ngrams: [...selectedNGrams.value],
+        unwanted: eliminateUnwanted.value
+    };
   };
 
 
@@ -31,13 +47,28 @@ const toggleNGram = (n) => {
         selectedNGrams.value.push(n);
         selectedNGrams.value.sort((a, b) => a - b);
     }
-    generateKeywordsFromInput();
+    shouldHighlight.value = true;
 };
 
 const clearInput = () => {
     inputText.value = '';
     generatedKeywords.value = {};
+    shouldHighlight.value = false;
 };
+
+watch(inputText, () => {
+    shouldHighlight.value = true;
+});
+
+watch(eliminateUnwanted, () => {
+    const hasChanged = eliminateUnwanted.value !== lastGenerationState.value.unwanted;
+    shouldHighlight.value = hasChanged;
+});
+
+watch(selectedNGrams, () => {
+    const hasChanged = JSON.stringify(selectedNGrams.value.sort()) !== JSON.stringify(lastGenerationState.value.ngrams.sort());
+    shouldHighlight.value = hasChanged;
+}, { deep: true });
 </script>
 
 <template>
@@ -54,14 +85,23 @@ const clearInput = () => {
                 />
                 <div class="ma-controls">
                     <MaButton 
+                        color="green"
                         size="medium" 
                         variant="stroke"
                         icon="rocket-bulk"
+                        :highlight="shouldHighlight"
                         @click="generateKeywordsFromInput"
                     >
                         Generate Keywords
                     </MaButton>
-                    <MaButton @click="clearInput" size="medium" variant="stroke">Clear</MaButton>
+                    <MaButton 
+                        @click="clearInput" 
+                        size="medium" 
+                        variant="stroke" 
+                        color="red"
+                    >   
+                        Clear
+                    </MaButton>
                     <MaCheckbox2
                         v-model:checked="eliminateUnwanted"
                         @update:checked="generateKeywordsFromInput"
