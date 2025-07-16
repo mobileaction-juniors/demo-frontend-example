@@ -17,7 +17,10 @@ const lastGenerationState = ref({
 });
 
 const keywordTags = computed(() => {
-    return selectedNGrams.value.reduce((acc, n) => {
+    if (Object.keys(generatedKeywords.value).length === 0) {
+        return {};
+    }
+    return lastGenerationState.value.ngrams.reduce((acc, n) => {
         const key = `${n}-gram`;
         acc[key] = generatedKeywords.value[key] || [];
         return acc;
@@ -104,7 +107,6 @@ watch(selectedNGrams, () => {
                     </MaButton>
                     <MaCheckbox2
                         v-model:checked="eliminateUnwanted"
-                        @update:checked="generateKeywordsFromInput"
                     >
                         Hide unwanted words
                     </MaCheckbox2>
