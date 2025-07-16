@@ -9,7 +9,6 @@ const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
 const shouldHighlight = ref(false);
 
-// Store last generation state to compare
 const lastGenerationState = ref({
     text: '',
     ngrams: [],
@@ -17,9 +16,7 @@ const lastGenerationState = ref({
 });
 
 const keywordTags = computed(() => {
-    if (Object.keys(generatedKeywords.value).length === 0) {
-        return {};
-    }
+    if (generatedKeywords.value.length == 0) { return; }
     return lastGenerationState.value.ngrams.reduce((acc, n) => {
         const key = `${n}-gram`;
         acc[key] = generatedKeywords.value[key] || [];
@@ -33,7 +30,6 @@ const generateKeywordsFromInput = () => {
     generatedKeywords.value = keywords;
     shouldHighlight.value = false;
     
-    // Update last generation state
     lastGenerationState.value = {
         text: inputText.value,
         ngrams: [...selectedNGrams.value],
@@ -69,7 +65,17 @@ watch(eliminateUnwanted, () => {
 });
 
 watch(selectedNGrams, () => {
-    const hasChanged = JSON.stringify(selectedNGrams.value.sort()) !== JSON.stringify(lastGenerationState.value.ngrams.sort());
+    const a = [...selectedNGrams.value].sort();
+    const b = [...lastGenerationState.value.ngrams].sort();
+    let hasChanged = a.length != b.length;
+    if (!hasChanged) {
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) {
+                hasChanged = true;
+                break;
+            }
+        }
+    }
     shouldHighlight.value = hasChanged;
 }, { deep: true });
 </script>
