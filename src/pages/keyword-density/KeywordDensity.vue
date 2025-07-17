@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { calculateKeywordDensityAuto } from '../../utils/keywordDensity';
-import { MaInput, MaButton, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCard, MaEmpty, MaNotification, MaCheckbox2 } from '@mobileaction/action-kit';
 import { KEYWORD_DENSITY_CONSTANTS } from '../../constants/keywordDensity';
 
 const props = defineProps({
     defaultText: {
         type: String,
-        default: ''
+        default: KEYWORD_DENSITY_CONSTANTS.DEFAULT_TEXT
     }
 });
 
@@ -19,6 +19,7 @@ const errorMessage = ref('');
 const errorType = ref('');
 
 const shouldMergeKeywords = ref(false);
+const filterUnwanted = ref(true);
 
 const currentPage = ref(1);
 const itemsPerPage = ref(KEYWORD_DENSITY_CONSTANTS.DEFAULT_PAGE_SIZE);
@@ -28,6 +29,7 @@ const sortOrder = ref('desc');
 
 const lastAnalysisState = ref({
     text: '',
+    filterUnwanted: true
 });
 
 const copyResultsToClipboard = () => {
@@ -48,45 +50,50 @@ const copyResultsToClipboard = () => {
     });
 };
 
-const sortedResults = computed(() => {
-    if (densityResults.value.length === 0) return [];
+const processedResults = ref([]);
+const totalWords = ref(0);
+
+const paginatedResults = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return processedResults.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(processedResults.value.length / itemsPerPage.value);
+});
+
+const paginationInfo = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value + 1;
+    const end = Math.min(start + itemsPerPage.value - 1, processedResults.value.length);
+    return {
+        start,
+        end,
+        total: processedResults.value.length
+    };
+});
+
+const sortAndProcessResults = () => {
+    if (densityResults.value.length === 0) {
+        processedResults.value = [];
+        totalWords.value = 0;
+        return;
+    }
     
-    return [...densityResults.value].sort((a, b) => {
-        const multiplier = sortOrder.value === 'desc' ? -1 : 1;
+    totalWords.value = densityResults.value[0]?.totalWords || 0;
+    
+    const sorted = [...densityResults.value].sort((a, b) => {
+        const multiplier = sortOrder.value == 'desc' ? -1 : 1;
         
-        if (sortBy.value === 'keyword') {
+        if (sortBy.value == 'keyword') {
             return a.keyword.localeCompare(b.keyword) * multiplier;
         }
         
         return (a[sortBy.value] - b[sortBy.value]) * multiplier;
     });
-});
-
-const paginatedResults = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return sortedResults.value.slice(start, end);
-});
-
-const totalPages = computed(() => {
-    return Math.ceil(sortedResults.value.length / itemsPerPage.value);
-});
-
-const totalWords = computed(() => {
-    return densityResults.value.length > 0 && densityResults.value[0]?.totalWords 
-        ? densityResults.value[0].totalWords 
-        : 0;
-});
-
-const paginationInfo = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value + 1;
-    const end = Math.min(start + itemsPerPage.value - 1, sortedResults.value.length);
-    return {
-        start,
-        end,
-        total: sortedResults.value.length
-    };
-});
+    
+    processedResults.value = sorted;
+};
 
 const analyzeDensity = () => {
     clearError();
@@ -100,12 +107,14 @@ const analyzeDensity = () => {
     isAnalyzing.value = true;
     
     try {
-        const results = calculateKeywordDensityAuto(inputText.value, shouldMergeKeywords.value);
+        const results = calculateKeywordDensityAuto(inputText.value, shouldMergeKeywords.value, filterUnwanted.value);
         densityResults.value = results;
+        sortAndProcessResults();
         shouldHighlight.value = false;
         
         lastAnalysisState.value = {
-            text: inputText.value
+            text: inputText.value,
+            filterUnwanted: filterUnwanted.value
         };
         
         MaNotification.success({
@@ -120,6 +129,8 @@ const analyzeDensity = () => {
         errorMessage.value = KEYWORD_DENSITY_CONSTANTS.ERROR_MESSAGES.CALCULATION_ERROR;
         errorType.value = 'calculation';
         densityResults.value = [];
+        processedResults.value = [];
+        totalWords.value = 0;
     } finally {
         isAnalyzing.value = false;
     }
@@ -128,6 +139,8 @@ const analyzeDensity = () => {
 const clearInput = () => {
     inputText.value = '';
     densityResults.value = [];
+    processedResults.value = [];
+    totalWords.value = 0;
     shouldHighlight.value = false;
     errorMessage.value = '';
     errorType.value = '';
@@ -165,6 +178,7 @@ const setSorting = (field) => {
         sortOrder.value = 'desc';
     }
     currentPage.value = 1;
+    sortAndProcessResults();
 };
 
 const getSortIcon = (field) => {
@@ -173,6 +187,11 @@ const getSortIcon = (field) => {
 
 watch(inputText, () => {
     shouldHighlight.value = true;
+});
+
+watch(filterUnwanted, () => {
+    const hasChanged = filterUnwanted.value !== lastAnalysisState.value.filterUnwanted;
+    shouldHighlight.value = hasChanged;
 });
 
 </script>
@@ -192,15 +211,17 @@ watch(inputText, () => {
                     size="large"
                     :rows="KEYWORD_DENSITY_CONSTANTS.TEXT_AREA_ROWS"
                 />
-                <div class="ma-merge-option">
-                    <label class="ma-merge-label">
-                        <input 
-                            type="checkbox" 
-                            v-model="shouldMergeKeywords"
-                            class="ma-merge-checkbox"
-                        />
-                        Merge keywords has same density
-                    </label>
+                <div class="ma-options">
+                    <div class="ma-merge-option">
+                        <MaCheckbox2 v-model:checked="shouldMergeKeywords">
+                            Merge keywords has same density
+                        </MaCheckbox2>
+                    </div>
+                    <div class="ma-filter-option">
+                        <MaCheckbox2 v-model:checked="filterUnwanted">
+                            Hide unwanted words
+                        </MaCheckbox2>
+                    </div>
                 </div>
                 <div class="ma-controls">
                     <MaButton 
@@ -235,7 +256,7 @@ watch(inputText, () => {
         
         <MaCard title="Density Results" description="Keyword density analysis results" class="ma-results-card">
             <template #default>
-                <div v-if="densityResults.length > 0" class="ma-results-content">
+                <div v-if="processedResults.length > 0" class="ma-results-content">
                     <div class="ma-table-container">
                         <table class="ma-density-table" aria-label="Keyword density analysis results">
                             <caption class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0" style="clip: rect(0, 0, 0, 0);">
@@ -447,16 +468,16 @@ watch(inputText, () => {
 
 
 
+    .ma-options {
+        @apply mb-4 flex flex-col gap-3;
+    }
+
     .ma-merge-option {
-        @apply mb-4;
+        @apply flex items-center;
     }
 
-    .ma-merge-label {
-        @apply flex items-center gap-2 cursor-pointer;
-    }
-
-    .ma-merge-checkbox {
-        @apply w-4 h-4;
+    .ma-filter-option {
+        @apply flex items-center;
     }
 }
 

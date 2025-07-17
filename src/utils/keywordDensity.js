@@ -1,13 +1,18 @@
 import { regex, filterArr } from '../cleanupResources';
 
-const cleanTextWithStopwords = (text) => {
-    return text
+const cleanTextWithStopwords = (text, filterUnwanted = true) => {
+    let words = text
         .toLowerCase()
         .replace(regex, '')
         .split(/\s+/)
         .map(word => word.trim())
-        .filter(word => word.length > 0)
-        .filter(word => !filterArr.includes(word));
+        .filter(word => word.length > 0);
+    
+    if (filterUnwanted) {
+        words = words.filter(word => !filterArr.includes(word));
+    }
+    
+    return words;
 };
 
 
@@ -36,12 +41,12 @@ const mergeKeywords = (keywordCountMap, totalWords) => {
     return mergedKeywords;
 };
 
-export function calculateKeywordDensityAuto(text, shouldMerge = false) {
+export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnwanted = true) {
     if (!text.trim()) {
         return [];
     }
 
-    const cleanedWords = cleanTextWithStopwords(text);
+    const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
     const totalWords = cleanedWords.length;
 
     if (totalWords === 0) {
