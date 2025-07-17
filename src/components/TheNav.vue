@@ -24,8 +24,8 @@ function goKeywordDensity() {
 
 const useNavButtonStyle = (pagePath) => {
     return computed(() => ({
-        variant: route.path === pagePath ? 'filled' : 'ghost',
-        color: route.path === pagePath ? 'dark' : 'primary'
+        variant: route.path == pagePath ? 'filled' : 'ghost',
+        color: route.path == pagePath ? 'dark' : 'primary'
     }));
 };
 

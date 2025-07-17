@@ -74,7 +74,7 @@ const paginationInfo = computed(() => {
 });
 
 const sortAndProcessResults = () => {
-    if (densityResults.value.length === 0) {
+    if (densityResults.value.length == 0) {
         processedResults.value = [];
         totalWords.value = 0;
         return;
@@ -190,7 +190,7 @@ watch(inputText, () => {
 });
 
 watch(filterUnwanted, () => {
-    const hasChanged = filterUnwanted.value !== lastAnalysisState.value.filterUnwanted;
+    const hasChanged = filterUnwanted.value != lastAnalysisState.value.filterUnwanted;
     shouldHighlight.value = hasChanged;
 });
 
@@ -297,7 +297,7 @@ watch(filterUnwanted, () => {
                     <div v-if="totalPages > 1" class="ma-pagination">
                         <MaButton 
                             @click="prevPage" 
-                            :disabled="currentPage === 1"
+                            :disabled="currentPage == 1"
                             size="small"
                             variant="stroke"
                         >
@@ -309,7 +309,7 @@ watch(filterUnwanted, () => {
                                 v-for="page in Math.min(5, totalPages)" 
                                 :key="page"
                                 @click="goToPage(page)"
-                                :class="['ma-pagination-btn', { 'active': currentPage === page }]"
+                                :class="['ma-pagination-btn', { 'active': currentPage == page }]"
                             >
                                 {{ page }}
                             </button>
@@ -318,7 +318,7 @@ watch(filterUnwanted, () => {
                         
                         <MaButton 
                             @click="nextPage" 
-                            :disabled="currentPage === totalPages"
+                            :disabled="currentPage == totalPages"
                             size="small"
                             variant="stroke"
                         >

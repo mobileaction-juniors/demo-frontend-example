@@ -76,7 +76,7 @@ watch(eliminateUnwanted, () => {
 watch(selectedNGrams, () => {
     const current = [...selectedNGrams.value].sort();
     const last = [...lastGenerationState.value.ngrams].sort();
-    const hasChanged = current.length !== last.length || current.some((val, i) => val !== last[i]);
+    const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
     shouldHighlight.value = hasChanged;
 }, { deep: true });
 </script>

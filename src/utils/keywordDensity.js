@@ -17,7 +17,7 @@ const cleanTextWithStopwords = (text, filterUnwanted = true) => {
 
 
 const calculateDensityValue = (keywords, count, totalWords) => {
-    if (keywords.length === 1) {
+    if (keywords.length == 1) {
         return ((count / totalWords) * 100).toFixed(1);
     }
     return ((parseInt(count) / totalWords) * 100).toFixed(1);
@@ -49,7 +49,7 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
     const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
     const totalWords = cleanedWords.length;
 
-    if (totalWords === 0) {
+    if (totalWords == 0) {
         return [];
     }
 
