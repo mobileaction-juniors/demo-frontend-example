@@ -9,7 +9,6 @@ const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
 const shouldHighlight = ref(false);
 
-// Store last generation state to compare
 const lastGenerationState = ref({
     text: '',
     ngrams: [],
@@ -17,8 +16,8 @@ const lastGenerationState = ref({
 });
 
 const keywordTags = computed(() => {
-    if (Object.keys(generatedKeywords.value).length === 0) {
-        return {};
+    if (generatedKeywords.value.length == 0) {
+        return;
     }
     return lastGenerationState.value.ngrams.reduce((acc, n) => {
         const key = `${n}-gram`;
@@ -32,8 +31,6 @@ const generateKeywordsFromInput = () => {
     selectedNGrams.value, eliminateUnwanted.value);
     generatedKeywords.value = keywords;
     shouldHighlight.value = false;
-    
-    // Update last generation state
     lastGenerationState.value = {
         text: inputText.value,
         ngrams: [...selectedNGrams.value],
@@ -64,12 +61,14 @@ watch(inputText, () => {
 });
 
 watch(eliminateUnwanted, () => {
-    const hasChanged = eliminateUnwanted.value !== lastGenerationState.value.unwanted;
+    const hasChanged = eliminateUnwanted.value != lastGenerationState.value.unwanted;
     shouldHighlight.value = hasChanged;
 });
 
 watch(selectedNGrams, () => {
-    const hasChanged = JSON.stringify(selectedNGrams.value.sort()) !== JSON.stringify(lastGenerationState.value.ngrams.sort());
+    const current = [...selectedNGrams.value].sort();
+    const last = [...lastGenerationState.value.ngrams].sort();
+    const hasChanged = current.length !== last.length || current.some((val, i) => val !== last[i]);
     shouldHighlight.value = hasChanged;
 }, { deep: true });
 </script>
@@ -93,18 +92,21 @@ watch(selectedNGrams, () => {
                         variant="stroke"
                         icon="rocket-bulk"
                         :highlight="shouldHighlight"
+                        :disabled="!inputText.trim()"
                         @click="generateKeywordsFromInput"
                     >
                         Generate Keywords
                     </MaButton>
                     <MaButton 
-                        @click="clearInput" 
                         size="medium" 
                         variant="stroke" 
                         color="red"
+                        @click="clearInput" 
                     >   
                         Clear
                     </MaButton>
+                </div>
+                <div class="ma-checkbox-wrapper">
                     <MaCheckbox2
                         v-model:checked="eliminateUnwanted"
                     >
@@ -115,9 +117,9 @@ watch(selectedNGrams, () => {
                     <MaButton
                         v-for="n in getNGramOptions()"
                         :key="n"
-                        @click="toggleNGram(n)"
                         size="small"
                         :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
+                        @click="toggleNGram(n)"
                     >
                         {{ n }}-gram
                     </MaButton>
@@ -156,11 +158,11 @@ watch(selectedNGrams, () => {
 
 <style lang="scss" scoped>
 .ma-container {
-    @apply mt-4 flex flex-wrap gap-6 p-4;
+    @apply mt-4 flex flex-wrap gap-6 p-4 lg:flex-nowrap;
 
     .ma-input-card,
     .ma-results-card {
-        @apply flex-1 min-w-80;
+        @apply flex-1 min-w-0 md:min-w-80;
     }
 
     .ma-input-card {
@@ -169,11 +171,11 @@ watch(selectedNGrams, () => {
         }
 
         .ma-controls {
-            @apply flex items-center gap-4 flex-wrap justify-start;
+            @apply flex items-center gap-4 flex-wrap justify-start py-2 sm:flex-nowrap;
         }
 
         .ma-ngram-grid {
-            @apply grid grid-cols-5 gap-2 max-w-96 mt-3;
+            @apply grid grid-cols-3 gap-2 max-w-96 mt-3 sm:grid-cols-4 md:grid-cols-5;
         }
     }
 
@@ -213,6 +215,17 @@ watch(selectedNGrams, () => {
 
     .ma-text-input {
         @apply w-full;
+    }
+}
+
+@media (max-width: 640px) {
+    .ma-container {
+        @apply flex-col gap-4 p-2;
+        
+        .ma-input-card,
+        .ma-results-card {
+            @apply w-full min-w-0;
+        }
     }
 }
 </style>
