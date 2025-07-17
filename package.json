@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
@@ -20,6 +20,7 @@
     "@heroicons/vue": "^2.2.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "10.4.19",
+    "cypress": "^14.5.2",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "postcss": "8.4.39",
