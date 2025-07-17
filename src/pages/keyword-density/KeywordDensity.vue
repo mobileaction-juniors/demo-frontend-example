@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { calculateKeywordDensityAuto } from '../../utils/keywordDensity';
-import { MaInput, MaButton, MaCard, MaEmpty } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 import { KEYWORD_DENSITY_CONSTANTS } from '../../constants/keywordDensity';
 
 const props = defineProps({
@@ -29,6 +29,24 @@ const sortOrder = ref('desc');
 const lastAnalysisState = ref({
     text: '',
 });
+
+const copyResultsToClipboard = () => {
+    if (!densityResults.value.length) return;
+    const header = 'Keyword\tCount\tDensity (%)\n';
+    const rows = densityResults.value.map(r =>
+        `${r.keyword}\t${r.count}\t${r.density}`
+    ).join('\n');
+    const text = header + rows;
+    navigator.clipboard.writeText(text);
+    
+    MaNotification.info({
+        "size": "large",
+        "variant": "light",
+        "title": "Copied to Clipboard!",
+        "description": "Analysis results have been copied to your clipboard in spreadsheet format.",
+        "type": "info"
+    });
+};
 
 const sortedResults = computed(() => {
     if (densityResults.value.length === 0) return [];
@@ -89,6 +107,14 @@ const analyzeDensity = () => {
         lastAnalysisState.value = {
             text: inputText.value
         };
+        
+        MaNotification.success({
+            "size": "large",
+            "variant": "light",
+            "title": "Analysis Complete!",
+            "description": "Keyword density analysis has been completed successfully for your text.",
+            "type": "success"
+        });
     } catch (error) {
         console.error('Error analyzing density:', error);
         errorMessage.value = KEYWORD_DENSITY_CONSTANTS.ERROR_MESSAGES.CALCULATION_ERROR;
@@ -278,6 +304,17 @@ watch(inputText, () => {
                             Next
                         </MaButton>
                     </div>
+                    
+                    <div class="ma-copy-btn-container">
+                        <MaButton
+                            icon="copy"
+                            color="primary"
+                            size="small"
+                            @click="copyResultsToClipboard"
+                        >
+                            Copy to Clipboard
+                        </MaButton>
+                    </div>
                 </div>
                 <div v-else class="ma-empty-state">
                     <MaEmpty description="Density results will appear here once analyzed" animation="no-data-found" size="medium" />
@@ -401,6 +438,10 @@ watch(inputText, () => {
 
         .ma-pagination-info {
             @apply text-xs text-gray-500 mt-2;
+        }
+        
+        .ma-copy-btn-container {
+            @apply flex justify-end mt-4;
         }
     }
 

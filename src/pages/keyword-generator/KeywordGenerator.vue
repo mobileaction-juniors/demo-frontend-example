@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
-import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const selectedNGrams = ref([1, 2, 3]);
@@ -36,6 +36,14 @@ const generateKeywordsFromInput = () => {
         ngrams: [...selectedNGrams.value],
         unwanted: eliminateUnwanted.value
     };
+    
+    MaNotification.success({
+        "size": "large",
+        "variant": "light",
+        "title": "Keywords Generated!",
+        "description": "Your keywords have been successfully generated from the input text.",
+        "type": "success"
+    });
   };
 
 
