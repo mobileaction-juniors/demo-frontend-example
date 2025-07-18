@@ -6,6 +6,7 @@ import { computed } from 'vue';
 const PAGES = {
     HOME: '/',
     KEYWORD_GENERATOR: '/keyword-generator',
+    KEYWORD_DENSITY: '/keyword-density',
 };
 
 const router = useRouter();
@@ -17,19 +18,20 @@ function goHome() {
 function goKeywordGenerator() {
     router.push(PAGES.KEYWORD_GENERATOR);
 }
+function goKeywordDensity() {
+    router.push(PAGES.KEYWORD_DENSITY);
+}
 
-const useNavButtonVariant = (pagePath) => {
-    return computed(() => route.path == pagePath ? 'filled' : 'ghost');
+const useNavButtonStyle = (pagePath) => {
+    return computed(() => ({
+        variant: route.path == pagePath ? 'filled' : 'ghost',
+        color: route.path == pagePath ? 'dark' : 'primary'
+    }));
 };
 
-const useNavButtonColor = (pagePath) => {
-    return computed(() => route.path == pagePath ? 'dark' : 'primary');
-};
-
-const homeVariant = useNavButtonVariant(PAGES.HOME);
-const homeColor = useNavButtonColor(PAGES.HOME);
-const keywordGeneratorVariant = useNavButtonVariant(PAGES.KEYWORD_GENERATOR);
-const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
+const homeStyle = useNavButtonStyle(PAGES.HOME);
+const keywordGeneratorStyle = useNavButtonStyle(PAGES.KEYWORD_GENERATOR);
+const keywordDensityStyle = useNavButtonStyle(PAGES.KEYWORD_DENSITY);
 </script>
 
 <template>
@@ -37,8 +39,8 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
         <MaButton
             @click="goHome"
             size="medium"
-            :variant="homeVariant"
-            :color="homeColor"
+            :variant="homeStyle.variant"
+            :color="homeStyle.color"
             icon="menu"
         >
             Home
@@ -46,18 +48,27 @@ const keywordGeneratorColor = useNavButtonColor(PAGES.KEYWORD_GENERATOR);
         <MaButton
             @click="goKeywordGenerator"
             size="medium"
-            :variant="keywordGeneratorVariant"
-            :color="keywordGeneratorColor"
+            :variant="keywordGeneratorStyle.variant"
+            :color="keywordGeneratorStyle.color"
             icon="list"
         >
             Keyword Generator
+        </MaButton>
+        <MaButton
+            size="medium"
+            :variant="keywordDensityStyle.variant"
+            :color="keywordDensityStyle.color"
+            icon="chart-bar"
+            @click="goKeywordDensity"
+        >
+            Keyword Density
         </MaButton>
     </nav>
 </template>
 
 <style lang="scss" scoped>
 .ma-navbar {
-    @apply sticky top-0 w-full bg-white border-b border-gray-200 flex justify-start items-center px-6 py-3 gap-1 z-50 shadow-sm;
+    @apply sticky top-0 w-full bg-white border-b border-gray-200 flex flex-wrap justify-start items-center px-2 py-2 gap-1 z-50 shadow-sm sm:px-6 sm:py-3 sm:gap-2 md:flex-nowrap;
 }
 
 </style>

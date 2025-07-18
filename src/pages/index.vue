@@ -1,5 +1,5 @@
 <script setup>
-import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
+import {MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
 </script>
 
 <template>
@@ -23,20 +23,21 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
             </template>
         </MaCard>
         
-        <MaCard class="ma-tool-card ma-tool-card-placeholder">
+        <MaCard class="ma-tool-card">
             <template #default>
                 <div class="ma-tool-content">
                     <MaIcon name="chart-bar" size="xl" class="ma-tool-icon" />
                     <h3 class="ma-tool-title">Keyword Density</h3>
                     <p class="ma-tool-desc">Analyze keyword density in your content</p>
-                    <MaButton 
-                        size="small"
-                        variant="stroke"
+                    <MaLinkButton 
+                        href="/keyword-density"
+                        size="medium"
+                        variant="primary"
+                        icon="arrow-right"
                         class="ma-tool-button"
-                        disabled
                     >
-                        Coming Soon
-                    </MaButton>
+                        Open Tool
+                    </MaLinkButton>
                 </div>
             </template>
         </MaCard>
@@ -55,13 +56,6 @@ import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit
         @apply -translate-y-1;
     }
     
-    &.ma-tool-card-placeholder {
-        @apply opacity-70;
-        
-        &:hover {
-            @apply -translate-y-0.5 opacity-80;
-        }
-    }
 
     .ma-tool-content {
         @apply text-center p-8 flex flex-col justify-center items-center;

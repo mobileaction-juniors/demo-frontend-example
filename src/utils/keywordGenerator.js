@@ -1,4 +1,4 @@
-import { cleanDescription, cleanStopWords } from './CleanDescription';
+import { cleanText } from './textUtils';
 
 export function generateKeywords(inputText, selectedNGrams, eliminateUnwanted = true) {
     if (!inputText.trim()) {
@@ -22,20 +22,6 @@ export function generateKeywords(inputText, selectedNGrams, eliminateUnwanted = 
     return newKeywords;
 }
 
-const cleanText = (text, eliminateUnwanted = true) => {
-    let words = cleanDescription(text)
-        .split(/\s+/)
-        .map(w => w.trim().toLowerCase())
-        .filter(Boolean);
-    
-    if (eliminateUnwanted) {
-        const stopWords = cleanStopWords(text);
-        const stopWordsSet = new Set(stopWords);
-        words = words.filter(word => !stopWordsSet.has(word));
-    }
-    
-    return words;
-};
 
 export const generateNGrams = (words, n) => {
     const ngramMap = new Map();
@@ -60,3 +46,4 @@ export function getNGramOptions() {
     }
     return options;
 }
+

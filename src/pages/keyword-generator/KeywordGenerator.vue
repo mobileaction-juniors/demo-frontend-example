@@ -1,13 +1,16 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
-import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
 
 const inputText = ref('');
+const isInputExists = computed(() => inputText.value.trim())
 const selectedNGrams = ref([1, 2, 3]);
 const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
 const shouldHighlight = ref(false);
+const router = useRouter();
 
 const lastGenerationState = ref({
     text: '',
@@ -16,7 +19,9 @@ const lastGenerationState = ref({
 });
 
 const keywordTags = computed(() => {
-    if (generatedKeywords.value.length == 0) { return; }
+    if (generatedKeywords.value.length == 0) {
+        return;
+    }
     return lastGenerationState.value.ngrams.reduce((acc, n) => {
         const key = `${n}-gram`;
         acc[key] = generatedKeywords.value[key] || [];
@@ -29,12 +34,19 @@ const generateKeywordsFromInput = () => {
     selectedNGrams.value, eliminateUnwanted.value);
     generatedKeywords.value = keywords;
     shouldHighlight.value = false;
-    
     lastGenerationState.value = {
         text: inputText.value,
         ngrams: [...selectedNGrams.value],
         unwanted: eliminateUnwanted.value
     };
+    
+    MaNotification.success({
+        "size": "large",
+        "variant": "light",
+        "title": "Keywords Generated!",
+        "description": "Your keywords have been successfully generated from the input text.",
+        "type": "success"
+    });
   };
 
 
@@ -46,7 +58,7 @@ const toggleNGram = (n) => {
         selectedNGrams.value.push(n);
         selectedNGrams.value.sort((a, b) => a - b);
     }
-    shouldHighlight.value = true;
+    shouldHighlight.value = inputText.value.trim() != '';
 };
 
 const clearInput = () => {
@@ -55,28 +67,30 @@ const clearInput = () => {
     shouldHighlight.value = false;
 };
 
+const analyzeDensity = () => {
+    if (!inputText.value.trim()) return;
+    
+    router.push({
+        path: '/keyword-density',
+        query: { text: inputText.value }
+    });
+};
+
+
 watch(inputText, () => {
-    shouldHighlight.value = true;
+    shouldHighlight.value = inputText.value.trim() != '';
 });
 
 watch(eliminateUnwanted, () => {
-    const hasChanged = eliminateUnwanted.value !== lastGenerationState.value.unwanted;
-    shouldHighlight.value = hasChanged;
+    const hasChanged = eliminateUnwanted.value != lastGenerationState.value.unwanted;
+    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
 });
 
 watch(selectedNGrams, () => {
-    const a = [...selectedNGrams.value].sort();
-    const b = [...lastGenerationState.value.ngrams].sort();
-    let hasChanged = a.length != b.length;
-    if (!hasChanged) {
-        for (let i = 0; i < a.length; i++) {
-            if (a[i] != b[i]) {
-                hasChanged = true;
-                break;
-            }
-        }
-    }
-    shouldHighlight.value = hasChanged;
+    const current = [...selectedNGrams.value].sort();
+    const last = [...lastGenerationState.value.ngrams].sort();
+    const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
+    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
 }, { deep: true });
 </script>
 
@@ -99,18 +113,32 @@ watch(selectedNGrams, () => {
                         variant="stroke"
                         icon="rocket-bulk"
                         :highlight="shouldHighlight"
+                        :disabled="!isInputExists"
                         @click="generateKeywordsFromInput"
                     >
                         Generate Keywords
                     </MaButton>
                     <MaButton 
-                        @click="clearInput" 
                         size="medium" 
                         variant="stroke" 
                         color="red"
+                        :disabled="!isInputExists"
+                        @click="clearInput" 
                     >   
                         Clear
                     </MaButton>
+                    <MaButton
+                        size="medium"
+                        variant="stroke"
+                        color="blue"
+                        icon="angle-double-right"
+                        :disabled="!isInputExists"
+                        @click="analyzeDensity"
+                    >
+                        Analyze Density
+                    </MaButton>
+                </div>
+                <div class="ma-checkbox-wrapper">
                     <MaCheckbox2
                         v-model:checked="eliminateUnwanted"
                     >
@@ -121,9 +149,9 @@ watch(selectedNGrams, () => {
                     <MaButton
                         v-for="n in getNGramOptions()"
                         :key="n"
-                        @click="toggleNGram(n)"
                         size="small"
                         :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
+                        @click="toggleNGram(n)"
                     >
                         {{ n }}-gram
                     </MaButton>
@@ -162,11 +190,11 @@ watch(selectedNGrams, () => {
 
 <style lang="scss" scoped>
 .ma-container {
-    @apply mt-4 flex flex-wrap gap-6 p-4;
+    @apply mt-4 flex flex-wrap gap-6 p-4 lg:flex-nowrap;
 
     .ma-input-card,
     .ma-results-card {
-        @apply flex-1 min-w-80;
+        @apply flex-1 min-w-0 md:min-w-80;
     }
 
     .ma-input-card {
@@ -175,11 +203,11 @@ watch(selectedNGrams, () => {
         }
 
         .ma-controls {
-            @apply flex items-center gap-4 flex-wrap justify-start;
+            @apply flex items-center gap-4 flex-wrap justify-start py-2;
         }
 
         .ma-ngram-grid {
-            @apply grid grid-cols-5 gap-2 max-w-96 mt-3;
+            @apply grid grid-cols-3 gap-2 max-w-96 mt-3 sm:grid-cols-4 md:grid-cols-5;
         }
     }
 
@@ -219,6 +247,18 @@ watch(selectedNGrams, () => {
 
     .ma-text-input {
         @apply w-full;
+    }
+
+}
+
+@media (max-width: 640px) {
+    .ma-container {
+        @apply flex-col gap-4 p-2;
+        
+        .ma-input-card,
+        .ma-results-card {
+            @apply w-full min-w-0;
+        }
     }
 }
 </style>
