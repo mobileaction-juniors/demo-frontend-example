@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import { calculateKeywordDensityAuto } from '../../utils/keywordDensity';
 import { MaInput, MaButton, MaCard, MaEmpty, MaNotification, MaCheckbox2 } from '@mobileaction/action-kit';
 import { KEYWORD_DENSITY_CONSTANTS } from '../../constants/keywordDensity';
@@ -12,8 +11,7 @@ const props = defineProps({
     }
 });
 
-const route = useRoute();
-const inputText = ref(route.query.text || props.defaultText);
+const inputText = ref(props.defaultText);
 const densityResults = ref([]);
 const shouldHighlight = ref(false);
 const isAnalyzing = ref(false);
