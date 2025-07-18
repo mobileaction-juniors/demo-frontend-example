@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
 import { MaInput, MaButton, MaLinkButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
 
@@ -8,6 +9,7 @@ const selectedNGrams = ref([1, 2, 3]);
 const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
 const shouldHighlight = ref(false);
+const router = useRouter();
 
 const lastGenerationState = ref({
     text: '',
@@ -64,6 +66,15 @@ const clearInput = () => {
     shouldHighlight.value = false;
 };
 
+const analyzeDensity = () => {
+    if (!inputText.value.trim()) return;
+    
+    router.push({
+        path: '/keyword-density',
+        query: { text: inputText.value }
+    });
+};
+
 
 watch(inputText, () => {
     shouldHighlight.value = inputText.value.trim() != '';
@@ -115,16 +126,16 @@ watch(selectedNGrams, () => {
                     >   
                         Clear
                     </MaButton>
-                    <MaLinkButton
-                        to="/keyword-density"
+                    <MaButton
                         size="medium"
                         variant="stroke"
                         color="blue"
                         icon="angle-double-right"
                         :disabled="!inputText.trim()"
+                        @click="analyzeDensity"
                     >
                         Analyze Density
-                    </MaLinkButton>
+                    </MaButton>
                 </div>
                 <div class="ma-checkbox-wrapper">
                     <MaCheckbox2
