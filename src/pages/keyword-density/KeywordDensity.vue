@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { calculateKeywordDensityAuto } from '../../utils/keywordDensity';
 import { MaInput, MaButton, MaCard, MaEmpty, MaNotification, MaCheckbox2 } from '@mobileaction/action-kit';
 import { KEYWORD_DENSITY_CONSTANTS } from '../../constants/keywordDensity';
@@ -11,13 +12,13 @@ const props = defineProps({
     }
 });
 
-const inputText = ref(props.defaultText);
+const route = useRoute();
+const inputText = ref(route.query.text || props.defaultText);
 const densityResults = ref([]);
 const shouldHighlight = ref(false);
 const isAnalyzing = ref(false);
 const errorMessage = ref('');
 const errorType = ref('');
-
 const shouldMergeKeywords = ref(false);
 const filterUnwanted = ref(true);
 
@@ -185,13 +186,21 @@ const getSortIcon = (field) => {
     return sortBy.value == field ? (sortOrder.value == 'desc' ? '↓' : '↑') : '';
 };
 
+const totalCharacters = computed(() => {
+    return inputText.value.length;
+});
+
 watch(inputText, () => {
-    shouldHighlight.value = true;
+    shouldHighlight.value = inputText.value.trim() !== '';
 });
 
 watch(filterUnwanted, () => {
     const hasChanged = filterUnwanted.value != lastAnalysisState.value.filterUnwanted;
-    shouldHighlight.value = hasChanged;
+    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
+});
+
+onMounted(() => {
+    analyzeDensity();
 });
 
 </script>
@@ -211,6 +220,9 @@ watch(filterUnwanted, () => {
                     size="large"
                     :rows="KEYWORD_DENSITY_CONSTANTS.TEXT_AREA_ROWS"
                 />
+                <div class="ma-character-count">
+                    Total characters: {{ totalCharacters }}
+                </div>
                 <div class="ma-options">
                     <div class="ma-merge-option">
                         <MaCheckbox2 v-model:checked="shouldMergeKeywords">
@@ -244,6 +256,7 @@ watch(filterUnwanted, () => {
                         size="medium" 
                         variant="stroke" 
                         color="red"
+                        :disabled="!inputText.trim()"
                     >
                         Clear
                     </MaButton>
@@ -478,6 +491,10 @@ watch(filterUnwanted, () => {
 
     .ma-filter-option {
         @apply flex items-center;
+    }
+
+    .ma-character-count {
+        @apply text-sm text-gray-500 text-right mt-1;
     }
 }
 

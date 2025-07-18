@@ -1,26 +1,37 @@
-import { regex, filterArr } from '../cleanupResources';
+import { regex, splitRegex, filterArr } from '../cleanupResources';
+
+// Memoization cache
+const densityCache = new Map();
+const textCleaningCache = new Map();
 
 const cleanTextWithStopwords = (text, filterUnwanted = true) => {
+    const cacheKey = `${text}-${filterUnwanted}`;
+    
+    if (textCleaningCache.has(cacheKey)) {
+        return textCleaningCache.get(cacheKey);
+    }
+    
     let words = text
-        .toLowerCase()
         .replace(regex, '')
+        .replace(splitRegex, ' ')
+        .trim()
+        .replaceAll('İ', 'i')
+        .toLowerCase()
         .split(/\s+/)
         .map(word => word.trim())
-        .filter(word => word.length > 0);
+        .filter(Boolean);
     
     if (filterUnwanted) {
         words = words.filter(word => !filterArr.includes(word));
     }
     
+    textCleaningCache.set(cacheKey, words);
     return words;
 };
 
 
-const calculateDensityValue = (keywords, count, totalWords) => {
-    if (keywords.length == 1) {
-        return ((count / totalWords) * 100).toFixed(1);
-    }
-    return ((parseInt(count) / totalWords) * 100).toFixed(1);
+const calculateDensityValue = (count, totalWords) => {
+    return ((count / totalWords) * 100).toFixed(2);
 };
 
 const mergeKeywords = (keywordCountMap, totalWords) => {
@@ -28,7 +39,7 @@ const mergeKeywords = (keywordCountMap, totalWords) => {
 
     for (const keyword in keywordCountMap) {
         const count = keywordCountMap[keyword];
-        const density = ((count / totalWords) * 100).toFixed(1);
+        const density = ((count / totalWords) * 100).toFixed(2);
         const key = `${count}-${density}`;
 
         if (!mergedKeywords[key]) {
@@ -46,10 +57,16 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
         return [];
     }
 
+    const cacheKey = `${text}-${shouldMerge}-${filterUnwanted}`;
+    
+    if (densityCache.has(cacheKey)) {
+        return densityCache.get(cacheKey);
+    }
+
     const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
     const totalWords = cleanedWords.length;
 
-    if (totalWords == 0) {
+    if (totalWords === 0) {
         return [];
     }
 
@@ -71,7 +88,7 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             const keywords = merged[key];
 
             if (keywords.length > 0 && !isNaN(count) && !isNaN(density)) {
-                const densityValue = calculateDensityValue(keywords, count, totalWords);
+                const densityValue = calculateDensityValue(count, totalWords);
                 
                 results.push({
                     keyword: keywords.join(', '),
@@ -82,7 +99,9 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             }
         }
 
-        return results.sort((a, b) => b.density - a.density);
+        const sortedResults = results.sort((a, b) => b.density - a.density);
+        densityCache.set(cacheKey, sortedResults);
+        return sortedResults;
     } else {
         const results = [];
         
@@ -98,7 +117,9 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             });
         }
 
-        return results.sort((a, b) => b.density - a.density);
+        const sortedResults = results.sort((a, b) => b.density - a.density);
+        densityCache.set(cacheKey, sortedResults);
+        return sortedResults;
     }
 }
 

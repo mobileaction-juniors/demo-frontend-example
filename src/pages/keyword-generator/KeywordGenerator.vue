@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
 import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
 
@@ -8,6 +9,7 @@ const selectedNGrams = ref([1, 2, 3]);
 const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
 const shouldHighlight = ref(false);
+const router = useRouter();
 
 const lastGenerationState = ref({
     text: '',
@@ -55,7 +57,7 @@ const toggleNGram = (n) => {
         selectedNGrams.value.push(n);
         selectedNGrams.value.sort((a, b) => a - b);
     }
-    shouldHighlight.value = true;
+    shouldHighlight.value = inputText.value.trim() !== '';
 };
 
 const clearInput = () => {
@@ -64,20 +66,29 @@ const clearInput = () => {
     shouldHighlight.value = false;
 };
 
+const analyzeDensity = () => {
+    if (!inputText.value.trim()) return;
+    
+    router.push({
+        path: '/keyword-density',
+        query: { text: inputText.value }
+    });
+};
+
 watch(inputText, () => {
-    shouldHighlight.value = true;
+    shouldHighlight.value = inputText.value.trim() !== '';
 });
 
 watch(eliminateUnwanted, () => {
     const hasChanged = eliminateUnwanted.value != lastGenerationState.value.unwanted;
-    shouldHighlight.value = hasChanged;
+    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
 });
 
 watch(selectedNGrams, () => {
     const current = [...selectedNGrams.value].sort();
     const last = [...lastGenerationState.value.ngrams].sort();
     const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
-    shouldHighlight.value = hasChanged;
+    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
 }, { deep: true });
 </script>
 
@@ -109,9 +120,20 @@ watch(selectedNGrams, () => {
                         size="medium" 
                         variant="stroke" 
                         color="red"
+                        :disabled="!inputText.trim()"
                         @click="clearInput" 
                     >   
                         Clear
+                    </MaButton>
+                    <MaButton
+                        size="medium"
+                        variant="stroke"
+                        color="blue"
+                        icon="angle-double-right"
+                        :disabled="!inputText.trim()"
+                        @click="analyzeDensity"
+                    >
+                        Analyze Density
                     </MaButton>
                 </div>
                 <div class="ma-checkbox-wrapper">
@@ -179,7 +201,7 @@ watch(selectedNGrams, () => {
         }
 
         .ma-controls {
-            @apply flex items-center gap-4 flex-wrap justify-start py-2 sm:flex-nowrap;
+            @apply flex items-center gap-4 flex-wrap justify-start py-2;
         }
 
         .ma-ngram-grid {
@@ -224,6 +246,7 @@ watch(selectedNGrams, () => {
     .ma-text-input {
         @apply w-full;
     }
+
 }
 
 @media (max-width: 640px) {

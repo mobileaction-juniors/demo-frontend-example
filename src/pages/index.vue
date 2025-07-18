@@ -1,5 +1,5 @@
 <script setup>
-import { MaButton, MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
+import {MaCard, MaLinkButton, MaIcon } from '@mobileaction/action-kit';
 </script>
 
 <template>
