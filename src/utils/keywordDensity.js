@@ -1,16 +1,6 @@
 import { regex, splitRegex, filterArr } from '../cleanupResources';
 
-// Memoization cache
-const densityCache = new Map();
-const textCleaningCache = new Map();
-
 const cleanTextWithStopwords = (text, filterUnwanted = true) => {
-    const cacheKey = `${text}-${filterUnwanted}`;
-    
-    if (textCleaningCache.has(cacheKey)) {
-        return textCleaningCache.get(cacheKey);
-    }
-    
     let words = text
         .replace(regex, '')
         .replace(splitRegex, ' ')
@@ -25,7 +15,6 @@ const cleanTextWithStopwords = (text, filterUnwanted = true) => {
         words = words.filter(word => !filterArr.includes(word));
     }
     
-    textCleaningCache.set(cacheKey, words);
     return words;
 };
 
@@ -55,12 +44,6 @@ const mergeKeywords = (keywordCountMap, totalWords) => {
 export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnwanted = true) {
     if (!text.trim()) {
         return [];
-    }
-
-    const cacheKey = `${text}-${shouldMerge}-${filterUnwanted}`;
-    
-    if (densityCache.has(cacheKey)) {
-        return densityCache.get(cacheKey);
     }
 
     const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
@@ -99,9 +82,7 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             }
         }
 
-        const sortedResults = results.sort((a, b) => b.density - a.density);
-        densityCache.set(cacheKey, sortedResults);
-        return sortedResults;
+        return results.sort((a, b) => b.density - a.density);
     } else {
         const results = [];
         
@@ -117,9 +98,7 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             });
         }
 
-        const sortedResults = results.sort((a, b) => b.density - a.density);
-        densityCache.set(cacheKey, sortedResults);
-        return sortedResults;
+        return results.sort((a, b) => b.density - a.density);
     }
 }
 

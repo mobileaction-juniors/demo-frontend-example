@@ -2,9 +2,10 @@
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
-import { MaInput, MaButton, MaLinkButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
 
 const inputText = ref('');
+const isInputExists = computed(() => inputText.value.trim())
 const selectedNGrams = ref([1, 2, 3]);
 const generatedKeywords = ref({});
 const eliminateUnwanted = ref(true);
@@ -112,7 +113,7 @@ watch(selectedNGrams, () => {
                         variant="stroke"
                         icon="rocket-bulk"
                         :highlight="shouldHighlight"
-                        :disabled="!inputText.trim()"
+                        :disabled="!isInputExists"
                         @click="generateKeywordsFromInput"
                     >
                         Generate Keywords
@@ -121,7 +122,7 @@ watch(selectedNGrams, () => {
                         size="medium" 
                         variant="stroke" 
                         color="red"
-                        :disabled="!inputText.trim()"
+                        :disabled="!isInputExists"
                         @click="clearInput" 
                     >   
                         Clear
@@ -131,7 +132,7 @@ watch(selectedNGrams, () => {
                         variant="stroke"
                         color="blue"
                         icon="angle-double-right"
-                        :disabled="!inputText.trim()"
+                        :disabled="!isInputExists"
                         @click="analyzeDensity"
                     >
                         Analyze Density

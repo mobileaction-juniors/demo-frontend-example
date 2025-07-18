@@ -55,11 +55,11 @@ const keywordDensityStyle = useNavButtonStyle(PAGES.KEYWORD_DENSITY);
             Keyword Generator
         </MaButton>
         <MaButton
-            @click="goKeywordDensity"
             size="medium"
             :variant="keywordDensityStyle.variant"
             :color="keywordDensityStyle.color"
             icon="chart-bar"
+            @click="goKeywordDensity"
         >
             Keyword Density
         </MaButton>
