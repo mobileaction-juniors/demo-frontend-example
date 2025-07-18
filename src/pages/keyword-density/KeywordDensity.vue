@@ -189,12 +189,12 @@ const totalCharacters = computed(() => {
 });
 
 watch(inputText, () => {
-    shouldHighlight.value = inputText.value.trim() !== '';
+    shouldHighlight.value = inputText.value.trim() != '';
 });
 
 watch(filterUnwanted, () => {
     const hasChanged = filterUnwanted.value != lastAnalysisState.value.filterUnwanted;
-    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
+    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
 });
 
 onMounted(() => {

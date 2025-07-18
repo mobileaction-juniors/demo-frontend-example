@@ -55,7 +55,7 @@ const toggleNGram = (n) => {
         selectedNGrams.value.push(n);
         selectedNGrams.value.sort((a, b) => a - b);
     }
-    shouldHighlight.value = inputText.value.trim() !== '';
+    shouldHighlight.value = inputText.value.trim() != '';
 };
 
 const clearInput = () => {
@@ -66,19 +66,19 @@ const clearInput = () => {
 
 
 watch(inputText, () => {
-    shouldHighlight.value = inputText.value.trim() !== '';
+    shouldHighlight.value = inputText.value.trim() != '';
 });
 
 watch(eliminateUnwanted, () => {
     const hasChanged = eliminateUnwanted.value != lastGenerationState.value.unwanted;
-    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
+    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
 });
 
 watch(selectedNGrams, () => {
     const current = [...selectedNGrams.value].sort();
     const last = [...lastGenerationState.value.ngrams].sort();
     const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
-    shouldHighlight.value = hasChanged && inputText.value.trim() !== '';
+    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
 }, { deep: true });
 </script>
 
