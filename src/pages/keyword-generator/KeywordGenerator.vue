@@ -1,96 +1,45 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { generateKeywords, getNGramOptions } from '../../utils/keywordGenerator';
-import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge, MaNotification } from '@mobileaction/action-kit';
+import { MaInput, MaButton, MaCheckbox2, MaCard, MaEmpty, MaBadge } from '@mobileaction/action-kit';
+import { useKeywordGeneratorStore } from '../../stores/keywordGenerator';
 
-const inputText = ref('');
-const isInputExists = computed(() => inputText.value.trim())
-const selectedNGrams = ref([1, 2, 3]);
-const generatedKeywords = ref({});
-const eliminateUnwanted = ref(true);
-const shouldHighlight = ref(false);
+const keywordGeneratorStore = useKeywordGeneratorStore();
 const router = useRouter();
 
-const lastGenerationState = ref({
-    text: '',
-    ngrams: [],
-    unwanted: true
-});
-
-const keywordTags = computed(() => {
-    if (generatedKeywords.value.length == 0) {
-        return;
-    }
-    return lastGenerationState.value.ngrams.reduce((acc, n) => {
-        const key = `${n}-gram`;
-        acc[key] = generatedKeywords.value[key] || [];
-        return acc;
-    }, {});
-});
-
-const generateKeywordsFromInput = () => {
-    const keywords = generateKeywords(inputText.value,
-    selectedNGrams.value, eliminateUnwanted.value);
-    generatedKeywords.value = keywords;
-    shouldHighlight.value = false;
-    lastGenerationState.value = {
-        text: inputText.value,
-        ngrams: [...selectedNGrams.value],
-        unwanted: eliminateUnwanted.value
-    };
-    
-    MaNotification.success({
-        "size": "large",
-        "variant": "light",
-        "title": "Keywords Generated!",
-        "description": "Your keywords have been successfully generated from the input text.",
-        "type": "success"
-    });
-  };
-
+const generateKeywordsFromInput = keywordGeneratorStore.generateKeywordsFromInput;
 
 const toggleNGram = (n) => {
-    const index = selectedNGrams.value.indexOf(n);
-    if (index > -1) {
-        selectedNGrams.value.splice(index, 1);
-    } else {
-        selectedNGrams.value.push(n);
-        selectedNGrams.value.sort((a, b) => a - b);
-    }
-    shouldHighlight.value = inputText.value.trim() != '';
+    keywordGeneratorStore.toggleNGram(n);
+    keywordGeneratorStore.setShouldHighlight(keywordGeneratorStore.inputText.trim() != '');
 };
 
-const clearInput = () => {
-    inputText.value = '';
-    generatedKeywords.value = {};
-    shouldHighlight.value = false;
-};
+const clearInput = keywordGeneratorStore.clearAll;
 
 const analyzeDensity = () => {
-    if (!inputText.value.trim()) return;
+    if (!keywordGeneratorStore.inputText.trim()) return;
     
     router.push({
         path: '/keyword-density',
-        query: { text: inputText.value }
+        query: { text: keywordGeneratorStore.inputText }
     });
 };
 
 
-watch(inputText, () => {
-    shouldHighlight.value = inputText.value.trim() != '';
+watch(() => keywordGeneratorStore.inputText, () => {
+    keywordGeneratorStore.setShouldHighlight(keywordGeneratorStore.inputText.trim() != '');
 });
 
-watch(eliminateUnwanted, () => {
-    const hasChanged = eliminateUnwanted.value != lastGenerationState.value.unwanted;
-    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
+watch(() => keywordGeneratorStore.eliminateUnwanted, () => {
+    const hasChanged = keywordGeneratorStore.eliminateUnwanted != keywordGeneratorStore.lastGenerationState.unwanted;
+    keywordGeneratorStore.setShouldHighlight(hasChanged && keywordGeneratorStore.inputText.trim() != '');
 });
 
-watch(selectedNGrams, () => {
-    const current = [...selectedNGrams.value].sort();
-    const last = [...lastGenerationState.value.ngrams].sort();
+watch(() => keywordGeneratorStore.selectedNGrams, () => {
+    const current = [...keywordGeneratorStore.selectedNGrams].sort();
+    const last = [...keywordGeneratorStore.lastGenerationState.ngrams].sort();
     const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
-    shouldHighlight.value = hasChanged && inputText.value.trim() != '';
+    keywordGeneratorStore.setShouldHighlight(hasChanged && keywordGeneratorStore.inputText.trim() != '');
 }, { deep: true });
 </script>
 
@@ -99,7 +48,7 @@ watch(selectedNGrams, () => {
         <MaCard title="Keyword Generator" description="Enter your text and configure settings to generate n-gram keywords" class="ma-input-card">
             <template #default>
                 <MaInput
-                    v-model:value="inputText"
+                    v-model:value="keywordGeneratorStore.inputText"
                     type="textarea"
                     placeholder="Paste your app description here..."
                     size="large"
@@ -112,17 +61,17 @@ watch(selectedNGrams, () => {
                         size="medium" 
                         variant="stroke"
                         icon="rocket-bulk"
-                        :highlight="shouldHighlight"
-                        :disabled="!isInputExists"
+                        :highlight="keywordGeneratorStore.shouldHighlight"
+                        :disabled="keywordGeneratorStore.isGenerating || !keywordGeneratorStore.inputText.trim()"
                         @click="generateKeywordsFromInput"
                     >
-                        Generate Keywords
+                        {{ keywordGeneratorStore.isGenerating ? 'Generating...' : 'Generate Keywords' }}
                     </MaButton>
                     <MaButton 
                         size="medium" 
                         variant="stroke" 
                         color="red"
-                        :disabled="!isInputExists"
+                        :disabled="!keywordGeneratorStore.inputText.trim()"
                         @click="clearInput" 
                     >   
                         Clear
@@ -132,7 +81,7 @@ watch(selectedNGrams, () => {
                         variant="stroke"
                         color="blue"
                         icon="angle-double-right"
-                        :disabled="!isInputExists"
+                        :disabled="!keywordGeneratorStore.inputText.trim()"
                         @click="analyzeDensity"
                     >
                         Analyze Density
@@ -140,17 +89,17 @@ watch(selectedNGrams, () => {
                 </div>
                 <div class="ma-checkbox-wrapper">
                     <MaCheckbox2
-                        v-model:checked="eliminateUnwanted"
+                        v-model:checked="keywordGeneratorStore.eliminateUnwanted"
                     >
                         Hide unwanted words
                     </MaCheckbox2>
                 </div>
                 <div class="ma-ngram-grid">
                     <MaButton
-                        v-for="n in getNGramOptions()"
+                        v-for="n in keywordGeneratorStore.getNGramOptionsList()"
                         :key="n"
                         size="small"
-                        :variant="selectedNGrams.includes(n) ? 'filled' : 'stroke'"
+                        :variant="keywordGeneratorStore.selectedNGrams.includes(n) ? 'filled' : 'stroke'"
                         @click="toggleNGram(n)"
                     >
                         {{ n }}-gram
@@ -161,12 +110,12 @@ watch(selectedNGrams, () => {
         
         <MaCard title="Generated Keywords" description="Your processed keywords will appear here" class="ma-results-card">
             <template #default>
-                <div v-if="Object.keys(generatedKeywords).length > 0" class="ma-results-content">
-                    <div v-for="ngram in Object.keys(keywordTags)" :key="ngram" class="ma-ngram-section">
+                <div v-if="Object.keys(keywordGeneratorStore.generatedKeywords).length > 0" class="ma-results-content">
+                    <div v-for="ngram in Object.keys(keywordGeneratorStore.keywordTags)" :key="ngram" class="ma-ngram-section">
                         <h6 class="ma-ngram-heading">{{ ngram }}</h6>
-                        <div v-if="keywordTags[ngram].length" class="ma-keywords-container">
+                        <div v-if="keywordGeneratorStore.keywordTags[ngram].length" class="ma-keywords-container">
                             <MaBadge
-                                v-for="item in keywordTags[ngram]"
+                                v-for="item in keywordGeneratorStore.keywordTags[ngram]"
                                 :key="item.keyword"
                                 type="primary"
                                 variant="dark"
