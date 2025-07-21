@@ -49,7 +49,7 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
     const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
     const totalWords = cleanedWords.length;
 
-    if (totalWords === 0) {
+    if (totalWords == 0) {
         return [];
     }
 

@@ -58,24 +58,24 @@ const prevPage = () => {
 };
 
 const setSorting = (field) => {
-    const newOrder = store.sortBy === field ? (store.sortOrder === 'desc' ? 'asc' : 'desc') : 'desc';
+    const newOrder = store.sortBy == field ? (store.sortOrder == 'desc' ? 'asc' : 'desc') : 'desc';
     store.setSorting(field, newOrder);
     store.setCurrentPage(1);
 };
 
 const getSortIcon = (field) => {
-    return store.sortBy === field ? (store.sortOrder === 'desc' ? '↓' : '↑') : '';
+    return store.sortBy == field ? (store.sortOrder == 'desc' ? '↓' : '↑') : '';
 };
 
 const totalCharacters = computed(() => store.textStats.totalCharacters);
 
 watch(() => store.inputText, () => {
-    store.shouldHighlight = store.inputText.trim() !== '';
+    store.shouldHighlight = store.inputText.trim() != '';
 });
 
 watch(() => store.filterUnwanted, () => {
-    const hasChanged = store.filterUnwanted !== store.lastAnalysisState.filterUnwanted;
-    store.shouldHighlight = hasChanged && store.inputText.trim() !== '';
+    const hasChanged = store.filterUnwanted != store.lastAnalysisState.filterUnwanted;
+    store.shouldHighlight = hasChanged && store.inputText.trim() != '';
 });
 
 onMounted(() => {
@@ -189,7 +189,7 @@ onMounted(() => {
                     <div v-if="store.totalPages > 1" class="ma-pagination">
                         <MaButton 
                             @click="prevPage" 
-                            :disabled="store.currentPage === 1"
+                            :disabled="store.currentPage == 1"
                             size="small"
                             variant="stroke"
                         >
@@ -201,7 +201,7 @@ onMounted(() => {
                                 v-for="page in Math.min(5, store.totalPages)" 
                                 :key="page"
                                 @click="goToPage(page)"
-                                :class="['ma-pagination-btn', { 'active': store.currentPage === page }]"
+                                :class="['ma-pagination-btn', { 'active': store.currentPage == page }]"
                             >
                                 {{ page }}
                             </button>
@@ -210,7 +210,7 @@ onMounted(() => {
                         
                         <MaButton 
                             @click="nextPage" 
-                            :disabled="store.currentPage === store.totalPages"
+                            :disabled="store.currentPage == store.totalPages"
                             size="small"
                             variant="stroke"
                         >

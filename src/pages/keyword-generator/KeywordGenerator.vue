@@ -11,7 +11,7 @@ const generateKeywordsFromInput = store.generateKeywordsFromInput;
 
 const toggleNGram = (n) => {
     store.toggleNGram(n);
-    store.shouldHighlight = store.inputText.trim() !== '';
+    store.shouldHighlight = store.inputText.trim() != '';
 };
 
 const clearInput = store.clearAll;
@@ -27,19 +27,19 @@ const analyzeDensity = () => {
 
 
 watch(() => store.inputText, () => {
-    store.shouldHighlight = store.inputText.trim() !== '';
+    store.shouldHighlight = store.inputText.trim() != '';
 });
 
 watch(() => store.eliminateUnwanted, () => {
-    const hasChanged = store.eliminateUnwanted !== store.lastGenerationState.unwanted;
-    store.shouldHighlight = hasChanged && store.inputText.trim() !== '';
+    const hasChanged = store.eliminateUnwanted != store.lastGenerationState.unwanted;
+    store.shouldHighlight = hasChanged && store.inputText.trim() != '';
 });
 
 watch(() => store.selectedNGrams, () => {
     const current = [...store.selectedNGrams].sort();
     const last = [...store.lastGenerationState.ngrams].sort();
-    const hasChanged = current.length !== last.length || current.some((val, i) => val !== last[i]);
-    store.shouldHighlight = hasChanged && store.inputText.trim() !== '';
+    const hasChanged = current.length != last.length || current.some((val, i) => val != last[i]);
+    store.shouldHighlight = hasChanged && store.inputText.trim() != '';
 }, { deep: true });
 </script>
 
@@ -62,10 +62,10 @@ watch(() => store.selectedNGrams, () => {
                         variant="stroke"
                         icon="rocket-bulk"
                         :highlight="store.shouldHighlight"
-                        :disabled="!store.isInputExists"
+                        :disabled="store.isGenerating || !store.isInputExists"
                         @click="generateKeywordsFromInput"
                     >
-                        Generate Keywords
+                        {{ store.isGenerating ? 'Generating...' : 'Generate Keywords' }}
                     </MaButton>
                     <MaButton 
                         size="medium" 

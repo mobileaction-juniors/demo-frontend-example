@@ -73,10 +73,10 @@ export const useKeywordAnalysisStore = defineStore('keywordAnalysis', () => {
       const aVal = a[sortBy.value]
       const bVal = b[sortBy.value]
       
-      if (sortOrder.value === 'desc') {
-        return typeof aVal === 'string' ? bVal.localeCompare(aVal) : bVal - aVal
+      if (sortOrder.value == 'desc') {
+        return typeof aVal == 'string' ? bVal.localeCompare(aVal) : bVal - aVal
       } else {
-        return typeof aVal === 'string' ? aVal.localeCompare(bVal) : aVal - bVal
+        return typeof aVal == 'string' ? aVal.localeCompare(bVal) : aVal - bVal
       }
     })
     
