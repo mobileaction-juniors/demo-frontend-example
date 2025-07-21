@@ -1,0 +1,17 @@
+{
+  "sampleTexts": {
+    "simple": "This is a simple test text for keyword analysis.",
+    "complex": "This comprehensive text contains multiple keywords that will be analyzed for density. The keyword analysis tool should identify repeated words and calculate their frequency. Testing the functionality is important for quality assurance.",
+    "withStopWords": "The quick brown fox jumps over the lazy dog. This sentence contains many stop words that should be filtered out during analysis."
+  },
+  "expectedResults": {
+    "simple": {
+      "totalWords": 9,
+      "uniqueWords": 9
+    },
+    "complex": {
+      "totalWords": 28,
+      "keywordCount": 3
+    }
+  }
+}
