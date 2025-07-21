@@ -1,9 +1,10 @@
 <script setup>
 import { computed, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { MaInput, MaButton, MaCard, MaEmpty, MaCheckbox2 } from '@mobileaction/action-kit';
 import { KEYWORD_DENSITY_CONSTANTS } from '../../constants/keywordDensity';
-import { useKeywordAnalysisStore } from '../../stores/keywordAnalysis';
+import { useKeywordDensityStore } from '../../stores/keywordDensity';
+import { useKeywordStore } from '../../stores/keyword';
 
 const props = defineProps({
     defaultText: {
@@ -13,73 +14,81 @@ const props = defineProps({
 });
 
 const route = useRoute();
-const store = useKeywordAnalysisStore();
+const router = useRouter();
+const keywordDensityStore = useKeywordDensityStore();
+const keywordStore = useKeywordStore();
 
-const initialText = route.query.text || props.defaultText;
-store.setDefaultText(initialText);
-store.setItemsPerPage(KEYWORD_DENSITY_CONSTANTS.DEFAULT_PAGE_SIZE);
+keywordDensityStore.setItemsPerPage(KEYWORD_DENSITY_CONSTANTS.DEFAULT_PAGE_SIZE);
 
-const copyResultsToClipboard = store.copyResultsToClipboard;
+if (route.query.text) {
+    keywordStore.setInputText(route.query.text);
+    keywordDensityStore.analyzeKeywords();
+    router.replace({ path: route.path });
+} else if (!keywordStore.inputText.trim()) {
+    keywordStore.setInputText(props.defaultText);
+}
+
+const copyResultsToClipboard = keywordDensityStore.copyResultsToClipboard;
 
 const paginationInfo = computed(() => {
-    const start = (store.currentPage - 1) * store.itemsPerPage + 1;
-    const end = Math.min(start + store.itemsPerPage - 1, store.sortedDensityResults.length);
+    const start = (keywordDensityStore.currentPage - 1) * keywordDensityStore.itemsPerPage + 1;
+    const end = Math.min(start + keywordDensityStore.itemsPerPage - 1, keywordDensityStore.sortedDensityResults.length);
     return {
         start,
         end,
-        total: store.sortedDensityResults.length
+        total: keywordDensityStore.sortedDensityResults.length
     };
 });
 
-const analyzeDensity = store.analyzeKeywords;
-const clearInput = store.clearAll;
+const analyzeDensity = keywordDensityStore.analyzeKeywords;
+const clearInput = keywordDensityStore.clearAll;
 
 const clearError = () => {
-    store.densityErrorMessage = '';
-    store.densityErrorType = '';
+    keywordDensityStore.densityErrorMessage = '';
+    keywordDensityStore.densityErrorType = '';
 };
 
 const goToPage = (page) => {
-    if (page >= 1 && page <= store.totalPages) {
-        store.setCurrentPage(page);
+    if (page >= 1 && page <= keywordDensityStore.totalPages) {
+        keywordDensityStore.setCurrentPage(page);
     }
 };
 
 const nextPage = () => {
-    if (store.currentPage < store.totalPages) {
-        store.setCurrentPage(store.currentPage + 1);
+    if (keywordDensityStore.currentPage < keywordDensityStore.totalPages) {
+        keywordDensityStore.setCurrentPage(keywordDensityStore.currentPage + 1);
     }
 };
 
 const prevPage = () => {
-    if (store.currentPage > 1) {
-        store.setCurrentPage(store.currentPage - 1);
+    if (keywordDensityStore.currentPage > 1) {
+        keywordDensityStore.setCurrentPage(keywordDensityStore.currentPage - 1);
     }
 };
 
 const setSorting = (field) => {
-    const newOrder = store.sortBy == field ? (store.sortOrder == 'desc' ? 'asc' : 'desc') : 'desc';
-    store.setSorting(field, newOrder);
-    store.setCurrentPage(1);
+    const newOrder = keywordDensityStore.sortBy == field ? (keywordDensityStore.sortOrder == 'desc' ? 'asc' : 'desc') : 'desc';
+    keywordDensityStore.setSorting(field, newOrder);
+    keywordDensityStore.setCurrentPage(1);
 };
 
 const getSortIcon = (field) => {
-    return store.sortBy == field ? (store.sortOrder == 'desc' ? '↓' : '↑') : '';
+    return keywordDensityStore.sortBy == field ? (keywordDensityStore.sortOrder == 'desc' ? '↓' : '↑') : '';
 };
 
-const totalCharacters = computed(() => store.textStats.totalCharacters);
+const totalCharacters = computed(() => keywordStore.textStats.totalCharacters);
 
-watch(() => store.inputText, () => {
-    store.shouldHighlight = store.inputText.trim() != '';
+watch(() => keywordStore.inputText, () => {
+    keywordStore.setHighlight(keywordStore.inputText.trim() != '');
 });
 
-watch(() => store.filterUnwanted, () => {
-    const hasChanged = store.filterUnwanted != store.lastAnalysisState.filterUnwanted;
-    store.shouldHighlight = hasChanged && store.inputText.trim() != '';
+watch(() => keywordDensityStore.filterUnwanted, () => {
+    const hasChanged = keywordDensityStore.filterUnwanted != keywordDensityStore.lastAnalysisState.filterUnwanted;
+    keywordStore.setHighlight(hasChanged && keywordStore.inputText.trim() != '');
 });
 
 onMounted(() => {
-    store.analyzeKeywords();
+    keywordDensityStore.analyzeKeywords();
 });
 
 </script>
@@ -88,12 +97,12 @@ onMounted(() => {
     <div class="ma-container">
         <MaCard title="Keyword Density Analyzer" description="Enter your text and keywords to analyze keyword density" class="ma-input-card">
             <template #default>
-                <div v-if="store.densityErrorMessage" class="ma-error-message" role="alert">
-                    {{ store.densityErrorMessage }}
+                <div v-if="keywordDensityStore.densityErrorMessage" class="ma-error-message" role="alert">
+                    {{ keywordDensityStore.densityErrorMessage }}
                     <button @click="clearError" class="ma-error-close" aria-label="Close error message">×</button>
                 </div>
                 <MaInput
-                    v-model:value="store.inputText"
+                    v-model:value="keywordStore.inputText"
                     type="textarea"
                     placeholder="Paste your text here..."
                     size="large"
@@ -104,12 +113,12 @@ onMounted(() => {
                 </div>
                 <div class="ma-options">
                     <div class="ma-merge-option">
-                        <MaCheckbox2 v-model:checked="store.shouldMergeKeywords">
+                        <MaCheckbox2 v-model:checked="keywordDensityStore.shouldMergeKeywords">
                             Merge keywords has same density
                         </MaCheckbox2>
                     </div>
                     <div class="ma-filter-option">
-                        <MaCheckbox2 v-model:checked="store.filterUnwanted">
+                        <MaCheckbox2 v-model:checked="keywordDensityStore.filterUnwanted">
                             Hide unwanted words
                         </MaCheckbox2>
                     </div>
@@ -121,11 +130,11 @@ onMounted(() => {
                         variant="stroke"
                         color="green"
                         icon="chart-bar"
-                        :highlight="store.shouldHighlight"
-                        :disabled="store.isDensityAnalyzing || !store.inputText.trim()"
+                        :highlight="keywordStore.shouldHighlight"
+                        :disabled="keywordDensityStore.isDensityAnalyzing || !keywordStore.inputText.trim()"
                         aria-describedby="analyze-help"
                     >
-                        {{ store.isDensityAnalyzing ? 'Analyzing...' : 'Analyze Density' }}
+                        {{ keywordDensityStore.isDensityAnalyzing ? 'Analyzing...' : 'Analyze Density' }}
                     </MaButton>
                     <div id="analyze-help" class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0" style="clip: rect(0, 0, 0, 0);">
                         Click to analyze keyword density in your text. Button is disabled when text or keywords are empty.
@@ -135,20 +144,20 @@ onMounted(() => {
                         size="medium" 
                         variant="stroke" 
                         color="red"
-                        :disabled="!store.inputText.trim()"
+                        :disabled="!keywordStore.inputText.trim()"
                     >
                         Clear
                     </MaButton>
                 </div>
                 <div aria-live="polite" aria-atomic="true" class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0" style="clip: rect(0, 0, 0, 0);">
-                    {{ store.isDensityAnalyzing ? 'Analyzing keyword density...' : '' }}
+                    {{ keywordDensityStore.isDensityAnalyzing ? 'Analyzing keyword density...' : '' }}
                 </div>
             </template>
         </MaCard>
         
         <MaCard title="Density Results" description="Keyword density analysis results" class="ma-results-card">
             <template #default>
-                <div v-if="store.sortedDensityResults.length > 0" class="ma-results-content">
+                <div v-if="keywordDensityStore.sortedDensityResults.length > 0" class="ma-results-content">
                     <div class="ma-table-container">
                         <table class="ma-density-table" aria-label="Keyword density analysis results">
                             <caption class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0" style="clip: rect(0, 0, 0, 0);">
@@ -168,7 +177,7 @@ onMounted(() => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="result in store.paginatedDensityResults" :key="result.keyword">
+                                <tr v-for="result in keywordDensityStore.paginatedDensityResults" :key="result.keyword">
                                     <td class="ma-keyword-cell">{{ result.keyword }}</td>
                                     <td class="ma-count-cell">{{ result.count }}</td>
                                     <td class="ma-density-cell">{{ result.density }}%</td>
@@ -178,7 +187,7 @@ onMounted(() => {
                     </div>
                     <div class="ma-summary">
                         <p class="ma-summary-text">
-                            Total words analyzed: {{ store.textStats.totalWords }}
+                            Total words analyzed: {{ keywordStore.textStats.totalWords }}
                         </p>
                         <div class="ma-pagination-info">
                             Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} results
@@ -186,10 +195,10 @@ onMounted(() => {
                     </div>
                     
                     <!-- Pagination Controls -->
-                    <div v-if="store.totalPages > 1" class="ma-pagination">
+                    <div v-if="keywordDensityStore.totalPages > 1" class="ma-pagination">
                         <MaButton 
                             @click="prevPage" 
-                            :disabled="store.currentPage == 1"
+                            :disabled="keywordDensityStore.currentPage == 1"
                             size="small"
                             variant="stroke"
                         >
@@ -198,19 +207,19 @@ onMounted(() => {
                         
                         <div class="ma-pagination-numbers">
                             <button 
-                                v-for="page in Math.min(5, store.totalPages)" 
+                                v-for="page in Math.min(5, keywordDensityStore.totalPages)" 
                                 :key="page"
                                 @click="goToPage(page)"
-                                :class="['ma-pagination-btn', { 'active': store.currentPage == page }]"
+                                :class="['ma-pagination-btn', { 'active': keywordDensityStore.currentPage == page }]"
                             >
                                 {{ page }}
                             </button>
-                            <span v-if="store.totalPages > 5" class="ma-pagination-ellipsis">...</span>
+                            <span v-if="keywordDensityStore.totalPages > 5" class="ma-pagination-ellipsis">...</span>
                         </div>
                         
                         <MaButton 
                             @click="nextPage" 
-                            :disabled="store.currentPage == store.totalPages"
+                            :disabled="keywordDensityStore.currentPage == keywordDensityStore.totalPages"
                             size="small"
                             variant="stroke"
                         >
