@@ -43,14 +43,14 @@ const mergeKeywords = (keywordCountMap, totalWords) => {
 
 export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnwanted = true) {
     if (!text.trim()) {
-        return [];
+        return { results: [], totalKeywords: 0, groups: 0 };
     }
 
     const cleanedWords = cleanTextWithStopwords(text, filterUnwanted);
     const totalWords = cleanedWords.length;
 
     if (totalWords == 0) {
-        return [];
+        return { results: [], totalKeywords: 0, groups: 0 };
     }
 
     const keywordCountMap = {};
@@ -61,6 +61,8 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
         }
         keywordCountMap[word]++;
     });
+
+    const totalUniqueKeywords = Object.keys(keywordCountMap).length;
 
     if (shouldMerge) {
         const merged = mergeKeywords(keywordCountMap, totalWords);
@@ -82,7 +84,12 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             }
         }
 
-        return results.sort((a, b) => b.density - a.density);
+        const sortedResults = results.sort((a, b) => b.density - a.density);
+        return { 
+            results: sortedResults, 
+            totalKeywords: totalUniqueKeywords, 
+            groups: sortedResults.length 
+        };
     } else {
         const results = [];
         
@@ -98,7 +105,12 @@ export function calculateKeywordDensityAuto(text, shouldMerge = false, filterUnw
             });
         }
 
-        return results.sort((a, b) => b.density - a.density);
+        const sortedResults = results.sort((a, b) => b.density - a.density);
+        return { 
+            results: sortedResults, 
+            totalKeywords: totalUniqueKeywords, 
+            groups: sortedResults.length 
+        };
     }
 }
 
