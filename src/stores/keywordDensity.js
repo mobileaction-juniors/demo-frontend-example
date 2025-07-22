@@ -65,13 +65,13 @@ export const useKeywordDensityStore = defineStore('keywordDensity', () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      const results = calculateKeywordDensityAuto(
+      const analysisResult = calculateKeywordDensityAuto(
         keywordStore.inputText,
         shouldMergeKeywords.value,
         filterUnwanted.value
       )
       
-      densityResults.value = results
+      densityResults.value = analysisResult.results
       currentPage.value = 1
       keywordStore.setHighlight(false)
       
@@ -81,11 +81,15 @@ export const useKeywordDensityStore = defineStore('keywordDensity', () => {
         shouldMerge: shouldMergeKeywords.value
       }
       
+      const notificationMessage = shouldMergeKeywords.value 
+        ? `Found ${analysisResult.totalKeywords} keywords grouped into ${analysisResult.groups} unique density groups in your text.`
+        : `Found ${analysisResult.totalKeywords} unique keywords in your text.`
+      
       MaNotification.success({
         size: "large",
         variant: "light",
         title: "Analysis Complete!",
-        description: `Found ${results.length} keywords in your text.`,
+        description: notificationMessage,
         type: "success"
       })
       
