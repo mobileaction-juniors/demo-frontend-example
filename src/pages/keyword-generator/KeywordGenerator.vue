@@ -11,12 +11,12 @@ function generateNGrams(splittedSentence, n) {
     for (let i = 0; i <= splittedSentence.length - n; i++) {
         c.add(splittedSentence.slice(i, i + n).join(" "));
     }
-
     return c;
 }
 
 function clearSentence(sentence) {
     return sentence
+        .toLowerCase()
         .replace(regex, "") // Remove punctuations.
         .split(" ") // Extract words.
         .filter((word) => word.trim() !== ""); // Remove white-spaces.
@@ -25,7 +25,6 @@ function clearSentence(sentence) {
 function generateMaxNGrams(sentence, maxN) {
     const res = [];
     const splittedSentence = clearSentence(sentence);
-    console.log(splittedSentence);
 
     for (let n = 1; n <= maxN; n++) {
         const generated = generateNGrams(splittedSentence, n);
@@ -80,18 +79,23 @@ function handleButtonClick(e) {
                 <div v-if="!hasError" class="ma-container">
                     <span
                         v-for="(calculatedNGramSet, i) in nGrams"
-                        :key="calculatedNGramSet"
+                        :key="i"
                         class="ma-result"
                     >
-                        <span class="ma-label"> {{ i + 1 }}-Grams </span>
-                        <div class="ma-ngram-container">
-                            <span
-                                v-for="value in calculatedNGramSet"
-                                class="ma-ngram"
-                                :key="value"
-                            >
-                                {{ value }}
-                            </span>
+                        <div
+                            v-if="calculatedNGramSet.size !== 0"
+                            class="ma-content"
+                        >
+                            <span class="ma-label"> {{ i + 1 }}-Grams </span>
+                            <div class="ma-ngram-container">
+                                <span
+                                    v-for="value in calculatedNGramSet"
+                                    class="ma-ngram"
+                                    :key="value"
+                                >
+                                    {{ value }}
+                                </span>
+                            </div>
                         </div>
                     </span>
                 </div>
