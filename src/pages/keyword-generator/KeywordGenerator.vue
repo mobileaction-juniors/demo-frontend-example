@@ -16,7 +16,10 @@ function generateNGrams(splittedSentence, n) {
 }
 
 function clearSentence(sentence) {
-    return sentence.replace(regex, "").split(" ");
+    return sentence
+        .replace(regex, "") // Remove punctuations.
+        .split(" ") // Extract words.
+        .filter((word) => word.trim() !== ""); // Remove white-spaces.
 }
 
 function generateMaxNGrams(sentence, maxN) {
