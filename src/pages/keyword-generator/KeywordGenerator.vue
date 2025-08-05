@@ -44,17 +44,18 @@ import {regex} from "@/cleanupResources.js";
 
 const inputText = ref('');
 const resultGrams = ref([[]]);
+const MAX_N = 3;
 
 function generateNGrams(){
   resultGrams.value = [];
-  const window = [];
   let resultN = new Set();
-
   let cleanedText = cleanText(inputText.value)
-  let wordCount = cleanedText.length;
 
+  let wordCount = cleanedText.length;
   //sliding window
-  for(let n=1;n<4;n++){
+
+  for(let n=1; n<= MAX_N; n++){
+    const window = [];
     for(let i=0;i < wordCount; i++){
       window.push(cleanedText[i]);
       if(window.length===n){
