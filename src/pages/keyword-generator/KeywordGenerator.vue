@@ -1,9 +1,19 @@
 <script setup>
 import { ref } from "vue";
-import { regex } from "@/cleanupResources";
+import { regex, filterArr } from "@/cleanupResources";
+import MaMultiSelect from "@/components/MaMultiSelect.vue";
+import {
+    MaButton,
+    MaInput,
+    MaBadge,
+    MaCheckbox2,
+} from "@mobileaction/action-kit";
+import { useNGramStore } from "@/stores/ngramStore";
 
+const ngramStore = useNGramStore();
 const sentence = ref("");
 const nGrams = ref([]);
+const removeUnwanted = ref(false);
 const hasError = ref(false);
 
 function generateNGrams(splittedSentence, n) {
@@ -14,86 +24,114 @@ function generateNGrams(splittedSentence, n) {
     return c;
 }
 
-function clearSentence(sentence) {
-    return sentence
+function clearSentence(sentence, removeUnwantedWords) {
+    sentence = sentence
         .toLowerCase()
-        .replace(regex, "") // Remove punctuations.
+        .replace(regex, " ") // Remove punctuations.
         .split(" ") // Extract words.
         .filter((word) => word.trim() !== ""); // Remove white-spaces.
+
+    if (removeUnwantedWords)
+        sentence = sentence.filter((word) => !filterArr.has(word));
+
+    return sentence;
 }
 
-function generateMaxNGrams(sentence, maxN) {
+function generateDesiredNGrams(sentence, desiredNGrams) {
     const res = [];
-    const splittedSentence = clearSentence(sentence);
+    const clearedSentence = clearSentence(sentence, removeUnwanted.value);
 
-    for (let n = 1; n <= maxN; n++) {
-        const generated = generateNGrams(splittedSentence, n);
-        if (generated) res.push(generated);
-    }
+    desiredNGrams.forEach((selectedNGram) => {
+        const generated = generateNGrams(clearedSentence, selectedNGram);
+        if (generated)
+            res.push({
+                ngram: selectedNGram,
+                data: generated,
+            });
+    });
 
-    return res;
+    return res.sort((ngData1, ngData2) => ngData1.ngram - ngData2.ngram);
 }
 
 function handleButtonClick() {
-    if (sentence.value.trim() === "") {
+    if (
+        sentence.value.trim() === "" ||
+        ngramStore.selectedNGrams.length === 0
+    ) {
         console.error("[MA] Invalid sentence input!");
         hasError.value = true;
         return;
     }
 
     hasError.value = false;
-    nGrams.value = generateMaxNGrams(sentence.value, 3);
+    nGrams.value = generateDesiredNGrams(
+        sentence.value,
+        ngramStore.selectedNGrams
+    );
 }
 </script>
 <template>
-    <div class="ma-keywords-generator">
-        <div class="ma-header">
+    <div class="flex flex-col h-dvh">
+        <div
+            class="bg-[#333333] text-[#f9f9f9] text-[1.2rem] px-4 py-3 font-semibold"
+        >
             <span>N-Gram Keyword Generator</span>
         </div>
-        <div class="ma-container">
-            <form class="ma-form">
-                <label class="ma-label" for="ma-sentence"
-                    >Enter a sentence</label
-                >
-                <textarea
+        <div class="flex justify-center items-center flex-col gap-8 flex-1 p-4">
+            <form class="flex flex-col gap-4 p-4">
+                <ma-input
                     id="ma-sentence"
-                    class="ma-input"
+                    type="textarea"
+                    title="Enter a sentence"
                     placeholder="Quick brown fox jump over fox..."
-                    v-model="sentence"
-                    rows="10"
+                    v-model:value="sentence"
+                    :rows="5"
                 />
-                <button
-                    class="ma-btn"
-                    @click="handleButtonClick()"
-                    type="button"
-                >
-                    Calculate N-Grams
-                </button>
-            </form>
-            <div class="ma-content">
-                <span v-if="hasError" class="ma-error">
-                    Invalid sentence input!
-                </span>
-                <div v-if="!hasError" class="ma-container">
-                    <span
-                        v-for="(calculatedNGramSet, i) in nGrams"
-                        :key="i"
-                        class="ma-result"
+                <ma-checkbox2 v-model:checked="removeUnwanted">
+                    Remove unwanted words
+                </ma-checkbox2>
+                <div class="flex justify-center items-center gap-4">
+                    <ma-button
+                        class="flex-1/2"
+                        variant="filled"
+                        @click="handleButtonClick()"
+                        type="button"
                     >
-                        <div
-                            v-if="calculatedNGramSet.size !== 0"
-                            class="ma-content"
-                        >
-                            <span class="ma-label"> {{ i + 1 }}-Grams </span>
-                            <div class="ma-ngram-container">
-                                <span
-                                    v-for="value in calculatedNGramSet"
-                                    class="ma-ngram"
-                                    :key="value"
-                                >
-                                    {{ value }}
-                                </span>
-                            </div>
+                        Calculate N-Grams
+                    </ma-button>
+                    <ma-multi-select />
+                </div>
+            </form>
+            <div
+                class="flex text-[14px] justify-center min-h-[5rem] items-center flex-col gap-2"
+            >
+                <span
+                    v-show="hasError"
+                    class="font-bold text-red-600 min-h-[3rem]"
+                >
+                    Invalid form values!
+                </span>
+                <div
+                    v-show="!hasError"
+                    class="flex justify-center items-center flex-col gap-8 flex-1 p-4"
+                >
+                    <span
+                        v-for="calculatedNGramSet in nGrams"
+                        :key="calculatedNGramSet.ngram"
+                        v-show="calculatedNGramSet.data.size !== 0"
+                        class="flex text-[14px] justify-center items-center gap-3 flex-col"
+                    >
+                        <span class="text-[#555555] text-[14px]">
+                            {{ calculatedNGramSet.ngram }}-Grams
+                        </span>
+                        <div class="flex flex-wrap gap-[0.65rem] max-w-[80vw]">
+                            <MaBadge
+                                v-for="value in calculatedNGramSet.data"
+                                :key="value"
+                                size="large"
+                            >
+                                {{ value }}
+                            </MaBadge>
                         </div>
                     </span>
                 </div>
@@ -101,114 +139,3 @@ function handleButtonClick() {
         </div>
     </div>
 </template>
-
-<style scoped>
-.ma-keywords-generator {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-}
-
-.ma-header {
-    background-color: #333333;
-    color: #f9f9f9;
-    font-size: 1.2rem;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-}
-
-.ma-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.ma-label {
-    color: #555555;
-    font-size: 14px;
-}
-
-.ma-btn {
-    border: none;
-    padding: 0.5rem 1rem;
-    background-color: #333333;
-    color: #f9f9f9;
-    border-radius: 1rem;
-
-    &:hover {
-        cursor: pointer;
-        background-color: #555555;
-    }
-}
-
-.ma-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 2rem;
-    flex: 1;
-    padding: 1rem;
-}
-
-.ma-content {
-    display: flex;
-    font-size: 14px;
-    justify-content: center;
-    min-height: 5rem;
-    align-items: center;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.ma-result {
-    display: flex;
-    font-size: 14px;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-    flex-direction: column;
-}
-
-.ma-ngram {
-    padding: 0.25rem 0.5rem;
-    border-radius: 1rem;
-    border: 2px solid darkgreen;
-    background-color: #008000;
-    color: white;
-    transition: all 0.25s ease-in-out;
-    width: max-content;
-    &:hover {
-        scale: 1.2;
-        cursor: pointer;
-        box-shadow: 4px 4px 4px darkgray;
-    }
-}
-
-.ma-ngram-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    max-width: 80vw;
-}
-
-.ma-input {
-    min-width: 25rem;
-    min-height: 5rem;
-    padding: 0.5rem 0.75rem;
-    height: 6rem;
-    border-radius: 1rem;
-    border: 1.25px solid #555555;
-}
-
-.ma-error {
-    font-weight: bold;
-    color: red;
-    min-height: 3rem;
-}
-
-.ma-hide {
-    opacity: 0;
-}
-</style>
