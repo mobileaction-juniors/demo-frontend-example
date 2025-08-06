@@ -34,9 +34,7 @@ function generateMaxNGrams(sentence, maxN) {
     return res;
 }
 
-function handleButtonClick(e) {
-    e.preventDefault();
-
+function handleButtonClick() {
     if (sentence.value.trim() === "") {
         console.error("[MA] Invalid sentence input!");
         hasError.value = true;
@@ -66,8 +64,8 @@ function handleButtonClick(e) {
                 />
                 <button
                     class="ma-btn"
-                    @click="handleButtonClick($event)"
-                    type="submit"
+                    @click="handleButtonClick()"
+                    type="button"
                 >
                     Calculate N-Grams
                 </button>
