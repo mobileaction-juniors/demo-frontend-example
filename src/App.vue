@@ -1,3 +1,4 @@
+<style src="@/style/main.css" />
 <template>
   <div>
       <the-header/>
