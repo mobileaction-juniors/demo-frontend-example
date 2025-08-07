@@ -10,7 +10,8 @@
         v-model:clearUnwantedSelected="clearUnwantedSelected"
     />
 
-    <MaButton @click="generateNGrams" class="generate-button">
+    <MaButton @click="generateNGrams" class="generate-button"
+              variant="lighter" icon="glass-bulk">
       Generate N-Grams...
     </MaButton>
 
@@ -22,7 +23,7 @@
 import { ref } from 'vue'
 
 import {cleanDescription, cleanUnwantedWords} from "@/utils/CleanDescription.js";
-import { MaNotification, MaButton } from '@mobileaction/action-kit'
+import {MaNotification, MaButton} from '@mobileaction/action-kit'
 import NGramsResult from "@/components/NGramsResult.vue";
 import NGramsControl from "@/components/NGramsControl.vue";
 import InputTextPlace from "@/components/InputTextPlace.vue";
