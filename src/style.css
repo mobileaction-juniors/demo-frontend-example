@@ -1,0 +1,12 @@
+/**
+ * Global CSS file - Required to initialize Tailwind CSS
+ * 
+ * WHY this file exists:
+ * - Tailwind CSS must be imported somewhere to be available globally
+ * - This file is imported in main.ts to load Tailwind styles
+ * - Without this import, @apply directive won't work in components
+ * - All Tailwind utility classes need this global import to function
+ * 
+ * Reference: https://tailwindcss.com/docs/installation/vite
+ */
+@import "tailwindcss";
