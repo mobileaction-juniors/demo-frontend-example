@@ -2,94 +2,52 @@
   <div class="container">
     <h1 class="title">N-Gram Creator</h1>
 
-    <div class="input-group">
-      <div class="input-column">
-        <p><strong>Message:</strong> {{ inputText }}</p>
-        <MaInput
-            v-model:value="inputText"
-            type="textarea"
-            title="Input Title"
-            size="large"
-            placeholder="n-gram me"
-            hintText="Write your text to create ngrams"
-        />
-      </div>
-    </div>
+    <InputTextPlace v-model="inputText" />
 
-    <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
-      <div class="ma-ngram-selection-container">
-        <MaSelect
-            allowClear
-            showSearch = "false"
-            checkboxPlacement="left"
-            dropdownMatchSelectWidth
-            mode="multiselect"
-            multiSelectOptionType="toggle"
-            optionFilterProp="label"
-            optionItemRounded
-            :options="generateNgramRange(MAX_N)"
-            placeholder="Select option..."
-            size="small"
-            v-model:value="selectedNValues"
-        >
-        </MaSelect>
-        <MaCheckboxCard
-            v-model:checked="clearUnwantedSelected"
-        >
-            <template #title>Remove Stop Words</template>
-        </MaCheckboxCard>
-      </div>
-    </MaCard>
+    <NGramsControl
+        :maxN="MAX_N"
+        v-model:selectedNRange="selectedNRange"
+        v-model:clearUnwantedSelected="clearUnwantedSelected"
+    />
 
-    <button @click="generateNGrams" class="generate-button">
+    <MaButton @click="generateNGrams" class="generate-button">
       Generate N-Grams...
-    </button>
+    </MaButton>
 
-    <div
-        v-for="(words, i) in resultGrams"
-        :key="i"
-        class="ngram-row"
-    >
-      <strong class="ngram-title">{{ words.label }} :</strong>
-      <div class="word-list">
-        <MaBadge
-            v-for="(word, j) in words.value"
-            :key="j"
-            class="word-tag"
-        >
-          {{ word }}
-        </MaBadge>
-      </div>
-    </div>
+    <NGramsResult :results="resultGrams" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+
 import {cleanDescription, cleanUnwantedWords} from "@/utils/CleanDescription.js";
-import { MaSelect as MaSelect, MaCard, MaCheckbox2Card as MaCheckboxCard, MaInput, MaBadge } from '@mobileaction/action-kit'
+import { MaNotification, MaButton } from '@mobileaction/action-kit'
+import NGramsResult from "@/components/NGramsResult.vue";
+import NGramsControl from "@/components/NGramsControl.vue";
+import InputTextPlace from "@/components/InputTextPlace.vue";
 
 const MAX_N = 10;
 const DEF_N = 3;
+const MIN_N = 1;
 
 const inputText = ref('');
 const resultGrams = ref([]);
-const selectedNValues = ref(Array.from({ length: DEF_N }, (_, i) => i + 1));
+const selectedNRange = ref([MIN_N,DEF_N]);
 const clearUnwantedSelected = ref(false);
 
-function generateNgramRange(max = 10, start = 1) {
-  return Array.from({ length: max - start + 1 }, (_, i) => {
-    const value = i + start;
-    return {
-      label: `${value}-gram`,
-      value: value
-    };
-  });
+function generateNgramRange(max = MAX_N, start = MIN_N) {
+  return Array.from({ length: max - start + 1 }, (_, i) => i + start);
 }
 
 function generateNGrams(){
 
   if (!inputText.value || inputText.value.trim() === '') {
+    MaNotification.warning({"size":"large","variant":"filled",
+      "title":"Empty message!",
+      "description":"Your message is empty!",
+      "type":"warning"
+    })
     return;
   }
 
@@ -101,7 +59,15 @@ function generateNGrams(){
 
   let wordCount = cleanedText.length;
 
-  const sorted = [...selectedNValues.value].sort((a, b) => a - b);
+  if(wordCount < selectedNRange.value[0]){
+    MaNotification.warning({"size":"large","variant":"filled",
+      "title":"Range fault!",
+      "description":"Your range doesn't cover your input message!",
+      "type":"warning"
+    });
+    return;
+  }
+  const sorted = generateNgramRange(selectedNRange.value[1],selectedNRange.value[0]);
   //sliding window
   for(let n of sorted){
     const window = [];
@@ -182,6 +148,11 @@ function generateNGrams(){
 .ma-ngram-selection-container{
   display: flex;
   justify-content: space-around;
+  gap: 8px;
+}
+
+.ma-ngram-selection-container > * {
+  flex: 1;
 }
 
 .ma-card{
