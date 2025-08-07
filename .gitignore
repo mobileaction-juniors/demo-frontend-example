@@ -30,3 +30,5 @@ coverage
 *.tsbuildinfo
 
 *.local.*
+
+bun.lock

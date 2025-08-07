@@ -1,6 +1,10 @@
 <script setup>
-import { ref } from "vue";
-import { regex, filterArr } from "@/cleanupResources";
+import { ref, computed } from "vue";
+import {
+    clearSentence,
+    ErrorMessages,
+    generateDesiredNGrams,
+} from "@/utils/NGramUtils";
 import MaMultiSelect from "@/components/MaMultiSelect.vue";
 import {
     MaButton,
@@ -12,60 +16,72 @@ import { useNGramStore } from "@/stores/ngramStore";
 
 const ngramStore = useNGramStore();
 const sentence = ref("");
+const errorMessages = ref([]);
 const nGrams = ref([]);
 const removeUnwanted = ref(false);
-const hasError = ref(false);
 
-function generateNGrams(splittedSentence, n) {
-    const c = new Set();
-    for (let i = 0; i <= splittedSentence.length - n; i++) {
-        c.add(splittedSentence.slice(i, i + n).join(" "));
-    }
-    return c;
-}
+const hasInputError = ref(false);
+const hasNGramSelectError = ref(false);
+const hasError = computed(
+    () =>
+        hasInputError.value ||
+        hasNGramSelectError.value ||
+        ngramStore.hasMultiSelectError
+);
 
-function clearSentence(sentence, removeUnwantedWords) {
-    sentence = sentence
-        .toLowerCase()
-        .replace(regex, " ") // Remove punctuations.
-        .split(" ") // Extract words.
-        .filter((word) => word.trim() !== ""); // Remove white-spaces.
+function validateTextarea(clearedSentence, sentence) {
+    const clearedLength = clearedSentence.length;
+    const selectedNGrams = ngramStore.selectedNGrams;
 
-    if (removeUnwantedWords)
-        sentence = sentence.filter((word) => !filterArr.has(word));
+    if (clearedLength === 0) {
+        hasInputError.value = true;
 
-    return sentence;
-}
+        if (sentence.trim().length === 0) {
+            errorMessages.value.push(ErrorMessages.EMPTY_SENTENCE);
+        } else if (removeUnwanted.value) {
+            errorMessages.value.push(ErrorMessages.EMPTY_AFTER_REMOVAL);
+        } else {
+            errorMessages.value.push(ErrorMessages.INVALID_SENTENCE);
+        }
 
-function generateDesiredNGrams(sentence, desiredNGrams) {
-    const res = [];
-    const clearedSentence = clearSentence(sentence, removeUnwanted.value);
-
-    desiredNGrams.forEach((selectedNGram) => {
-        const generated = generateNGrams(clearedSentence, selectedNGram);
-        if (generated)
-            res.push({
-                ngram: selectedNGram,
-                data: generated,
-            });
-    });
-
-    return res.sort((ngData1, ngData2) => ngData1.ngram - ngData2.ngram);
-}
-
-function handleButtonClick() {
-    if (
-        sentence.value.trim() === "" ||
-        ngramStore.selectedNGrams.length === 0
-    ) {
-        console.error("[MA] Invalid sentence input!");
-        hasError.value = true;
         return;
     }
 
-    hasError.value = false;
+    const minSelected = Math.min(...selectedNGrams);
+
+    if (selectedNGrams.length > 0 && minSelected > clearedLength) {
+        hasInputError.value = true;
+        errorMessages.value.push(ErrorMessages.NOT_ENOUGH_WORDS);
+        return;
+    }
+
+    hasInputError.value = false;
+}
+
+function validateMultiSelect(errorMessages) {
+    if (ngramStore.selectedNGrams.length === 0) {
+        ngramStore.hasMultiSelectError = true;
+        errorMessages.value.push(ErrorMessages.MISSING_NGRAM_SELECTION);
+    } else ngramStore.hasMultiSelectError = false;
+}
+
+function validateFormValues(clearedSentence) {
+    errorMessages.value = [];
+    validateTextarea(clearedSentence, sentence.value);
+    validateMultiSelect(errorMessages);
+}
+
+function handleButtonClick() {
+    const clearedSentence = clearSentence(sentence.value, removeUnwanted.value);
+
+    validateFormValues(clearedSentence);
+    if (hasError.value) {
+        console.error(`[MA] ${errorMessages.value.join("\n")}`);
+        return;
+    }
+
     nGrams.value = generateDesiredNGrams(
-        sentence.value,
+        clearedSentence,
         ngramStore.selectedNGrams
     );
 }
@@ -82,12 +98,26 @@ function handleButtonClick() {
                 <ma-input
                     id="ma-sentence"
                     type="textarea"
-                    title="Enter a sentence"
+                    title="Enter a
+                sentence"
                     placeholder="Quick brown fox jump over fox..."
                     v-model:value="sentence"
                     :rows="5"
+                    :hasError="hasInputError"
+                    @change="
+                        validateFormValues(
+                            clearSentence(sentence, removeUnwanted)
+                        )
+                    "
                 />
-                <ma-checkbox2 v-model:checked="removeUnwanted">
+                <ma-checkbox2
+                    v-model:checked="removeUnwanted"
+                    @change="
+                        validateFormValues(
+                            clearSentence(sentence, removeUnwanted)
+                        )
+                    "
+                >
                     Remove unwanted words
                 </ma-checkbox2>
                 <div class="flex justify-center items-center gap-4">
@@ -99,17 +129,26 @@ function handleButtonClick() {
                     >
                         Calculate N-Grams
                     </ma-button>
-                    <ma-multi-select />
+                    <ma-multi-select
+                        :errorMessages="errorMessages"
+                        @change="
+                            validateFormValues(
+                                clearSentence(sentence, removeUnwanted)
+                            )
+                        "
+                    />
                 </div>
             </form>
             <div
                 class="flex text-[14px] justify-center min-h-[5rem] items-center flex-col gap-2"
             >
                 <span
+                    v-for="errorMessage in errorMessages"
+                    :key="errorMessage"
                     v-show="hasError"
                     class="font-bold text-red-600 min-h-[3rem]"
                 >
-                    Invalid form values!
+                    {{ errorMessage }}
                 </span>
                 <div
                     v-show="!hasError"
@@ -139,3 +178,9 @@ function handleButtonClick() {
         </div>
     </div>
 </template>
+
+<style>
+.ak-input.ak-input--has-error .ak-input__input.antd-input-sm {
+    border-color: #f87171 !important;
+}
+</style>

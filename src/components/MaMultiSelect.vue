@@ -3,7 +3,8 @@ import { MaSelect2 } from "@mobileaction/action-kit";
 import { useNGramStore } from "@/stores/ngramStore";
 import { storeToRefs } from "pinia";
 
-const { selectedNGrams } = storeToRefs(useNGramStore());
+const ngramStore = useNGramStore();
+const { selectedNGrams, hasMultiSelectError } = storeToRefs(ngramStore);
 
 const options = Array.from({ length: 10 }, (_, i) => ({
     value: i + 1,
@@ -19,5 +20,6 @@ const options = Array.from({ length: 10 }, (_, i) => ({
         placeholder="Select N-Grams"
         prefixIcon="setting-bulk"
         v-model:value="selectedNGrams"
+        :hasError="hasMultiSelectError"
     />
 </template>
