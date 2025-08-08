@@ -1,11 +1,9 @@
 <script setup>
 
 import {MaCard} from "@mobileaction/action-kit";
+import { useNGramStore } from '@/stores/ngramStore'
 
-defineProps({
-  resultGrams: Array,
-  headers: Array
-})
+const store = useNGramStore();
 
 </script>
 
@@ -19,7 +17,7 @@ defineProps({
       <thead>
       <tr class="bg-blue-600 text-white">
         <th
-            v-for="header in headers"
+            v-for="header in store.getHeaders"
             :key="header"
             class="px-4 py-2 text-left font-semibold"
         >
@@ -29,7 +27,7 @@ defineProps({
       </thead>
       <tbody>
       <tr
-          v-for="(row, index) in resultGrams"
+          v-for="(row, index) in store.getResultGrams"
           :key="index"
           :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
           class="hover:bg-blue-50 transition-colors"

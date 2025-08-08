@@ -1,7 +1,7 @@
 <template>
     <MaInput
         v-model:value="inputValue"
-        rows="8"
+        :rows="8"
         class="w-full"
         type="textarea"
         size="large"
@@ -13,12 +13,12 @@
 <script setup>
 import { MaInput } from '@mobileaction/action-kit'
 import {computed} from "vue";
+import { useNGramStore } from '@/stores/ngramStore'
 
-const props = defineProps(['modelValue']);
-const emit = defineEmits(['update:modelValue']);
+const store = useNGramStore();
 const inputValue = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  get: () => store.getInputText,
+  set: (val) => store.setInputText(val)
 });
 
 </script>

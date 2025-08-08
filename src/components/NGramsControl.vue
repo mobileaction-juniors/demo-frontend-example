@@ -11,7 +11,7 @@
           class="flex-1 max-w-md"
           :min="1"
           :max="maxN"
-          v-model:value="localSelectedNRange"
+          v-model:value="localRange"
           range
       />
     </div>
@@ -21,25 +21,22 @@
 <script setup>
 import { computed } from 'vue'
 import { MaCard, MaSlider, MaCheckbox2Card as MaCheckboxCard } from '@mobileaction/action-kit'
+import { useNGramStore } from '@/stores/ngramStore'
 
+const store = useNGramStore();
 // Define props
-const props = defineProps({
+defineProps({
   maxN: Number,
-  selectedNRange: Array,
-  clearUnwantedSelected: Boolean
-})
-
-// Define emit
-const emit = defineEmits(['update:selectedNRange', 'update:clearUnwantedSelected'])
-
-// Computed proxies
-const localSelectedNRange = computed({
-  get: () => props.selectedNRange,
-  set: val => emit('update:selectedNRange', val)
 })
 
 const localClearUnwantedSelected = computed({
-  get: () => props.clearUnwantedSelected,
-  set: val => emit('update:clearUnwantedSelected', val)
+  get: () => store.getClearUnwantedSelected,
+  set: val => store.setClearUnwantedSelected(val)
 })
+
+const localRange = computed({
+  get: () => store.getSelectedNRange,
+  set: val => store.setSelectedRange(val)
+})
+
 </script>
