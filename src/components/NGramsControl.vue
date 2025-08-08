@@ -2,7 +2,6 @@
   <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
     <div class="flex flex-row items-center justify-center gap-6 p-4">
       <MaCheckboxCard
-          class="flex-1 max-w-sm"
           v-model:checked="localClearUnwantedSelected"
       >
         <template #title>Remove Stop Words</template>
