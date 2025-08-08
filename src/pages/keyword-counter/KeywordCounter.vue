@@ -1,13 +1,18 @@
 <template>
-  <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 p-4 w-full max-w-screen-xl mx-auto h-auto min:h-[34vh]">
+  <div class="flex flex-col space-y-4 md:flex-row
+              md:space-y-0 md:space-x-4 p-4 w-full
+              max-w-screen-xl mx-auto h-auto min:h-[34vh]"
+  >
     <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
       <InputTextPlace class="flex-1 w-full" />
       <div class="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0">
         <MaButton @click="countNGrams"
-                  class="generate-button"
+                  class="px-5 py-2.5 text-base mb-5 cursor-pointer bg-blue-600 text-white
+                         rounded-lg border-0 transition-colors duration-300 hover:bg-blue-800"
                   variant="lighter"
                   icon="glass-bulk"
-                  :highlight="store.getHighlightSubmit">
+                  :highlight="store.getHighlightSubmit"
+        >
           Generate N-Grams...
         </MaButton>
         <p class="text-sm text-gray-500">
@@ -22,7 +27,10 @@
 
       </div>
       <MaButton @click="copyToClipboard"
-                class="generate-button self-end"
+                class="
+                  px-5 py-2.5 text-base mb-5 cursor-pointer bg-blue-600 text-white
+                  rounded-lg border-0 transition-colors duration-300 hover:bg-blue-800
+                  self-end"
                 variant="lighter"
                 icon="copy"
                 :highlight="!store.highlightSubmit">
@@ -30,9 +38,11 @@
       </MaButton>
     </div>
   </div>
-  <NGramsControl
-      :maxN="MAX_N"
-  />
+  <div class="flex justify-center w-full p-4">
+    <NGramsControl
+        :maxN="MAX_N"
+    />
+  </div>
 
 </template>
 
@@ -111,27 +121,5 @@ function copyToClipboard() {
 
 <style>
 
-.generate-button {
-  padding: 10px 20px;
-  font-size: 1em;
-  margin-bottom: 20px;
-  cursor: pointer;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  border-radius: 6px;
-  transition: background-color 0.3s;
-}
 
-.generate-button:hover {
-  background-color: #0056b3;
-}
-
-.ma-ngram-selection-container > * {
-  flex: 1;
-}
-
-.ak-card__header{
-  justify-self:center;
-}
 </style>

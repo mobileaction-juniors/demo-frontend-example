@@ -1,14 +1,15 @@
 <template>
-  <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
-    <div class="flex flex-row items-center justify-center gap-6 p-4">
+  <MaCard class="justify-center" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-6 p-4">
       <MaCheckboxCard
+          class="max-w-xs"
           v-model:checked="localClearUnwantedSelected"
       >
         <template #title>Remove Stop Words</template>
       </MaCheckboxCard>
 
       <MaSlider
-          class="flex-1 max-w-md"
+          class="flex-1 min-w-[150px] md:min-w-[200px]"
           :min="1"
           :max="maxN"
           v-model:value="localRange"

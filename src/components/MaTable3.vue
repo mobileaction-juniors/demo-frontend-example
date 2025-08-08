@@ -34,7 +34,7 @@ const store = useNGramStore();
       >
         <td class="px-4 py-2 w-1/2 font-medium text-gray-800">{{ row.word }}</td>
         <td class="px-4 py-2 w-1/4 text-center text-gray-700">{{ row.count }}</td>
-        <td class="px-4 py-2 w-1/4 text-center text-gray-700">{{ row.density }}%</td>
+        <td class="px-4 py-2 w-1/4 text-center text-gray-700">{{ row.density != null ? row.density.toFixed(2) : '-' }}%</td>
       </tr>
       </tbody>
     </table>
