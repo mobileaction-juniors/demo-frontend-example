@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 p-4 w-full max-w-screen-xl mx-auto h-[34vh]">
-    <!-- Left Column -->
+
     <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
       <InputTextPlace v-model="inputText" class="flex-1"/>
       <div class="flex items-center justify-between">
@@ -14,32 +14,14 @@
         <p class="text-sm text-gray-500">
           Total characters: <span class="font-bold">{{ inputText.length }}</span>
         </p>
-
       </div>
-
-
     </div>
 
-
-
-    <!-- Right Column -->
     <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
-      <MaCard class="flex-1 overflow-auto border border-gray-300">
-        <table class="w-full border-collapse">
-          <thead>
-          <tr>
-            <th v-for="header in headers" :key="header">{{ header }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(row, index) in resultGrams" :key="index">
-            <td class="text-left w-1/2">{{ row.word }}</td>
-            <td class="text-center w-1/4">{{ row.count }}</td>
-            <td class="text-center w-1/4">{{ row.density }}%</td>
-          </tr>
-          </tbody>
-        </table>
-      </MaCard>
+      <MaTable3
+        v-model:headers="headers"
+        v-model:result-grams="resultGrams"
+      />
       <div class="flex items-center justify-between">
 
       </div>
@@ -62,20 +44,19 @@
 
 <script setup>
 import {ref, watch} from 'vue'
-import {cleanDescription, cleanUnwantedWords} from "@/utils/CleanDescription.js";
-import {MaButton, MaCard} from '@mobileaction/action-kit'
+import {sanitizeAndTokenize} from "@/utils/CleanDescription.js";
+import {MaButton} from '@mobileaction/action-kit'
 import NGramsControl from "@/components/NGramsControl.vue";
 import InputTextPlace from "@/components/InputTextPlace.vue";
 import {nthGram} from "@/utils/NGram.js";
 import {giveNotification} from "@/utils/GiveNotification.js";
-
-const headers = ref(['Keyword', 'Count', 'Density'])
-
+import MaTable3 from "@/components/MaTable3.vue";
 
 const MAX_N = 10;
 const DEF_N = 3;
 const MIN_N = 1;
 
+const headers = ref(['Keyword', 'Count', 'Density'])
 const inputText = ref('');
 const submittedText = ref('');
 const highlightSubmit = ref(false);
@@ -95,17 +76,14 @@ function countNGrams(){
   }
   resultGrams.value = [];
 
-  let cleanedText = cleanDescription(inputText.value).split(/\s+/);
-  if(clearUnwantedSelected.value){
-    cleanedText = cleanUnwantedWords(cleanedText);
-  }
+  let cleanedText = sanitizeAndTokenize(inputText.value,clearUnwantedSelected.value);
   let wordCount = cleanedText.length;
 
   if(wordCount < selectedNRange.value[0]){
-
     giveNotification("Range fault!","Your range doesn't cover your input message!","warning");
     return;
   }
+
   submittedText.value = inputText.value;
   highlightSubmit.value = false;
 
@@ -150,18 +128,6 @@ watch(inputText, (newVal) => {
 </script>
 
 <style>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px;
-  font-family: sans-serif;
-  text-align: center;
-}
-
-.title {
-  font-size: 2em;
-  margin-bottom: 20px;
-}
 
 .generate-button {
   padding: 10px 20px;
@@ -179,51 +145,11 @@ watch(inputText, (newVal) => {
   background-color: #0056b3;
 }
 
-.ngram-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding: 10px 14px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
-}
-
-.ngram-title {
-  white-space: nowrap;
-  font-weight: bold;
-}
-
-.word-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 8px;
-}
-
-.ma-ngram-selection-container{
-  display: flex;
-  justify-content: space-around;
-  gap: 8px;
-}
-
 .ma-ngram-selection-container > * {
   flex: 1;
 }
 
-.ma-card{
-  text-align: center;
-  justify-content: space-around;
-}
-
 .ak-card__header{
   justify-self:center;
-}
-
-.word-tag {
-  padding: 6px 10px;
-  background-color: #0056b3;
-  border-radius: 6px;
-  font-size: 0.95em;
 }
 </style>
