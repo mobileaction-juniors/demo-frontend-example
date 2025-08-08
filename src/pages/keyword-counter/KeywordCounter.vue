@@ -1,9 +1,8 @@
 <template>
-  <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 p-4 w-full max-w-screen-xl mx-auto h-[34vh]">
-
+  <div class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 p-4 w-full max-w-screen-xl mx-auto h-auto min:h-[34vh]">
     <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
-      <InputTextPlace v-model="inputText" class="flex-1"/>
-      <div class="flex items-center justify-between">
+      <InputTextPlace v-model="inputText" class="flex-1 w-full" />
+      <div class="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0">
         <MaButton @click="countNGrams"
                   class="generate-button"
                   variant="lighter"
@@ -56,8 +55,8 @@ const MAX_N = 10;
 const DEF_N = 3;
 const MIN_N = 1;
 
-const headers = ref(['Keyword', 'Count', 'Density'])
 const inputText = ref('');
+const headers = ref(['Keyword', 'Count', 'Density'])
 const submittedText = ref('');
 const highlightSubmit = ref(false);
 const resultGrams = ref([]);

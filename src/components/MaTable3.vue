@@ -10,7 +10,10 @@ defineProps({
 </script>
 
 <template>
-  <MaCard class="flex-1 overflow-auto border border-gray-300">
+  <MaCard
+      class="overflow-auto border border-gray-300
+         md:min-h-[26vh] max-h-[34vh] md:max-h-[50vh] lg:max-h-[60vh]"
+  >
     <table class="w-full border-collapse">
       <thead>
       <tr>
