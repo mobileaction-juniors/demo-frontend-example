@@ -2,56 +2,75 @@
   <div class="container">
     <h1 class="title">N-Gram Creator</h1>
 
-    <div class="input-group">
-      <div class="input-column">
-        <p><strong>Message:</strong> {{ inputText }}</p>
-        <input v-model="inputText" placeholder="n-gram me" class="input-box" />
-      </div>
-    </div>
+    <InputTextPlace v-model="inputText" />
 
-    <button @click="generateNGrams" class="generate-button">
+    <NGramsControl
+        :maxN="MAX_N"
+        v-model:selectedNRange="selectedNRange"
+        v-model:clearUnwantedSelected="clearUnwantedSelected"
+    />
+
+    <MaButton @click="generateNGrams" class="generate-button"
+              variant="lighter" icon="glass-bulk">
       Generate N-Grams...
-    </button>
+    </MaButton>
 
-    <div
-        v-for="(words, i) in resultGrams"
-        :key="i"
-        class="ngram-row"
-    >
-      <strong class="ngram-title">{{ i + 1 }}-Gram :</strong>
-      <div class="word-list">
-        <span
-            v-for="(word, j) in words"
-            :key="j"
-            class="word-tag"
-        >
-          {{ word }}
-        </span>
-      </div>
-    </div>
+    <NGramsResult :results="resultGrams" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import {regex} from "@/cleanupResources.js";
+
+import {cleanDescription, cleanUnwantedWords} from "@/utils/CleanDescription.js";
+import {MaNotification, MaButton} from '@mobileaction/action-kit'
+import NGramsResult from "@/components/NGramsResult.vue";
+import NGramsControl from "@/components/NGramsControl.vue";
+import InputTextPlace from "@/components/InputTextPlace.vue";
+
+const MAX_N = 10;
+const DEF_N = 3;
+const MIN_N = 1;
 
 const inputText = ref('');
 const resultGrams = ref([]);
-const MAX_N = 3;
+const selectedNRange = ref([MIN_N,DEF_N]);
+const clearUnwantedSelected = ref(false);
+
+function generateNgramRange(max = MAX_N, start = MIN_N) {
+  return Array.from({ length: max - start + 1 }, (_, i) => i + start);
+}
 
 function generateNGrams(){
 
   if (!inputText.value || inputText.value.trim() === '') {
+    MaNotification.warning({"size":"large","variant":"filled",
+      "title":"Empty message!",
+      "description":"Your message is empty!",
+      "type":"warning"
+    })
     return;
   }
 
   resultGrams.value = [];
-  let cleanedText = getCleanedWords(inputText.value)
+  let cleanedText = cleanDescription(inputText.value).split(/\s+/);
+  if(clearUnwantedSelected.value){
+    cleanedText = cleanUnwantedWords(cleanedText);
+  }
+
   let wordCount = cleanedText.length;
 
+  if(wordCount < selectedNRange.value[0]){
+    MaNotification.warning({"size":"large","variant":"filled",
+      "title":"Range fault!",
+      "description":"Your range doesn't cover your input message!",
+      "type":"warning"
+    });
+    return;
+  }
+  const sorted = generateNgramRange(selectedNRange.value[1],selectedNRange.value[0]);
   //sliding window
-  for(let n=1; n<= MAX_N; n++){
+  for(let n of sorted){
     const window = [];
     let resultN = new Set();
 
@@ -64,21 +83,16 @@ function generateNGrams(){
     }
 
     if(resultN.size > 0){
-      resultGrams.value.push(Array.from(resultN));
+      resultGrams.value.push({
+            label: `${n}-Gram`,
+            value: Array.from(resultN)
+          }
+      );
     }
   }
 }
 
-function getCleanedWords(text){
-  return text
-      .toLowerCase()
-      .replace(regex,'')
-      .trim()
-      .split(/\s+/);
-}
-
 </script>
-
 
 <style>
 .container {
@@ -92,28 +106,6 @@ function getCleanedWords(text){
 .title {
   font-size: 2em;
   margin-bottom: 20px;
-}
-
-.input-group {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 20px;
-}
-
-.input-column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.input-box {
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
 }
 
 .generate-button {
@@ -154,10 +146,29 @@ function getCleanedWords(text){
   gap: 8px;
 }
 
+.ma-ngram-selection-container{
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.ma-ngram-selection-container > * {
+  flex: 1;
+}
+
+.ma-card{
+  text-align: center;
+  justify-content: space-around;
+}
+
+.ak-card__header{
+  justify-self:center;
+}
+
 .word-tag {
   padding: 6px 10px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
+  background-color: #0056b3;
+  border-radius: 6px;
   font-size: 0.95em;
 }
 </style>
