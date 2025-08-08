@@ -11,24 +11,38 @@ defineProps({
 
 <template>
   <MaCard
-      class="overflow-auto border border-gray-300
-         md:min-h-[26vh] max-h-[34vh] md:max-h-[50vh] lg:max-h-[60vh]"
+      class="overflow-auto
+         md:min-h-[26vh] max-h-[26vh] md:max-h-[26vh] lg:max-h-[26vh]
+         p-0 [&>*]:p-0"
   >
-    <table class="w-full border-collapse">
+    <table class="w-full border-collapse text-sm">
       <thead>
-      <tr>
-        <th v-for="header in headers" :key="header">{{ header }}</th>
+      <tr class="bg-blue-600 text-white">
+        <th
+            v-for="header in headers"
+            :key="header"
+            class="px-4 py-2 text-left font-semibold"
+        >
+          {{ header }}
+        </th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(row, index) in resultGrams" :key="index">
-        <td class="text-left w-1/2">{{ row.word }}</td>
-        <td class="text-center w-1/4">{{ row.count }}</td>
-        <td class="text-center w-1/4">{{ row.density }}%</td>
+      <tr
+          v-for="(row, index) in resultGrams"
+          :key="index"
+          :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
+          class="hover:bg-blue-50 transition-colors"
+      >
+        <td class="px-4 py-2 w-1/2 font-medium text-gray-800">{{ row.word }}</td>
+        <td class="px-4 py-2 w-1/4 text-center text-gray-700">{{ row.count }}</td>
+        <td class="px-4 py-2 w-1/4 text-center text-gray-700">{{ row.density }}%</td>
       </tr>
       </tbody>
     </table>
   </MaCard>
+
+
 </template>
 
 <style scoped>
