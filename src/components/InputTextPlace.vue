@@ -1,17 +1,13 @@
 <template>
-  <div class="input-group">
-    <div class="input-column">
-      <p><strong>Message:</strong> {{ inputValue }}</p>
-      <MaInput
-          v-model:value="inputValue"
-          type="textarea"
-          title="Input Title"
-          size="large"
-          placeholder="n-gram me"
-          hintText="Write your text to create ngrams"
-      />
-    </div>
-  </div>
+    <MaInput
+        v-model:value="inputValue"
+        rows="8"
+        class="w-full"
+        type="textarea"
+        size="large"
+        placeholder="n-gram me"
+        hintText="Write your text to create ngrams"
+    />
 </template>
 
 <script setup>
