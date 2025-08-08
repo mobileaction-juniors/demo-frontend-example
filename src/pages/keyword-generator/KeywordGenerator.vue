@@ -13,6 +13,8 @@ import {
     MaCheckbox2,
 } from "@mobileaction/action-kit";
 import { useNGramStore } from "@/stores/ngramStore";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faCalculator } from "@fortawesome/free-solid-svg-icons";
 
 const ngramStore = useNGramStore();
 const sentence = ref("");
@@ -98,8 +100,7 @@ function handleButtonClick() {
                 <ma-input
                     id="ma-sentence"
                     type="textarea"
-                    title="Enter a
-                sentence"
+                    title="Enter a sentence"
                     placeholder="Quick brown fox jump over fox..."
                     v-model:value="sentence"
                     :rows="5"
@@ -126,7 +127,9 @@ function handleButtonClick() {
                         variant="filled"
                         @click="handleButtonClick()"
                         type="button"
+                        :disabled="hasError"
                     >
+                        <FontAwesomeIcon :icon="faCalculator" />
                         Calculate N-Grams
                     </ma-button>
                     <ma-multi-select
@@ -182,5 +185,10 @@ function handleButtonClick() {
 <style>
 .ak-input.ak-input--has-error .ak-input__input.antd-input-sm {
     border-color: #f87171 !important;
+}
+
+#ma-sentence {
+    min-height: 6rem;
+    max-height: 12rem;
 }
 </style>
