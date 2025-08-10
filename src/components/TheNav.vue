@@ -1,16 +1,17 @@
+<script setup>
+import MaNavRouter from "./MaNavRouter.vue";
+
+const props = defineProps({
+    class: { type: String, default: "" },
+});
+</script>
+
 <template>
-    <div class="ma-router-item">
-        <router-link to="/keyword-density">
-            Keyword Density
-        </router-link>
+    <div
+        class="flex items-center justify-between gap-4 max-phone:text-sm"
+        :class="props.class"
+    >
+        <MaNavRouter route="/keyword-generator">Generator</MaNavRouter>
+        <MaNavRouter route="/keyword-density">Density</MaNavRouter>
     </div>
 </template>
-
-<style>
- .ma-router-item {
-   display: flex;
-   flex-direction: row;
-   justify-content: space-evenly;
-   margin: 15px;
- }
-</style>
