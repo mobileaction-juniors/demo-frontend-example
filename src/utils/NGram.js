@@ -13,3 +13,8 @@ export function nthGram(n, wordCount, cleanedText) {
 
     return resultN;
 }
+
+
+export function generateNgramRange(max = 10, start = 1) {
+    return Array.from({ length: max - start + 1 }, (_, i) => i + start);
+}

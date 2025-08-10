@@ -51,7 +51,7 @@ import {sanitizeAndTokenize} from "@/utils/CleanDescription.js";
 import {MaButton} from '@mobileaction/action-kit'
 import NGramsControl from "@/components/NGramsControl.vue";
 import InputTextPlace from "@/components/InputTextPlace.vue";
-import {nthGram} from "@/utils/NGram.js";
+import {generateNgramRange, nthGram} from "@/utils/NGram.js";
 import {giveNotification} from "@/utils/GiveNotification.js";
 import MaTable3 from "@/components/MaTable3.vue";
 import { useNGramStore } from '@/stores/ngramStore'
@@ -60,10 +60,6 @@ const MAX_N = 10;
 const MIN_N = 1;
 
 const store = useNGramStore();
-
-function generateNgramRange(max = MAX_N, start = MIN_N) {
-  return Array.from({ length: max - start + 1 }, (_, i) => i + start);
-}
 
 function countNGrams(){
   if (!store.getInputText || store.getInputText.trim() === '') {
@@ -120,6 +116,4 @@ function copyToClipboard() {
 </script>
 
 <style>
-
-
 </style>
