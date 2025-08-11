@@ -53,7 +53,7 @@ watch(
 );
 </script>
 
-<style scoped>
+<style>
 @reference "tailwindcss";
 
 .main-header {

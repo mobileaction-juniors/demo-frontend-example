@@ -79,7 +79,7 @@ const generateKeywords = () => {
   </div>
 </template>
 
-<style scoped>
+<style>
 @reference "tailwindcss";
 
 .generator-wrapper {

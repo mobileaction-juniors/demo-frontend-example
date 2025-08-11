@@ -13,7 +13,7 @@ import VHeader from "@/components/organisms/VHeader.vue";
 import VFooter from "@/components/organisms/VFooter.vue";
 </script>
 
-<style scoped>
+<style>
 .layout {
   min-height: 100vh;
   display: flex;
