@@ -7,7 +7,9 @@ export const useNGramStore = defineStore('ngram', {
         resultGrams: [],
         selectedNRange: [1, 3],
         clearUnwantedSelected: false,
-        highlightSubmit: true
+        highlightSubmit: true,
+        MAX_N : 10,
+        MIN_N : 1,
     }),
     getters: {
         getSelectedNRange: (state) => state.selectedNRange,
@@ -17,8 +19,11 @@ export const useNGramStore = defineStore('ngram', {
         getHeaders: (state) => state.headers,
         getHighlightSubmit: (state) => state.highlightSubmit,
 
-        minN: (state) => state.selectedNRange[0],
-        maxN: (state) => state.selectedNRange[1],
+        getMaxN: (state) => state.MAX_N,
+        getMinN: (state) => state.MIN_N,
+
+        getMinRange: (state) => state.selectedNRange[0],
+        getMaxRange: (state) => state.selectedNRange[1],
         rangeLabel: (state) => `${state.selectedNRange[0]} - ${state.selectedNRange[1]}`,
         totalGrams: (state) => state.resultGrams.length
     },

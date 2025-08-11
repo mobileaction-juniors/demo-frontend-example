@@ -12,7 +12,7 @@ describe('ngramStore', () => {
     })
 
     it('should have the correct initial state', () => {
-        expect(store.inputText).toBe(" ")
+        expect(store.inputText).toBe("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at facilisis lorem. Morbi dignissim ipsum et condimentum congue. Sed consectetur mi vel lectus ornare dictum. Donec ligula dolor, feugiat sed ex eget, porttitor congue nulla.")
         expect(store.headers).toEqual(['Keyword', 'Count', 'Density'])
         expect(store.resultGrams).toEqual([])
         expect(store.selectedNRange).toEqual([1, 3])
@@ -23,12 +23,12 @@ describe('ngramStore', () => {
     it('getters should return correct values', () => {
         expect(store.getSelectedNRange).toEqual([1, 3])
         expect(store.getClearUnwantedSelected).toBe(false)
-        expect(store.getInputText).toBe(" ")
+        expect(store.getInputText).toBe("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at facilisis lorem. Morbi dignissim ipsum et condimentum congue. Sed consectetur mi vel lectus ornare dictum. Donec ligula dolor, feugiat sed ex eget, porttitor congue nulla.")
         expect(store.getResultGrams).toEqual([])
         expect(store.getHeaders).toEqual(['Keyword', 'Count', 'Density'])
         expect(store.getHighlightSubmit).toBe(true)
-        expect(store.minN).toBe(1)
-        expect(store.maxN).toBe(3)
+        expect(store.getMinRange).toBe(1)
+        expect(store.getMaxRange).toBe(3)
         expect(store.rangeLabel).toBe('1 - 3')
         expect(store.totalGrams).toBe(0)
     })

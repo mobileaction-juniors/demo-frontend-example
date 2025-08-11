@@ -10,8 +10,8 @@
 
       <MaSlider
           class="flex-1 min-w-[150px] md:min-w-[200px]"
-          :min="1"
-          :max="maxN"
+          :min="store.getMinN"
+          :max="store.getMaxN"
           v-model:value="localRange"
           range
       />
@@ -25,10 +25,7 @@ import { MaCard, MaSlider, MaCheckbox2Card as MaCheckboxCard } from '@mobileacti
 import { useNGramStore } from '@/stores/ngramStore'
 
 const store = useNGramStore();
-// Define props
-defineProps({
-  maxN: Number,
-})
+
 
 const localClearUnwantedSelected = computed({
   get: () => store.getClearUnwantedSelected,

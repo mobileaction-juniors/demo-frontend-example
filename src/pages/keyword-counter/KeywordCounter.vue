@@ -1,47 +1,40 @@
 <template>
-  <div class="flex flex-col space-y-4 md:flex-row
+  <div class="flex flex-col md:flex-row
               md:space-y-0 md:space-x-4 p-4 w-full
-              max-w-screen-xl mx-auto h-auto min:h-[34vh]"
+              max-w-screen-xl mx-auto h-auto min-h-[34vh]"
   >
-    <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
-      <InputTextPlace class="flex-1 w-full" />
-      <div class="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0">
+    <div class="w-full md:w-1/2 flex flex-col space-y-4 ">
+      <InputTextPlace/>
+      <div class="flex flex-col md:flex-row items-center justify-between">
         <MaButton @click="countNGrams"
-                  class="px-5 py-2.5 text-base mb-5 cursor-pointer bg-blue-600 text-white
-                         rounded-lg border-0 transition-colors duration-300 hover:bg-blue-800"
+                  class="px-5 py-2.5 text-base mb-5"
                   variant="lighter"
+                  color = "dark"
                   icon="glass-bulk"
                   :highlight="store.getHighlightSubmit"
         >
           Generate N-Grams...
         </MaButton>
         <p class="text-sm text-gray-500">
-          Total characters: <span class="font-bold">{{ store.getInputText.length }}</span>
+          Total characters: <span class="font-bold">{{ totalChars }}</span>
         </p>
       </div>
     </div>
 
-    <div class="w-full md:w-1/2 flex flex-col space-y-4 h-full">
+    <div class="md:w-1/2 flex flex-col space-y-4">
       <MaTable3/>
-      <div class="flex items-center justify-between">
-
-      </div>
       <MaButton @click="copyToClipboard"
-                class="
-                  px-5 py-2.5 text-base mb-5 cursor-pointer bg-blue-600 text-white
-                  rounded-lg border-0 transition-colors duration-300 hover:bg-blue-800
-                  self-end"
+                class="self-end"
                 variant="lighter"
+                color = "dark"
                 icon="copy"
-                :highlight="!store.highlightSubmit">
+                :highlight="!store.getHighlightSubmit">
         Copy to clipboard
       </MaButton>
     </div>
   </div>
-  <div class="flex justify-center w-full p-4">
-    <NGramsControl
-        :maxN="MAX_N"
-    />
+  <div class="flex justify-center p-4">
+    <NGramsControl/>
   </div>
 
 </template>
@@ -55,12 +48,10 @@ import {generateNgramRange, nthGram} from "@/utils/NGram.js";
 import {giveNotification} from "@/utils/GiveNotification.js";
 import MaTable3 from "@/components/MaTable3.vue";
 import { useNGramStore } from '@/stores/ngramStore'
-import {onMounted} from "vue";
-
-const MAX_N = 10;
-const MIN_N = 1;
+import {computed, onMounted} from "vue";
 
 const store = useNGramStore();
+const totalChars = computed(() => (store.getInputText || '').length)
 
 function countNGrams(){
   if (!store.getInputText || store.getInputText.trim() === '') {
@@ -80,7 +71,7 @@ function countNGrams(){
 
   store.setHighlightSubmit();
 
-  const sorted = generateNgramRange(store.maxN,store.minN);
+  const sorted = generateNgramRange(store.getMaxRange,store.getMinRange);
   //sliding window
   for(let n of sorted){
     const resultN = nthGram(n, wordCount, cleanedText);
@@ -90,7 +81,7 @@ function countNGrams(){
         newGrams.push({
           word: ngram,
           count: count,
-          density: count/wordCount *100
+          density: Number(((count / wordCount) * 100).toFixed(2)),
         });
       }
     }
@@ -101,7 +92,7 @@ function countNGrams(){
 
 function copyToClipboard() {
   const text = store.getResultGrams
-      .map(item => `${item.word}: ${item.count} (${item.density.toFixed(2)}%)`)
+      .map(item => `${item.word}: ${item.count} (${item.density}%)`)
       .join('\n');
 
   navigator.clipboard.writeText(text)
@@ -118,6 +109,3 @@ onMounted(()=>{
 })
 
 </script>
-
-<style>
-</style>
