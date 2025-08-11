@@ -1,3 +1,5 @@
+import './assets/tailwind.css'
+
 <script setup>
 
 </script>
