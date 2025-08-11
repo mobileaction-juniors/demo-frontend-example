@@ -10,7 +10,7 @@
 // Composition API - no export default needed with script setup
 </script>
 
-<style scoped>
+<style >
 .footer {
   background-color: #2d3748;
   color: white;
