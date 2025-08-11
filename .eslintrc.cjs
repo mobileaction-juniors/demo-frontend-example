@@ -1,14 +1,22 @@
-/* eslint-env node */
 module.exports = {
   root: true,
-  'extends': [
-    'plugin:vue/vue3-essential',
-    'eslint:recommended'
-  ],
+  env: { browser: true, es2021: true, node: true },
+  parser: "vue-eslint-parser",
   parserOptions: {
-    ecmaVersion: 'latest'
+    parser: "@typescript-eslint/parser",
+    ecmaVersion: "latest",
+    sourceType: "module"
   },
+  extends: [
+    "plugin:vue/vue3-recommended",
+    "airbnb-base",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  settings: { "import/resolver": { typescript: true, node: true } },
   rules: {
-    'vue/multi-word-component-names': 'off',
+    "import/extensions": ["error", "ignorePackages", { ts: "never", vue: "always" }],
+    "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
+    "no-console": ["warn", { allow: ["warn", "error"] }]
   }
-}
+};
