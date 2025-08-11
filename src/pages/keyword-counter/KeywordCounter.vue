@@ -71,7 +71,7 @@ function countNGrams(){
 
   store.setHighlightSubmit();
 
-  const sorted = generateNgramRange(store.getMaxRange,store.getMinRange);
+  const sorted = generateNgramRange(store.getMaxCurrRange,store.getMinCurrRange);
   //sliding window
   for(let n of sorted){
     const resultN = nthGram(n, wordCount, cleanedText);

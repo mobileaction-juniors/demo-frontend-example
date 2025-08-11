@@ -10,8 +10,8 @@
 
       <MaSlider
           class="flex-1 min-w-[150px] md:min-w-[200px]"
-          :min="store.getMinN"
-          :max="store.getMaxN"
+          :min="MIN_N"
+          :max="MAX_N"
           v-model:value="localRange"
           range
       />
@@ -23,6 +23,7 @@
 import { computed } from 'vue'
 import { MaCard, MaSlider, MaCheckbox2Card as MaCheckboxCard } from '@mobileaction/action-kit'
 import { useNGramStore } from '@/stores/ngramStore'
+import {MAX_N, MIN_N} from "@/utils/Constants.js";
 
 const store = useNGramStore();
 
