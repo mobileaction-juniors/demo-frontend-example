@@ -1,18 +1,18 @@
 <template>
-  <MaCard class="ma-card" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
-    <div class="flex flex-row items-center justify-center gap-6 p-4">
+  <MaCard class="justify-center" title="N-gram Selection" description="Choose n-gram types to generate (1-10)">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-6 p-4">
       <MaCheckboxCard
-          class="flex-1 max-w-sm"
+          class="max-w-xs"
           v-model:checked="localClearUnwantedSelected"
       >
         <template #title>Remove Stop Words</template>
       </MaCheckboxCard>
 
       <MaSlider
-          class="flex-1 max-w-md"
-          :min="1"
-          :max="maxN"
-          v-model:value="localSelectedNRange"
+          class="flex-1 min-w-[150px] md:min-w-[200px]"
+          :min="MIN_N"
+          :max="MAX_N"
+          v-model:value="localRange"
           range
       />
     </div>
@@ -22,25 +22,20 @@
 <script setup>
 import { computed } from 'vue'
 import { MaCard, MaSlider, MaCheckbox2Card as MaCheckboxCard } from '@mobileaction/action-kit'
+import { useNGramStore } from '@/stores/ngramStore'
+import {MAX_N, MIN_N} from "@/utils/Constants.js";
 
-// Define props
-const props = defineProps({
-  maxN: Number,
-  selectedNRange: Array,
-  clearUnwantedSelected: Boolean
-})
+const store = useNGramStore();
 
-// Define emit
-const emit = defineEmits(['update:selectedNRange', 'update:clearUnwantedSelected'])
-
-// Computed proxies
-const localSelectedNRange = computed({
-  get: () => props.selectedNRange,
-  set: val => emit('update:selectedNRange', val)
-})
 
 const localClearUnwantedSelected = computed({
-  get: () => props.clearUnwantedSelected,
-  set: val => emit('update:clearUnwantedSelected', val)
+  get: () => store.getClearUnwantedSelected,
+  set: val => store.setClearUnwantedSelected(val)
 })
+
+const localRange = computed({
+  get: () => store.getSelectedNRange,
+  set: val => store.setSelectedRange(val)
+})
+
 </script>

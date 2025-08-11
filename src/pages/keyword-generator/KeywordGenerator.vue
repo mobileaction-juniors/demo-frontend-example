@@ -23,10 +23,12 @@
 import { ref } from 'vue'
 
 import {cleanDescription, cleanUnwantedWords} from "@/utils/CleanDescription.js";
-import {MaNotification, MaButton} from '@mobileaction/action-kit'
+import {MaButton} from '@mobileaction/action-kit'
 import NGramsResult from "@/components/NGramsResult.vue";
 import NGramsControl from "@/components/NGramsControl.vue";
 import InputTextPlace from "@/components/InputTextPlace.vue";
+import {nthGram} from "@/utils/NGram.js";
+import {giveNotification} from "@/utils/GiveNotification.js";
 
 const MAX_N = 10;
 const DEF_N = 3;
@@ -44,11 +46,7 @@ function generateNgramRange(max = MAX_N, start = MIN_N) {
 function generateNGrams(){
 
   if (!inputText.value || inputText.value.trim() === '') {
-    MaNotification.warning({"size":"large","variant":"filled",
-      "title":"Empty message!",
-      "description":"Your message is empty!",
-      "type":"warning"
-    })
+    giveNotification("Empty message!","Your message is empty!", "warning");
     return;
   }
 
@@ -61,31 +59,18 @@ function generateNGrams(){
   let wordCount = cleanedText.length;
 
   if(wordCount < selectedNRange.value[0]){
-    MaNotification.warning({"size":"large","variant":"filled",
-      "title":"Range fault!",
-      "description":"Your range doesn't cover your input message!",
-      "type":"warning"
-    });
+    giveNotification("Range fault!","Your range doesn't cover your input message!", "warning");
     return;
   }
   const sorted = generateNgramRange(selectedNRange.value[1],selectedNRange.value[0]);
   //sliding window
   for(let n of sorted){
-    const window = [];
-    let resultN = new Set();
-
-    for(let i=0;i < wordCount; i++){
-      window.push(cleanedText[i]);
-      if(window.length===n){
-        resultN.add(window.join(' '));
-        window.shift();
-      }
-    }
+    const resultN = nthGram(n, wordCount, cleanedText);
 
     if(resultN.size > 0){
       resultGrams.value.push({
             label: `${n}-Gram`,
-            value: Array.from(resultN)
+            value: Array.from(resultN.keys())
           }
       );
     }
