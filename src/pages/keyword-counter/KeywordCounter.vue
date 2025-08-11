@@ -55,6 +55,7 @@ import {generateNgramRange, nthGram} from "@/utils/NGram.js";
 import {giveNotification} from "@/utils/GiveNotification.js";
 import MaTable3 from "@/components/MaTable3.vue";
 import { useNGramStore } from '@/stores/ngramStore'
+import {onMounted} from "vue";
 
 const MAX_N = 10;
 const MIN_N = 1;
@@ -112,6 +113,9 @@ function copyToClipboard() {
       });
 }
 
+onMounted(()=>{
+  countNGrams();
+})
 
 </script>
 

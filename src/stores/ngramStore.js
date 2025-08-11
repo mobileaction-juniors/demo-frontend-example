@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useNGramStore = defineStore('ngram', {
     state: () => ({
-        inputText: " ",
+        inputText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at facilisis lorem. Morbi dignissim ipsum et condimentum congue. Sed consectetur mi vel lectus ornare dictum. Donec ligula dolor, feugiat sed ex eget, porttitor congue nulla.",
         headers: ['Keyword', 'Count', 'Density'],
         resultGrams: [],
         selectedNRange: [1, 3],
