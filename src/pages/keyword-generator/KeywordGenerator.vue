@@ -89,94 +89,83 @@ function handleButtonClick() {
 }
 </script>
 <template>
-    <div class="flex flex-col h-dvh">
-        <div
-            class="bg-[#333333] text-[#f9f9f9] text-[1.2rem] px-4 py-3 font-semibold"
-        >
-            <span>N-Gram Keyword Generator</span>
-        </div>
-        <div class="flex justify-center items-center flex-col gap-8 flex-1 p-4">
-            <form class="flex flex-col gap-4 p-4">
-                <ma-input
-                    id="ma-sentence"
-                    type="textarea"
-                    title="Enter a sentence"
-                    placeholder="Quick brown fox jump over fox..."
-                    v-model:value="sentence"
-                    :rows="5"
-                    :hasError="hasInputError"
+    <div class="flex flex-col justify-center items-center gap-8 flex-1">
+        <form class="flex flex-col gap-4">
+            <ma-input
+                id="ma-generator-sentence"
+                type="textarea"
+                title="Enter a sentence"
+                placeholder="Quick brown fox jump over fox..."
+                v-model:value="sentence"
+                :rows="5"
+                :hasError="hasInputError"
+                @change="
+                    validateFormValues(clearSentence(sentence, removeUnwanted))
+                "
+            />
+            <ma-checkbox2
+                v-model:checked="removeUnwanted"
+                @change="
+                    validateFormValues(clearSentence(sentence, removeUnwanted))
+                "
+            >
+                Remove unwanted words
+            </ma-checkbox2>
+            <div class="flex justify-center items-center gap-4">
+                <ma-button
+                    class="flex-1/2"
+                    variant="filled"
+                    @click="handleButtonClick()"
+                    type="button"
+                    :disabled="hasError"
+                >
+                    <FontAwesomeIcon :icon="faCalculator" />
+                    Calculate N-Grams
+                </ma-button>
+                <ma-multi-select
+                    :errorMessages="errorMessages"
                     @change="
                         validateFormValues(
                             clearSentence(sentence, removeUnwanted)
                         )
                     "
                 />
-                <ma-checkbox2
-                    v-model:checked="removeUnwanted"
-                    @change="
-                        validateFormValues(
-                            clearSentence(sentence, removeUnwanted)
-                        )
-                    "
-                >
-                    Remove unwanted words
-                </ma-checkbox2>
-                <div class="flex justify-center items-center gap-4">
-                    <ma-button
-                        class="flex-1/2"
-                        variant="filled"
-                        @click="handleButtonClick()"
-                        type="button"
-                        :disabled="hasError"
-                    >
-                        <FontAwesomeIcon :icon="faCalculator" />
-                        Calculate N-Grams
-                    </ma-button>
-                    <ma-multi-select
-                        :errorMessages="errorMessages"
-                        @change="
-                            validateFormValues(
-                                clearSentence(sentence, removeUnwanted)
-                            )
-                        "
-                    />
-                </div>
-            </form>
+            </div>
+        </form>
+        <div
+            class="flex text-[14px] justify-center min-h-[5rem] items-center flex-col gap-2"
+        >
+            <span
+                v-for="errorMessage in errorMessages"
+                :key="errorMessage"
+                v-show="hasError"
+                class="font-bold text-red-600 min-h-[3rem]"
+            >
+                {{ errorMessage }}
+            </span>
             <div
-                class="flex text-[14px] justify-center min-h-[5rem] items-center flex-col gap-2"
+                v-show="!hasError"
+                class="flex justify-center items-center flex-col gap-8 flex-1 p-4"
             >
                 <span
-                    v-for="errorMessage in errorMessages"
-                    :key="errorMessage"
-                    v-show="hasError"
-                    class="font-bold text-red-600 min-h-[3rem]"
+                    v-for="calculatedNGramSet in nGrams"
+                    :key="calculatedNGramSet.ngram"
+                    v-show="calculatedNGramSet.data.size !== 0"
+                    class="flex text-[14px] justify-center items-center gap-3 flex-col"
                 >
-                    {{ errorMessage }}
-                </span>
-                <div
-                    v-show="!hasError"
-                    class="flex justify-center items-center flex-col gap-8 flex-1 p-4"
-                >
-                    <span
-                        v-for="calculatedNGramSet in nGrams"
-                        :key="calculatedNGramSet.ngram"
-                        v-show="calculatedNGramSet.data.size !== 0"
-                        class="flex text-[14px] justify-center items-center gap-3 flex-col"
-                    >
-                        <span class="text-[#555555] text-[14px]">
-                            {{ calculatedNGramSet.ngram }}-Grams
-                        </span>
-                        <div class="flex flex-wrap gap-[0.65rem] max-w-[80vw]">
-                            <MaBadge
-                                v-for="value in calculatedNGramSet.data"
-                                :key="value"
-                                size="large"
-                            >
-                                {{ value }}
-                            </MaBadge>
-                        </div>
+                    <span class="text-[#555555] text-[14px]">
+                        {{ calculatedNGramSet.ngram }}-Grams
                     </span>
-                </div>
+                    <div class="flex flex-wrap gap-[0.65rem] max-w-[80vw]">
+                        <MaBadge
+                            v-for="value in calculatedNGramSet.data"
+                            :key="value"
+                            size="large"
+                        >
+                            {{ value }}
+                        </MaBadge>
+                    </div>
+                </span>
             </div>
         </div>
     </div>
@@ -187,8 +176,8 @@ function handleButtonClick() {
     border-color: #f87171 !important;
 }
 
-#ma-sentence {
-    min-height: 6rem;
-    max-height: 12rem;
+#ma-generator-sentence {
+    min-height: 6rem !important;
+    max-height: 12rem !important;
 }
 </style>

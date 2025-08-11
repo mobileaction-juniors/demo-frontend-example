@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import { MaSelect2 } from "@mobileaction/action-kit";
 import { useNGramStore } from "@/stores/ngramStore";
 import { storeToRefs } from "pinia";
