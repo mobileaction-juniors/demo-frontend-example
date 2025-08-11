@@ -43,7 +43,7 @@ const generateKeywords = () => {
     <MaCard 
       title="Keyword Generator"
       description="Generate 1-gram, 2-gram, and 3-gram keywords from your text"
-      headerIcon="search-normal"
+      headerIcon="flash"
     >
       <div class="input-section">
         <MaInput

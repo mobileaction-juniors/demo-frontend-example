@@ -8,8 +8,8 @@ describe('VFooter', () => {
     expect(wrapper.find('footer').exists()).toBe(true);
   });
 
-  it('is empty footer component', () => {
+  it('renders text', () => {
     const wrapper = mount(VFooter);
-    expect(wrapper.find('footer').text()).toBe('');
+    expect(wrapper.find('footer').text()).toBe('Footer');
   });
 });

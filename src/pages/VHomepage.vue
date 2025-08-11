@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { MaButton } from '@mobileaction/action-kit';
-
-const openTaskLink = () => {
-    window.open('https://mobileaction.atlassian.net/l/cp/7fw8MroM', '_blank');
-};
 </script>
 
 <template>
@@ -15,6 +11,7 @@ const openTaskLink = () => {
                 Please continue with these steps while coding.
             </p>
             <div class="button-section">
+              <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank">
                 <MaButton 
                     type="primary" 
                     @click="openTaskLink"
@@ -22,12 +19,13 @@ const openTaskLink = () => {
                 >
                     Implement First Front-End Task
                 </MaButton>
+                </a>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped>
+<style>
 @reference "tailwindcss";
 
 .homepage-container {

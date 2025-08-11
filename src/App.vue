@@ -1,38 +1,25 @@
 <template>
-  <div class="app-container">
-      <VSpecialHeader @tab-change="handleTabChange"/>
-      <div class="content-area">
-          <VHomepage v-if="activeTab === 'home'" />
-          <VKeywordGenerator v-if="activeTab === 'keyword-generator'" />
-      </div>
-  </div>
+  <component :is="ResolvedLayout" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import VSpecialHeader from '@/components/organisms/VSpecialHeader.vue';
-import VHomepage from '@/components/organisms/VHomepage.vue';
-import VKeywordGenerator from '@/components/organisms/VKeywordGenerator.vue';
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import DefaultLayout from "@/layouts/default.vue";
+import { LAYOUT } from "@/layouts/layout-constants";
 
-const activeTab = ref('home');
+const route = useRoute();
 
-const handleTabChange = (key: string) => {
-    activeTab.value = key;
+const layoutMap = {
+  [LAYOUT.DEFAULT]: DefaultLayout,
 };
+
+const ResolvedLayout = computed(() => {
+  const key = (route.meta?.layout as string) || LAYOUT.DEFAULT;
+  return layoutMap[key] || DefaultLayout;
+});
 </script>
 
 <style>
-.app-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.content-area {
-    flex: 1;
-    overflow-y: auto;
-}
+/* Global app-wide styles can stay here if needed */
 </style>
-
-
-
