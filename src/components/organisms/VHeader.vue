@@ -30,24 +30,33 @@ const route = useRoute();
 
 const activeTab = ref("home");
 
-const emit = defineEmits(["tab-change"]);
+const routeMap = {
+  home: "Home",
+  "keyword-generator": "KeywordGenerator"
+} as const;
+
+const tabMap = {
+  Home: "home",
+  KeywordGenerator: "keyword-generator"
+} as const;
 
 const handleTabChange = (key: string) => {
-  // Navigate based on tab key
-  if (key === "home") {
-    router.push({ name: "Home" });
-  } else if (key === "keyword-generator") {
-    router.push({ name: "KeywordGenerator" });
+  const routeName = routeMap[key as keyof typeof routeMap];
+  if (routeName) {
+    router.push({ name: routeName });
   }
-  emit("tab-change", key);
 };
 
-// Keep tab state in sync with route
+// Keep tab highlighting in sync with current route
+// This ensures correct tab is highlighted regardless of how user navigates 
+// (clicking tabs, direct URL, browser back/forward buttons)
 watch(
   () => route.name,
   (name) => {
-    if (name === "Home") activeTab.value = "home";
-    else if (name === "KeywordGenerator") activeTab.value = "keyword-generator";
+    const tabKey = tabMap[name as keyof typeof tabMap];
+    if (tabKey) {
+      activeTab.value = tabKey;
+    }
   },
   { immediate: true }
 );
