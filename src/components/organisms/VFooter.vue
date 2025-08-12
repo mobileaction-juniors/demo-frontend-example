@@ -10,24 +10,18 @@
 // Composition API - no export default needed with script setup
 </script>
 
-<style >
+<style>
+@reference "tailwindcss";
+
 .footer {
-  background-color: #2d3748;
-  color: white;
-  padding: 1.5rem 0;
-  margin-top: auto;
+  @apply bg-gray-800 text-white py-6 mt-auto;
 }
 
 .footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  text-align: center;
+  @apply max-w-screen-xl mx-auto px-4 text-center;
 }
 
 .footer-content p {
-  margin: 0;
-  font-size: 0.875rem;
-  font-weight: 600;
+  @apply m-0 text-sm font-semibold;
 }
 </style>

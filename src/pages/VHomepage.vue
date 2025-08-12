@@ -12,13 +12,12 @@ import { MaButton } from '@mobileaction/action-kit';
             </p>
             <div class="button-section">
               <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank">
-                <MaButton 
+                <ma-button 
                     type="primary" 
-                    @click="openTaskLink"
                     size="large"
                 >
                     Implement First Front-End Task
-                </MaButton>
+                </ma-button>
                 </a>
             </div>
         </div>

@@ -14,13 +14,13 @@ import VFooter from "@/components/organisms/VFooter.vue";
 </script>
 
 <style>
+@reference "tailwindcss";
+
 .layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  @apply min-h-screen flex flex-col;
 }
 
 .main-content {
-  flex: 1;
+  @apply flex-1;
 }
 </style>

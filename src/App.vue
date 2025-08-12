@@ -6,7 +6,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import DefaultLayout from "@/layouts/default.vue";
-import { LAYOUT } from "@/layouts/layout-constants";
+import { LAYOUT } from "@/layouts/constants/layout-constants";
 
 const route = useRoute();
 

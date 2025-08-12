@@ -1,11 +1,11 @@
 <template>
   <header class="main-header">
     <div class="header-brand">
-      <MaIcon name="rocket" class="brand-icon" />
+      <ma-icon name="rocket" class="brand-icon" />
       <h1 class="brand-title">Mobile Action Internship Tools</h1>
     </div>
     <div class="header-nav">
-      <MaTabs
+      <ma-tabs
         v-model:activeKey="activeTab"
         type="line"
         tabPosition="top"
@@ -13,22 +13,21 @@
         class="header-tabs"
         @change="handleTabChange"
       >
-        <MaTabPane key="home" tab="Main"></MaTabPane>
-        <MaTabPane key="keyword-generator" tab="Keyword Generator"></MaTabPane>
-      </MaTabs>
+        <ma-tab-pane key="home" tab="Main"></ma-tab-pane>
+        <ma-tab-pane key="keyword-generator" tab="Keyword Generator"></ma-tab-pane>
+      </ma-tabs>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { MaIcon, MaTabs, MaTabPane } from "@mobileaction/action-kit";
 
 const router = useRouter();
 const route = useRoute();
 
-const activeTab = ref("home");
 
 const routeMap = {
   home: "Home",
@@ -47,19 +46,10 @@ const handleTabChange = (key: string) => {
   }
 };
 
-// Keep tab highlighting in sync with current route
-// This ensures correct tab is highlighted regardless of how user navigates 
-// (clicking tabs, direct URL, browser back/forward buttons)
-watch(
-  () => route.name,
-  (name) => {
-    const tabKey = tabMap[name as keyof typeof tabMap];
-    if (tabKey) {
-      activeTab.value = tabKey;
-    }
-  },
-  { immediate: true }
-);
+const activeTab = computed(() => {
+	const routeName = route.name;
+	return tabMap[routeName as keyof typeof tabMap]
+});
 </script>
 
 <style>

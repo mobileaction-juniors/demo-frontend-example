@@ -3,50 +3,64 @@ import { ref } from 'vue';
 import { MaButton, MaCard, MaInput, MaBadge } from '@mobileaction/action-kit';
 
 const inputText = ref('');
-const keywords = ref([]);
+const oneGramKeywords = ref([]);
+const twoGramKeywords = ref([]);
+const threeGramKeywords = ref([]);
 
-const generateKeywords = () => {
+const cleanAndTokenizeText = (text: string): string[] => {
+  const cleanedText = text.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleanedText.split(' ').filter(word => word.length > 0);
+};
+
+const generateOneGrams = (words: string[]): string[] => {
+  return [...new Set(words)];
+};
+
+const generateTwoGrams = (words: string[]): string[] => {
+  const twoGramSet = new Set<string>();
+  for (let i = 0; i < words.length - 1; i++) {
+    twoGramSet.add(`${words[i]} ${words[i + 1]}`);
+  }
+  return [...twoGramSet];
+};
+
+const generateThreeGrams = (words: string[]): string[] => {
+  const threeGramSet = new Set<string>();
+  for (let i = 0; i < words.length - 2; i++) {
+    threeGramSet.add(`${words[i]} ${words[i + 1]} ${words[i + 2]}`);
+  }
+  return [...threeGramSet];
+};
+
+const clearKeywords = (): void => {
+  oneGramKeywords.value = [];
+  twoGramKeywords.value = [];
+  threeGramKeywords.value = [];
+};
+
+const generateKeywords = (): void => {
   if (!inputText.value.trim()) {
-    keywords.value = [];
+    clearKeywords();
     return;
   }
 
-  const cleanedText = inputText.value.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
-  const words = cleanedText.split(' ').filter(word => word.length > 0);
+  const words = cleanAndTokenizeText(inputText.value);
   
-  const result = [];
-  
-  // 1-gram
-  const oneGram = [...new Set(words)];
-  result.push({ type: '1-gram', keywords: oneGram });
-  
-  // 2-gram
-  const twoGramSet = new Set();
-  for (let i = 0; i < words.length - 1; i++) {
-    twoGramSet.add(words[i] + ' ' + words[i + 1]);
-  }
-  result.push({ type: '2-gram', keywords: [...twoGramSet] });
-  
-  // 3-gram
-  const threeGramSet = new Set();
-  for (let i = 0; i < words.length - 2; i++) {
-    threeGramSet.add(words[i] + ' ' + words[i + 1] + ' ' + words[i + 2]);
-  }
-  result.push({ type: '3-gram', keywords: [...threeGramSet] });
-  
-  keywords.value = result;
+  oneGramKeywords.value = generateOneGrams(words);
+  twoGramKeywords.value = generateTwoGrams(words);
+  threeGramKeywords.value = generateThreeGrams(words);
 };
 </script>
 
 <template>
   <div class="generator-wrapper">
-    <MaCard 
+    <ma-card 
       title="Keyword Generator"
       description="Generate 1-gram, 2-gram, and 3-gram keywords from your text"
       headerIcon="flash"
     >
       <div class="input-section">
-        <MaInput
+        <ma-input
           v-model:value="inputText"
           type="textarea"
           title="Text Input"
@@ -54,28 +68,58 @@ const generateKeywords = () => {
           hintText="Paste or type the text you want to analyze for keywords"
         />
         
-        <MaButton @click="generateKeywords" type="primary" class="generate-btn">
+        <ma-button @click="generateKeywords" type="primary" class="generate-btn">
           Generate Keywords
-        </MaButton>
+        </ma-button>
       </div>
 
-      <div v-if="keywords.length > 0" class="results-section">
-        <div v-for="group in keywords" :key="group.type" class="keyword-group">
-          <h3 class="group-title">{{ group.type }}</h3>
+      <div v-if="oneGramKeywords.length > 0 || twoGramKeywords.length > 0 || threeGramKeywords.length > 0" class="results-section">
+        <div v-if="oneGramKeywords.length > 0" class="keyword-group">
+          <h3 class="group-title">1-gram</h3>
           <div class="keywords-list">
-            <MaBadge
-              v-for="keyword in group.keywords"
+            <ma-badge
+              v-for="keyword in oneGramKeywords"
               :key="keyword"
               size="medium"
               type="primary"
               variant="dark"
             >
               {{ keyword }}
-            </MaBadge>
+            </ma-badge>
+          </div>
+        </div>
+
+        <div v-if="twoGramKeywords.length > 0" class="keyword-group">
+          <h3 class="group-title">2-gram</h3>
+          <div class="keywords-list">
+            <ma-badge
+              v-for="keyword in twoGramKeywords"
+              :key="keyword"
+              size="medium"
+              type="primary"
+              variant="dark"
+            >
+              {{ keyword }}
+            </ma-badge>
+          </div>
+        </div>
+
+        <div v-if="threeGramKeywords.length > 0" class="keyword-group">
+          <h3 class="group-title">3-gram</h3>
+          <div class="keywords-list">
+            <ma-badge
+              v-for="keyword in threeGramKeywords"
+              :key="keyword"
+              size="medium"
+              type="primary"
+              variant="dark"
+            >
+              {{ keyword }}
+            </ma-badge>
           </div>
         </div>
       </div>
-    </MaCard>
+    </ma-card>
   </div>
 </template>
 
@@ -83,7 +127,7 @@ const generateKeywords = () => {
 @reference "tailwindcss";
 
 .generator-wrapper {
-  @apply max-w-4xl mx-auto;
+  @apply max-w-4xl mx-auto pt-8;
 }
 
 .input-section {
