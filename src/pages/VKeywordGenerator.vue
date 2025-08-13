@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { MaButton, MaCard, MaInput, MaBadge } from '@mobileaction/action-kit';
 
 const inputText = ref('');
@@ -50,6 +50,10 @@ const generateKeywords = (): void => {
   twoGramKeywords.value = generateTwoGrams(words);
   threeGramKeywords.value = generateThreeGrams(words);
 };
+
+const isResultVisible = computed(() => {
+  return oneGramKeywords.value.length > 0 || twoGramKeywords.value.length > 0 || threeGramKeywords.value.length > 0;
+});
 </script>
 
 <template>
@@ -73,7 +77,7 @@ const generateKeywords = (): void => {
         </ma-button>
       </div>
 
-      <div v-if="oneGramKeywords.length > 0 || twoGramKeywords.length > 0 || threeGramKeywords.length > 0" class="results-section">
+      <div v-if="isResultVisible" class="results-section">
         <div v-if="oneGramKeywords.length > 0" class="keyword-group">
           <h3 class="group-title">1-gram</h3>
           <div class="keywords-list">

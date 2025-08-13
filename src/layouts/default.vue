@@ -1,10 +1,10 @@
 <template>
   <div class="layout">
-    <VHeader />
+    <v-header />
     <main class="main-content">
       <router-view />
     </main>
-    <VFooter />
+    <v-footer />
   </div>
 </template>
 

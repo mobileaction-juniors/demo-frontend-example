@@ -28,7 +28,6 @@ import { MaIcon, MaTabs, MaTabPane } from "@mobileaction/action-kit";
 const router = useRouter();
 const route = useRoute();
 
-
 const routeMap = {
   home: "Home",
   "keyword-generator": "KeywordGenerator"
