@@ -8,7 +8,7 @@
       <ma-tabs
         v-model:activeKey="activeTab"
         type="line"
-        tabPosition="top"
+        tab-position="top"
         animated
         class="header-tabs"
         @change="handleTabChange"
