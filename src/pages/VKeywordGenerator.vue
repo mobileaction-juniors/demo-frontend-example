@@ -1,41 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { MaButton, MaCard, MaInput, MaBadge } from '@mobileaction/action-kit';
+import { ref, computed, watch } from 'vue';
+import { MaButton, MaCard, MaInput, MaBadge, MaCheckboxGroup, MaCheckbox } from '@mobileaction/action-kit';
+import { filterArr } from '../cleanupResources';
+
+const MAX_NGRAM = 10;
 
 const inputText = ref('');
-const oneGramKeywords = ref([]);
-const twoGramKeywords = ref([]);
-const threeGramKeywords = ref([]);
+const keywords = ref({});
+const selectedNGrams = ref([1, 2, 3]);
+
+const getKeywords = (n) => keywords.value[n] || [];
 
 const cleanAndTokenizeText = (text: string): string[] => {
   const cleanedText = text.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
-  return cleanedText.split(' ').filter(word => word.length > 0);
+  let words = cleanedText.split(' ').filter(word => word.length > 0);
+  words = words.filter(word => !filterArr.includes(word));
+  return words;
 };
 
-const generateOneGrams = (words: string[]): string[] => {
-  return [...new Set(words)];
-};
-
-const generateTwoGrams = (words: string[]): string[] => {
-  const twoGramSet = new Set<string>();
-  for (let i = 0; i < words.length - 1; i++) {
-    twoGramSet.add(`${words[i]} ${words[i + 1]}`);
+const generateNGrams = (words: string[], n: number): string[] => {  
+  const nGramSet = new Set<string>();
+  for (let i = 0; i <= words.length - n; i++) {
+    const gram = words.slice(i, i + n).join(' ');
+    nGramSet.add(gram);
   }
-  return [...twoGramSet];
-};
-
-const generateThreeGrams = (words: string[]): string[] => {
-  const threeGramSet = new Set<string>();
-  for (let i = 0; i < words.length - 2; i++) {
-    threeGramSet.add(`${words[i]} ${words[i + 1]} ${words[i + 2]}`);
-  }
-  return [...threeGramSet];
+  return [...nGramSet];
 };
 
 const clearKeywords = (): void => {
-  oneGramKeywords.value = [];
-  twoGramKeywords.value = [];
-  threeGramKeywords.value = [];
+  keywords.value = {};
 };
 
 const generateKeywords = (): void => {
@@ -43,16 +36,21 @@ const generateKeywords = (): void => {
     clearKeywords();
     return;
   }
-
-  const words = cleanAndTokenizeText(inputText.value);
   
-  oneGramKeywords.value = generateOneGrams(words);
-  twoGramKeywords.value = generateTwoGrams(words);
-  threeGramKeywords.value = generateThreeGrams(words);
+  const words = cleanAndTokenizeText(inputText.value);
+  keywords.value = {};
+  
+  selectedNGrams.value.forEach(n => {
+    keywords.value[n] = generateNGrams(words, n);
+  });
 };
 
+watch([selectedNGrams, inputText], () => {
+  generateKeywords();
+});
+
 const isResultVisible = computed(() => {
-  return oneGramKeywords.value.length > 0 || twoGramKeywords.value.length > 0 || threeGramKeywords.value.length > 0;
+  return Object.values(keywords.value).some(arr => arr.length > 0);
 });
 </script>
 
@@ -60,7 +58,7 @@ const isResultVisible = computed(() => {
   <div class="generator-wrapper">
     <ma-card 
       title="Keyword Generator"
-      description="Generate 1-gram, 2-gram, and 3-gram keywords from your text"
+      description="Generate n-grams (1-10) keywords from your text with automatic stop word removal"
       headerIcon="flash"
     >
       <div class="input-section">
@@ -71,48 +69,21 @@ const isResultVisible = computed(() => {
           placeholder="Enter your text here..."
           hintText="Paste or type the text you want to analyze for keywords"
         />
-        
-        <ma-button @click="generateKeywords" type="primary" class="generate-btn">
-          Generate Keywords
-        </ma-button>
+
+        <div class="ngram-selection">
+          <h4 class="selection-title">Select N-grams to generate:</h4>
+          <ma-checkbox-group v-model:value="selectedNGrams" class="ngram-checkboxes">
+            <ma-checkbox v-for="n in MAX_NGRAM" :key="n" :value="n">{{ n }}-gram</ma-checkbox>
+          </ma-checkbox-group>
+        </div>
       </div>
 
       <div v-if="isResultVisible" class="results-section">
-        <div v-if="oneGramKeywords.length > 0" class="keyword-group">
-          <h3 class="group-title">1-gram</h3>
+        <div v-for="n in selectedNGrams" :key="n" class="keyword-group">
+          <h3 class="group-title">{{ n }}-gram</h3>
           <div class="keywords-list">
             <ma-badge
-              v-for="keyword in oneGramKeywords"
-              :key="keyword"
-              size="medium"
-              type="primary"
-              variant="dark"
-            >
-              {{ keyword }}
-            </ma-badge>
-          </div>
-        </div>
-
-        <div v-if="twoGramKeywords.length > 0" class="keyword-group">
-          <h3 class="group-title">2-gram</h3>
-          <div class="keywords-list">
-            <ma-badge
-              v-for="keyword in twoGramKeywords"
-              :key="keyword"
-              size="medium"
-              type="primary"
-              variant="dark"
-            >
-              {{ keyword }}
-            </ma-badge>
-          </div>
-        </div>
-
-        <div v-if="threeGramKeywords.length > 0" class="keyword-group">
-          <h3 class="group-title">3-gram</h3>
-          <div class="keywords-list">
-            <ma-badge
-              v-for="keyword in threeGramKeywords"
+              v-for="keyword in getKeywords(n)"
               :key="keyword"
               size="medium"
               type="primary"
@@ -156,5 +127,17 @@ const isResultVisible = computed(() => {
 
 .keywords-list {
   @apply flex flex-wrap gap-2;
+}
+
+.ngram-selection {
+  @apply mt-4 mb-4;
+}
+
+.selection-title {
+  @apply text-base font-medium mb-3;
+}
+
+.ngram-checkboxes {
+  @apply grid grid-cols-5 gap-3 p-4 bg-gray-50 rounded-lg border;
 }
 </style>
