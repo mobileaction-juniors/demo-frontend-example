@@ -15,6 +15,12 @@ const router = createRouter({
       name: 'KeywordGenerator',
       component: () => import('@/pages/VKeywordGenerator.vue'),
       meta: { layout: LAYOUT.DEFAULT },
+    },
+    {
+      path: '/keyword-counter',
+      name: 'KeywordCounter',
+      component: () => import('@/pages/VKeywordCounter.vue'),
+      meta: { layout: LAYOUT.DEFAULT },
     }
   ]
 })
