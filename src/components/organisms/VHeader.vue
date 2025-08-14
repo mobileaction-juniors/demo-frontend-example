@@ -15,6 +15,7 @@
       >
         <ma-tab-pane key="home" tab="Main"></ma-tab-pane>
         <ma-tab-pane key="keyword-generator" tab="Keyword Generator"></ma-tab-pane>
+        <ma-tab-pane key="keyword-counter" tab="Keyword Counter"></ma-tab-pane>
       </ma-tabs>
     </div>
   </header>
@@ -30,12 +31,14 @@ const route = useRoute();
 
 const routeMap = {
   home: "Home",
-  "keyword-generator": "KeywordGenerator"
+  "keyword-generator": "KeywordGenerator",
+  "keyword-counter": "KeywordCounter"
 } as const;
 
 const tabMap = {
   Home: "home",
-  KeywordGenerator: "keyword-generator"
+  KeywordGenerator: "keyword-generator",
+  KeywordCounter: "keyword-counter"
 } as const;
 
 const handleTabChange = (key: string) => {
