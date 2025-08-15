@@ -5,10 +5,10 @@ import VFooter from "@/components/molecules/VFooter.vue";
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <VHeader />
-    <main class="flex-1 obj-section">
-      <router-view />
+    <VHeader/>
+    <main class="flex-1">
+      <slot />
     </main>
-    <VFooter />
+    <VFooter/>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 const year = new Date().getFullYear()
 </script>
+import { MaButton } from "@mobileaction/action-kit";
 
 <template>
   <footer class="mt-10 border-t bg-white/60 backdrop-blur">
@@ -9,11 +10,11 @@ const year = new Date().getFullYear()
         © {{ year }} Demo. All rights reserved.
       </p>
 
-      <nav class="flex items-center gap-5 text-sm">
-        <a href="#" class="text-neutral-600 hover:text-black">Privacy</a>
-        <a href="#" class="text-neutral-600 hover:text-black">Terms</a>
-        <a href="#" class="text-neutral-600 hover:text-black">Contact</a>
-      </nav>
+    <nav class="flex items-center gap-2">
+      <MaButton as="a" href="#" size="sm" variant="text">Privacy</MaButton>
+      <MaButton as="a" href="#" size="sm" variant="text">Terms</MaButton>
+      <MaButton as="a" href="#" size="sm" variant="text">Contact</MaButton>
+    </nav>
     </div>
   </footer>
 </template>
