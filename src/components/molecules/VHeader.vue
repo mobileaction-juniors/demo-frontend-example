@@ -29,16 +29,19 @@ function onGetStarted() {
         </router-link>
 
         <nav class="flex items-center gap-2" aria-label="primary">
-          <MaButton
+          <router-link
             v-for="l in links"
             :key="l.to"
-            type="text"
-            size="sm"
-            class="text-neutral-700"
-            @click="onLinkClick(l.to)"
+            :to="l.to"
           >
-            {{ l.label }}
-          </MaButton>
+            <MaButton
+              type="text"
+              size="sm"
+              class="text-neutral-700"
+            >
+              {{ l.label }}
+            </MaButton>
+          </router-link>
         </nav>
 
         <div class="flex items-center gap-3">
