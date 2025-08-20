@@ -8,6 +8,8 @@ const router = useRouter()
 const links = [
   { to: '/', label: 'Home' },
   { to: '/keyword-generator', label: 'Keyword Generator' },
+  { to: '/review-app', label: 'Review App' },
+
 ]
 
 </script>
