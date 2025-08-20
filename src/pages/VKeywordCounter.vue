@@ -11,10 +11,32 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const inputText = ref('');
-const keywordStats = ref<{ keyword: string; count: number; percentage: number }[]>([]);
-const totalWords = ref(0);
 
-const processText = (text: string) => {
+const totalWords = computed(() => {
+  return textToWords(inputText.value).length;
+});
+
+const wordCount = computed(() => {
+  const words = textToWords(inputText.value);
+  return words.reduce((acc, word) => {
+    acc[word] = (acc[word] || 0) + 1;
+    return acc;
+  }, {} as { [key: string]: number });
+});
+
+const keywordStats = computed(() => {
+  if (totalWords.value === 0) return [];
+  
+  return Object.entries(wordCount.value)
+    .map(([keyword, count]) => ({
+      keyword,
+      count,
+      percentage: Math.round((count / totalWords.value) * 100 * 100) / 100
+    }))
+    .sort((a, b) => b.count - a.count);
+});
+
+const textToWords = (text: string) => {
   if (!text.trim()) return [];
   
   return text
@@ -26,52 +48,13 @@ const processText = (text: string) => {
     .filter(word => word.length > 0);
 };
 
-const updateWordCount = () => {
-  const words = processText(inputText.value);
-  totalWords.value = words.length;
-};
-
-onMounted(() => {
+const initializeText = () => {
   if (props.text) {
     inputText.value = props.text;
-    updateWordCount();
   }
-});
-
-watch(inputText, updateWordCount);
-
-const countWords = (words: string[]) => {
-  const wordCount: { [key: string]: number } = {};
-  words.forEach(word => {
-    wordCount[word] = (wordCount[word] || 0) + 1;
-  });
-  return wordCount;
 };
 
-const calculatePercentage = (count: number, total: number) => {
-  return Math.round((count / total) * 100 * 100) / 100;
-};
-
-const formatKeywordStats = (wordCount: { [key: string]: number }, totalWords: number) => {
-  return Object.entries(wordCount)
-    .map(([keyword, count]) => ({
-      keyword,
-      count,
-      percentage: calculatePercentage(count, totalWords)
-    }))
-    .sort((a, b) => b.count - a.count);
-};
-
-const analyzeKeywords = () => {
-  if (totalWords.value === 0) {
-    keywordStats.value = [];
-    return;
-  }
-
-  const words = processText(inputText.value);
-  const wordCount = countWords(words);
-  keywordStats.value = formatKeywordStats(wordCount, totalWords.value);
-};
+onMounted(initializeText);
 
 const hasResults = computed(() => keywordStats.value.length > 0);
 </script>
@@ -96,15 +79,6 @@ const hasResults = computed(() => keywordStats.value.length > 0);
               hintText="Paste or type the text you want to analyze for keyword frequency"
               class="mb-4"
             />
-            
-            <ma-button 
-              type="primary" 
-              size="medium"
-              @click="analyzeKeywords"
-              class="w-full sm:w-auto"
-            >
-              Count Keywords
-            </ma-button>
             
             <div v-if="inputText.trim()" class="word-count-display">
               <span class="word-count-label">Total Words:</span>
@@ -138,7 +112,7 @@ const hasResults = computed(() => keywordStats.value.length > 0);
           </div>
         </div>
         <div v-else class="no-results">
-          <p class="no-results-text">Enter text and click "Count Keywords" to see frequency analysis</p>
+          <p class="no-results-text">Enter text to see keyword frequency analysis</p>
         </div>
       </div>
     </div>
