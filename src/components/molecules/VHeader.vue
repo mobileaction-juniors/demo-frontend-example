@@ -10,12 +10,6 @@ const links = [
   { to: '/keyword-generator', label: 'Keyword Generator' },
 ]
 
-function onLinkClick(to) {
-  router.push(to)
-}
-function onGetStarted() {
-  router.push('/keyword-generator')
-}
 </script>
 
 <template>
@@ -46,9 +40,11 @@ function onGetStarted() {
 
         <div class="flex items-center gap-3">
           <MaInput placeholder="Search…" size="sm" class="w-48" />
-          <MaButton type="primary" size="sm" @click="onGetStarted">
-            Get Started
-          </MaButton>
+          <router-link to="/get-started">
+            <MaButton type="primary" size="sm">
+              Get Started
+            </MaButton>
+          </router-link>
           <MaAvatar size="sm" username="Kutay D." />
         </div>
       </div>
