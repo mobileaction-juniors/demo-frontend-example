@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineExpose } from 'vue'
 import { MaForm, MaInput, MaButton } from '@mobileaction/action-kit'
 import '@mobileaction/action-kit/dist/style.css'
 import ReviewTable from '@/components/molecules/review-table.vue'
@@ -7,7 +7,6 @@ import ReviewTable from '@/components/molecules/review-table.vue'
 const props = defineProps({ text: { type: String, default: '' } })
 
 const input_text = ref(props.text)
-
 const results = ref([])
 
 const total_tokens = computed(() => tokenize(input_text.value).length)
@@ -37,6 +36,8 @@ function reset_form() {
   input_text.value = ''
   results.value = []
 }
+
+defineExpose({ reset_form })
 </script>
 
 <template>
@@ -58,6 +59,7 @@ function reset_form() {
         <div class="mt-4 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <ma-button color="red" @click="analyze">Count</ma-button>
+            <ma-button color="gray" @click="reset_form">Reset</ma-button>
           </div>
           <span class="text-base font-medium text-neutral-700">
             Total characters: <span class="font-bold">{{ total_chars }}</span>

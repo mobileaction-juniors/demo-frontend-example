@@ -8,5 +8,10 @@ export default defineConfig({
   css: { postcss: { plugins: [tailwindcss()] } },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
+  },
+   test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: 'tests/setup.ts'
   }
 })
