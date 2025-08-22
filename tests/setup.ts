@@ -5,15 +5,15 @@ vi.mock('@mobileaction/action-kit', () => {
     name,
     props: ['modelValue','value','size','type','label','rows','placeholder','class'],
     emits: ['update:value','update:modelValue','click'],
-    template: name === 'MaInput'
+    template: name === 'ma-input'
       ? '<textarea :value="modelValue ?? value" @input="$emit(\'update:value\', $event.target.value)"><slot/></textarea>'
       : '<button @click="$emit(\'click\')"><slot/></button>'
   })
   return {
-    MaForm: { template: '<form><slot/></form>' },
-    MaInput: Comp('MaInput'),
-    MaButton: Comp('MaButton'),
-    MaAvatar: { template: '<div class="ma-avatar"><slot/></div>' }
+    ma-form: { template: '<form><slot/></form>' },
+    ma-input: Comp('ma-input'),
+    ma-button: Comp('ma-button'),
+    ma-avatar: { template: '<div class="ma-avatar"><slot/></div>' }
   }
 })
 

@@ -2,8 +2,8 @@
   <section class="p-4 max-w-4xl mx-auto">
     <h1 class="text-2xl font-bold mb-3">Keyword Generator</h1>
 
-    <MaForm :model="{ description: descriptionText }" label-position="top">
-      <MaInput
+    <ma-form :model="{ description: descriptionText }" label-position="top">
+      <ma-input
         id="app-desc"
         v-model:value="descriptionText"
         type="textarea"
@@ -11,11 +11,11 @@
         placeholder="Paste an app description here..."
         rows="10"
       />
-    </MaForm>
+    </ma-form>
 
     <div class="flex items-center gap-3 mt-3">
-      <MaButton @click="generateKeywords">Generate</MaButton>
-      <MaButton variant="outline" @click="resetForm">Clear</MaButton>
+      <ma-button @click="generateKeywords">Generate</ma-button>
+      <ma-button variant="outline" @click="resetForm">Clear</ma-button>
       <span class="text-sm text-gray-600">Tokens: {{ tokenCount }}</span>
     </div>
 

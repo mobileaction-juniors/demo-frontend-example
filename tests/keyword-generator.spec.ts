@@ -3,13 +3,13 @@ import { mount } from '@vue/test-utils'
 import KeywordGeneratorPage from '@/pages/keyword-generator/KeywordGenerator.vue'
 
 const stubs = {
-  MaForm: { template: '<form><slot /></form>' },
-  MaInput: {
+  ma-form: { template: '<form><slot /></form>' },
+  ma-input: {
     props: ['modelValue', 'value'],
     emits: ['update:value', 'update:modelValue'],
     template: '<textarea @input="$emit(\'update:value\', $event.target.value)"></textarea>'
   },
-  MaButton: { template: '<button><slot /></button>' }
+  ma-button: { template: '<button><slot /></button>' }
 }
 
 describe('KeywordGenerator page', () => {

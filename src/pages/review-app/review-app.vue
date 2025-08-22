@@ -3,6 +3,8 @@ import { ref, computed, defineExpose } from 'vue'
 import { MaForm, MaInput, MaButton } from '@mobileaction/action-kit'
 import '@mobileaction/action-kit/dist/style.css'
 import ReviewTable from '@/components/molecules/review-table.vue'
+import CharacterCounter from '@/components/molecules/CharacterCounter.vue'
+import FormTextArea from '@/components/molecules/FormTextArea.vue'
 
 const props = defineProps({ text: { type: String, default: '' } })
 
@@ -44,27 +46,18 @@ defineExpose({ reset_form })
   <section class="p-4 max-w-7xl mx-auto w-full">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
       <div class="rounded-2xl border border-neutral-200 bg-white p-4">
-        <ma-form :model="{ text: input_text }" label-position="top" class="w-full">
-          <ma-input
-            id="review-text"
-            v-model:value="input_text"
-            type="textarea"
-            label=""
-            placeholder='Paste your text here and press "Count".'
-            :rows="14"
-            class="w-full"
-          />
-        </ma-form>
+         <FormTextArea
+          v-model="input_text"
+          input-id="review-text"
+          :rows="14"
+          placeholder='Paste your text here and press "Count".'
+        />
 
-        <div class="mt-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <ma-button color="red" @click="analyze">Count</ma-button>
-            <ma-button color="gray" @click="reset_form">Reset</ma-button>
-          </div>
-          <span class="text-base font-medium text-neutral-700">
-            Total characters: <span class="font-bold">{{ total_chars }}</span>
-          </span>
-        </div>
+       <CharacterCounter
+        :totalChars="total_chars"
+        :onAnalyze="analyze"
+        :onReset="reset_form"
+       />
       </div>
 
       <div>
