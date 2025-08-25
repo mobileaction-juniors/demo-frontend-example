@@ -52,7 +52,7 @@ const resetForm = () => {
 const total_tokens = computed(() => tokenizeClean(input_text.value).length)
 const total_chars  = computed(() => input_text.value.length)
 
-defineExpose({ reset_form })
+defineExpose({ resetForm })
 </script>
 
 <template>
