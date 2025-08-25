@@ -11,9 +11,9 @@ import { MaButton } from "@mobileaction/action-kit";
       </p>
 
     <nav class="flex items-center gap-2">
-      <MaButton as="a" href="#" size="sm" variant="text">Privacy</MaButton>
-      <MaButton as="a" href="#" size="sm" variant="text">Terms</MaButton>
-      <MaButton as="a" href="#" size="sm" variant="text">Contact</MaButton>
+      <ma-button as="a" href="#" size="sm" variant="text">Privacy</ma-button>
+      <ma-button as="a" href="#" size="sm" variant="text">Terms</ma-button>
+      <ma-button as="a" href="#" size="sm" variant="text">Contact</ma-button>
     </nav>
     </div>
   </footer>

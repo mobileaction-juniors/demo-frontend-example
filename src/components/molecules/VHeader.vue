@@ -8,14 +8,10 @@ const router = useRouter()
 const links = [
   { to: '/', label: 'Home' },
   { to: '/keyword-generator', label: 'Keyword Generator' },
+  { to: '/review-app', label: 'Review App' },
+
 ]
 
-function onLinkClick(to) {
-  router.push(to)
-}
-function onGetStarted() {
-  router.push('/keyword-generator')
-}
 </script>
 
 <template>
@@ -23,9 +19,9 @@ function onGetStarted() {
     <div class="mx-auto max-w-7xl px-4">
       <div class="flex h-14 items-center gap-3">
         <router-link to="/" class="mr-auto">
-          <MaButton type="text" class="flex items-center gap-2 font-semibold text-neutral-800">
+          <ma-button type="text" class="flex items-center gap-2 font-semibold text-neutral-800">
             Demo
-          </MaButton>
+          </ma-button>
         </router-link>
 
         <nav class="flex items-center gap-2" aria-label="primary">
@@ -34,22 +30,24 @@ function onGetStarted() {
             :key="l.to"
             :to="l.to"
           >
-            <MaButton
+            <ma-button
               type="text"
               size="sm"
               class="text-neutral-700"
             >
               {{ l.label }}
-            </MaButton>
+            </ma-button>
           </router-link>
         </nav>
 
         <div class="flex items-center gap-3">
-          <MaInput placeholder="Search…" size="sm" class="w-48" />
-          <MaButton type="primary" size="sm" @click="onGetStarted">
-            Get Started
-          </MaButton>
-          <MaAvatar size="sm" username="Kutay D." />
+          <ma-input placeholder="Search…" size="sm" class="w-48" />
+          <router-link to="/get-started">
+            <ma-button type="primary" size="sm">
+              Get Started
+            </ma-button>
+          </router-link>
+          <ma-avatar size="sm" username="Kutay D." />
         </div>
       </div>
     </div>
