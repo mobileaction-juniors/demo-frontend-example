@@ -4,7 +4,7 @@ import { MaForm, MaInput } from '@mobileaction/action-kit'
 import '@mobileaction/action-kit/dist/style.css'
 
 const props = defineProps({
-  modelValue: { type: String, required: true }, // v-model
+  modelValue: { type: String, required: true }, 
   rows: { type: Number, default: 14 },
   placeholder: { type: String, default: 'Paste your text here and press "Count".' },
   label: { type: String, default: '' },

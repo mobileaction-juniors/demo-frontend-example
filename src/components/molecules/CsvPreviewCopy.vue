@@ -4,7 +4,7 @@ const props = defineProps({
   buttonText: { type: String, default: 'Copy to clipboard' }
 })
 
-const emit = defineEmits(['copied'])
+const emit = defineEmits(['click:copy'])
 
 async function copyCsv() {
   await navigator.clipboard?.writeText(props.text)
@@ -20,7 +20,7 @@ async function copyCsv() {
     <div class="mt-3">
       <button
         type="button"
-        @click="copyCsv"
+        @click="() => emit('click:copy')"
         class="rounded-lg border border-indigo-200 px-4 py-2 text-indigo-600 hover:bg-indigo-50 active:scale-[.99]"
       >
         {{ buttonText }}

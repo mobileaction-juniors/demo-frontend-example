@@ -30,11 +30,7 @@ const links = [
             :key="l.to"
             :to="l.to"
           >
-            <ma-button
-              type="text"
-              size="sm"
-              class="text-neutral-700"
-            >
+            <ma-button type="text" class="flex items-center gap-2 font-semibold text-neutral-800">
               {{ l.label }}
             </ma-button>
           </router-link>
@@ -43,7 +39,7 @@ const links = [
         <div class="flex items-center gap-3">
           <ma-input placeholder="Search…" size="sm" class="w-48" />
           <router-link to="/get-started">
-            <ma-button type="primary" size="sm">
+            <ma-button type="text" class="flex items-center gap-2 font-semibold text-neutral-800">
               Get Started
             </ma-button>
           </router-link>
