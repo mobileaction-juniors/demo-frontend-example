@@ -8,7 +8,7 @@ const emit = defineEmits(['click:copy'])
 
 async function copyCsv() {
   await navigator.clipboard?.writeText(props.text)
-  emit('copied')
+  emit('copy')
 }
 </script>
 
