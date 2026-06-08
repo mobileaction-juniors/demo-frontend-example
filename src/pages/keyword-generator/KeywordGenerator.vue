@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { MaInput } from '@mobileaction/action-kit'
+import { MaButton, MaInput } from '@mobileaction/action-kit'
 
 const text = ref('')
 const selectedNgrams = ref([])
@@ -35,9 +35,8 @@ function removeStopwords(inputText) {
     .join(' ')
 }
 
-function generateKeywords(removeStops = false) {
-  const input = removeStops ? removeStopwords(text.value) : text.value
-  const words = input
+function generateKeywords() {
+  const words = removeStopwords(text.value)
     .toLowerCase()
     .replace(/[^a-z\s]/g, '')
     .split(' ')
@@ -54,151 +53,134 @@ function generateKeywords(removeStops = false) {
 </script>
 
 <template>
-  <div class="ma-keywords-generator">
-    <h2>Keyword Generator</h2>
+  <main class="min-h-[calc(100vh-64px)] bg-slate-50 px-4 py-10 sm:px-6">
+    <section class="mx-auto max-w-5xl">
+      <div class="mb-8">
+        <span class="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-700">
+          Keyword tools
+        </span>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          Keyword Generator
+        </h1>
+        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          Turn any text into focused keyword groups with custom n-grams and excluded words.
+        </p>
+      </div>
 
-    <div class="ma-input-row">
-      <MaInput
-        v-model:value="text"
-        type="textarea"
-        placeholder="Enter a text to generate keywords."
-        class="ma-textarea"
-      />
-      <div class="ma-select">
-        <label v-for="opt in options" :key="opt.value" class="ma-checkbox-label">
-          <input type="checkbox" :value="opt.value" v-model="selectedNgrams" />
-          {{ opt.label }}
-        </label>
-      </div>
-    </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div class="grid gap-7 lg:grid-cols-[minmax(0,1fr)_220px]">
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-slate-800">Text to analyze</label>
+            <MaInput
+              v-model:value="text"
+              type="textarea"
+              placeholder="Enter a text to generate keywords."
+              class="w-full"
+            />
+          </div>
 
-    <div class="ma-stopwords">
-      <span>Exclude words:</span>
-      <div class="ma-stopword-options">
-        <label v-for="word in stopwordOptions" :key="word" class="ma-checkbox-label">
-          <input type="checkbox" :value="word" v-model="selectedStopwords" />
-          {{ word }}
-        </label>
+          <div>
+            <p class="mb-3 text-sm font-semibold text-slate-800">N-gram sizes</p>
+            <div class="grid grid-cols-2 gap-2 lg:grid-cols-1">
+              <label
+                v-for="opt in options"
+                :key="opt.value"
+                class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition hover:border-blue-300 hover:bg-blue-50"
+              >
+                <input
+                  v-model="selectedNgrams"
+                  type="checkbox"
+                  :value="opt.value"
+                  class="size-4 accent-blue-600"
+                />
+                {{ opt.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-7 border-t border-slate-100 pt-6">
+          <p class="mb-3 text-sm font-semibold text-slate-800">Exclude words</p>
+          <div class="flex flex-wrap gap-2">
+            <label
+              v-for="word in stopwordOptions"
+              :key="word"
+              class="flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:border-blue-300"
+            >
+              <input
+                v-model="selectedStopwords"
+                type="checkbox"
+                :value="word"
+                class="size-4 accent-blue-600"
+              />
+              {{ word }}
+            </label>
+          </div>
+
+          <div class="mt-4 flex max-w-sm gap-2">
+            <input
+              v-model="customStopword"
+              class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              placeholder="Add another word"
+              @keyup.enter="addStopword"
+            />
+            <button
+              class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              @click="addStopword"
+            >
+              Add
+            </button>
+          </div>
+
+          <div v-if="selectedStopwords.length" class="mt-3 flex flex-wrap gap-2">
+            <button
+              v-for="word in selectedStopwords"
+              :key="word"
+              class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 transition hover:bg-red-50 hover:text-red-700"
+              title="Remove excluded word"
+              @click="removeStopword(word)"
+            >
+              {{ word }} ×
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-7 flex justify-end border-t border-slate-100 pt-6">
+          <MaButton
+            color="blue"
+            size="large"
+            icon="ai-sparkle"
+            :disabled="!text.trim() || !selectedNgrams.length"
+            @click="generateKeywords"
+          >
+            Generate keywords
+          </MaButton>
+        </div>
       </div>
-      <div class="ma-custom-stopword">
-        <input
-          v-model="customStopword"
-          placeholder="Add a word"
-          @keyup.enter="addStopword"
-        />
-        <button @click="addStopword">Add</button>
-      </div>
-      <div v-if="selectedStopwords.length" class="ma-selected-stopwords">
-        <button
-          v-for="word in selectedStopwords"
-          :key="word"
-          class="ma-selected-word"
-          @click="removeStopword(word)"
+
+      <div v-if="nGrams.length" class="mt-6 space-y-4">
+        <article
+          v-for="nGram in nGrams"
+          :key="nGram.n"
+          class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
         >
-          {{ word }} ×
-        </button>
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-slate-800">{{ nGram.n }}-gram keywords</h2>
+            <span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+              {{ nGram.keywords.length }}
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="keyword in nGram.keywords"
+              :key="keyword"
+              class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-800"
+            >
+              {{ keyword }}
+            </span>
+          </div>
+        </article>
       </div>
-    </div>
-
-    <div class="ma-buttons">
-      <button @click="generateKeywords(true)">Generate</button>
-    </div>
-
-    <div v-for="nGram in nGrams" :key="nGram.n" class="ma-result">
-      <h4>{{ nGram.n }}-gram</h4>
-      <span v-for="keyword in nGram.keywords" :key="keyword" class="ma-tag">{{ keyword }}</span>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
-
-<style scoped>
-.ma-keywords-generator {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 24px;
-}
-
-.ma-input-row {
-  display: flex;
-  gap: 32px;
-  align-items: flex-start;
-}
-
-.ma-textarea {
-  flex: 4;
-}
-
-.ma-select {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.ma-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.ma-stopwords {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: start;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.ma-stopword-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-}
-
-.ma-custom-stopword {
-  display: flex;
-  gap: 6px;
-}
-
-.ma-custom-stopword input {
-  width: 120px;
-  padding: 6px 8px;
-}
-
-.ma-selected-stopwords {
-  grid-column: 2 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.ma-selected-word {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 2px 8px;
-  background: #f5f5f5;
-  cursor: pointer;
-}
-
-.ma-buttons {
-  margin-top: 20px;
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.ma-result {
-  margin-top: 16px;
-}
-
-.ma-tag {
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 2px 8px;
-  margin: 3px;
-  font-size: 13px;
-}
-</style>

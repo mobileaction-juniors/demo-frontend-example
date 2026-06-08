@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import '@mobileaction/action-kit/dist/style.css'
+import './style.css'
 import { ActionKit } from '@mobileaction/action-kit'
 import App from './App.vue'
 import router from './router'
