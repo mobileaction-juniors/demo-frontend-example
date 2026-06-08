@@ -11,11 +11,27 @@ const options = Array.from({ length: 10 }, (_, i) => ({
   value: i + 1
 }))
 
+const stopwordOptions = ['a', 'an', 'the', 'is', 'of', 'to', 'in', 'on', 'for', 'and', 'or', 'with']
+const selectedStopwords = ref([])
+const customStopword = ref('')
+
+function addStopword() {
+  const word = customStopword.value.trim().toLowerCase()
+  if (word && !selectedStopwords.value.includes(word)) {
+    selectedStopwords.value.push(word)
+  }
+  customStopword.value = ''
+}
+
+function removeStopword(word) {
+  selectedStopwords.value = selectedStopwords.value.filter(item => item !== word)
+}
+
 function removeStopwords(inputText) {
-  const stopwords = new Set(['a', 'an', 'the', 'is'])
+  const stopwords = new Set(selectedStopwords.value)
   return inputText
-    .split(' ')
-    .filter(word => !stopwords.has(word.toLowerCase()))
+    .split(/\s+/)
+    .filter(word => !stopwords.has(word.toLowerCase().replace(/[^a-z]/g, '')))
     .join(' ')
 }
 
@@ -56,9 +72,36 @@ function generateKeywords(removeStops = false) {
       </div>
     </div>
 
+    <div class="ma-stopwords">
+      <span>Exclude words:</span>
+      <div class="ma-stopword-options">
+        <label v-for="word in stopwordOptions" :key="word" class="ma-checkbox-label">
+          <input type="checkbox" :value="word" v-model="selectedStopwords" />
+          {{ word }}
+        </label>
+      </div>
+      <div class="ma-custom-stopword">
+        <input
+          v-model="customStopword"
+          placeholder="Add a word"
+          @keyup.enter="addStopword"
+        />
+        <button @click="addStopword">Add</button>
+      </div>
+      <div v-if="selectedStopwords.length" class="ma-selected-stopwords">
+        <button
+          v-for="word in selectedStopwords"
+          :key="word"
+          class="ma-selected-word"
+          @click="removeStopword(word)"
+        >
+          {{ word }} ×
+        </button>
+      </div>
+    </div>
+
     <div class="ma-buttons">
-      <button @click="generateKeywords(false)">Generate</button>
-      <button @click="generateKeywords(true)">Generate Without Stopwords</button>
+      <button @click="generateKeywords(true)">Generate</button>
     </div>
 
     <div v-for="nGram in nGrams" :key="nGram.n" class="ma-result">
@@ -100,10 +143,50 @@ function generateKeywords(removeStops = false) {
   font-size: 14px;
 }
 
+.ma-stopwords {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.ma-stopword-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.ma-custom-stopword {
+  display: flex;
+  gap: 6px;
+}
+
+.ma-custom-stopword input {
+  width: 120px;
+  padding: 6px 8px;
+}
+
+.ma-selected-stopwords {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ma-selected-word {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
 .ma-buttons {
-  margin-top: 12px;
+  margin-top: 20px;
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .ma-result {
