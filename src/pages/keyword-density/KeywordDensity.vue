@@ -13,9 +13,16 @@ const props = defineProps({
 
 const text = ref(props.initialText)
 const results = ref([])
+const error = ref('')
 const totalChars = ref(0)
 
 function countKeywords() {
+  if (!text.value.trim()) {
+    error.value = 'Please enter some text.'
+    return
+  }
+  error.value = ''
+
   const words = text.value
     .toLowerCase()
     .replace(/[^a-z\s]/g, '')
@@ -74,6 +81,7 @@ function copyToClipboard() {
           <MaButton color="red" @click="countKeywords">Count</MaButton>
           <span class="text-sm text-gray-600">Total characters: <strong>{{ totalChars }}</strong></span>
         </div>
+        <p v-if="error" class="text-sm text-red-500">{{ error }}</p>
       </div>
 
       <!-- SAĞ: tablo -->
@@ -99,7 +107,7 @@ function copyToClipboard() {
             </tr>
           </tbody>
         </table>
-        <MaButton @click="copyToClipboard">Copy to clipboard</MaButton>
+        <MaButton v-if="results.length" @click="copyToClipboard">Copy to clipboard</MaButton>
       </div>
 
     </div>
