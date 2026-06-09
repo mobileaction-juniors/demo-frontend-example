@@ -81,6 +81,8 @@ const cleanedWords = computed(() => {
     return cleanedText.split(' ').filter(Boolean)
 })
 
+
+//new pull request
 //filtering cleaned words by removing initally selected stop words.
 const filteredWords = computed(() => {
     const stopWords = new Set(selectedStopWords.value.map((word) => word.toLowerCase()))
