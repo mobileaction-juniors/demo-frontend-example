@@ -1,5 +1,4 @@
 <script setup>
-
 </script>
 <template>
     <div style="text-align: center">
