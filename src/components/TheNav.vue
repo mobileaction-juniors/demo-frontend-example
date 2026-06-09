@@ -1,6 +1,6 @@
 <template>
     <div class="ma-router-item">
-        <router-link to="/keyword-density">
+        <router-link to="/keyword-generator">
             Keyword Density
         </router-link>
     </div>
