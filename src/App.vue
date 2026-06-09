@@ -1,3 +1,4 @@
+<style src="@/styles/main.css"/>
 <template>
   <div>
       <the-header/>
@@ -8,6 +9,5 @@
       </div>
   </div>
 </template>
-
 
 

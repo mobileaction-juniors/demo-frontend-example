@@ -10,7 +10,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@mobileaction/action-kit": "^1.58.17",
+    "@tailwindcss/vite": "^4.3.0",
+    "tailwindcss": "^4.3.0",
     "vue": "^3.4.29",
+    "vue-multiselect": "^3.5.0",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {

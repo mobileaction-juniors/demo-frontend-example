@@ -1,12 +1,23 @@
-export const generateKeyword = (text) => {
+const STOP_WORDS = new Set([
+    "an",
+    "a",
+    "is",
+    "are",
+    "was",
+    "were",
+    "of",
+    "the"
+])
+
+export const generateKeyword = (text, selectedNgrams) => {
 
     text = cleanText(text);
     let textArray = text.split(' ');
 
     const result = [];
 
-    for(let i=1;i<=3;i++){
-        result.push({ngram: i, keywords: generateNGram(textArray, i)});
+    for(const ngram of selectedNgrams){
+        result.push({ngram: ngram, keywords: generateNGram(textArray, ngram)});
     }
 
     return result;
@@ -15,7 +26,10 @@ export const generateKeyword = (text) => {
 const cleanText = (text) => {
 
     const regex = /\s+/g;
-    return text.replace(/\s+/g, ' ').trim();
+    return text.replace(/\s+/g, ' ').trim()
+                                    .split(' ')
+                                    .filter(word => !STOP_WORDS.has(word.toLowerCase()))
+                                    .join(' ');
 }
 
 const generateNGram = (array, ngram) => {

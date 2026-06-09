@@ -1,0 +1,17 @@
+{
+  "name": "keyword-generator-review",
+  "scripts": {
+    "postdeploy": "echo Review app deployed"
+  },
+  "env": {
+    "NODE_ENV": {
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+}
