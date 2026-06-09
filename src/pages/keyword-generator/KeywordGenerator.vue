@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { MaButton, MaInput } from '@mobileaction/action-kit'
+import { filterArr } from '../../cleanupResources'
 
 const text = ref('')
 const selectedNgrams = ref([])
@@ -11,7 +12,9 @@ const options = Array.from({ length: 10 }, (_, i) => ({
   value: i + 1
 }))
 
-const stopwordOptions = ['a', 'an', 'the', 'is', 'of', 'to', 'in', 'on', 'for', 'and', 'or', 'with']
+const stopwordOptions = filterArr
+const showAllStopwords = ref(false)
+const visibleStopwords = computed(() => showAllStopwords.value ? stopwordOptions : stopwordOptions.slice(0, 10))
 const selectedStopwords = ref([])
 const customStopword = ref('')
 
@@ -103,7 +106,7 @@ function generateKeywords() {
           <p class="mb-3 text-sm font-semibold text-slate-800">Exclude words</p>
           <div class="flex flex-wrap gap-2">
             <label
-              v-for="word in stopwordOptions"
+              v-for="word in visibleStopwords"
               :key="word"
               class="flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:border-blue-300"
             >
@@ -116,6 +119,12 @@ function generateKeywords() {
               {{ word }}
             </label>
           </div>
+          <button
+            class="mt-2 text-xs font-semibold text-blue-600 hover:underline"
+            @click="showAllStopwords = !showAllStopwords"
+          >
+            {{ showAllStopwords ? 'Show less' : 'Show more' }}
+          </button>
 
           <div class="mt-4 flex max-w-sm gap-2">
             <input
