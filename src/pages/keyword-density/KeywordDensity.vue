@@ -8,6 +8,8 @@ const props = defineProps({
     default: ''
   }
 })
+//burayı parent dzüeneyecği için başta boş bıraktık, 
+// parenttan gelecek metinle doldurulacak
 
 const text = ref(props.initialText)
 const results = ref([])
@@ -21,7 +23,11 @@ function countKeywords() {
     .filter(w => w !== '')
 
   totalChars.value = text.value.length
+  //text 1 ref objesi ve vuede ref değerlerine .value ile erişilir
+  //templatede {{ text }} yazarken otomatik olarak .value'ya erişilir,
+  //  bu yüzden template içinde .value yazmaya gerek yokt
 
+  //map oluşturup kelimeleri sayıyoruz mapi güncelleyip resultsa kaydedeiyoruz
   const map = new Map()
   for (const word of words) {
     if (map.has(word)) {
@@ -32,19 +38,20 @@ function countKeywords() {
   }
 
   results.value = Array.from(map.entries())
-    .map(([keyword, count]) => ({
+    .map(([keyword, count]) => ({ //her keyword count çiftini objeye dönüştürür
       keyword,
       count,
       density: ((count / words.length) * 100).toFixed(2)
     }))
-    .sort((a, b) => b.count - a.count)
+    .sort((a, b) => b.count - a.count)  //en çok geçen kelime en üstte olcak şekilde sıralar
+                                        // pozitif dönerse yer değiştiriyo a ve b negatif dönerse kalıyolar
 }
 
 function copyToClipboard() {
-  const content = results.value
+  const content = results.value   //results.value 1 array bunu ilk önce stringe çeviriyo
     .map(r => `${r.keyword}: ${r.count} (${r.density}%)`)
     .join('\n')
-  navigator.clipboard.writeText(content)
+  navigator.clipboard.writeText(content)  //tarayıcının pano api si o stringi panoya kopyalıyor
 }
 </script>
 
@@ -52,10 +59,10 @@ function copyToClipboard() {
   <main class="p-6 max-w-6xl mx-auto">
     <h1 class="text-2xl font-bold mb-6">Keyword Density</h1>
 
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div style="display: flex; gap: 24px; align-items: flex-start;">
 
       <!-- SOL: textarea + buton -->
-      <div class="flex flex-col gap-3 lg:w-1/2">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
         <MaInput
           v-model:value="text"
           type="textarea"
@@ -70,7 +77,7 @@ function copyToClipboard() {
       </div>
 
       <!-- SAĞ: tablo -->
-      <div class="flex flex-col gap-3 lg:w-1/2">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
         <table v-if="results.length" class="w-full border-collapse text-sm">
           <thead>
             <tr class="bg-blue-600 text-white">
