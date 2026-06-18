@@ -3,7 +3,10 @@ import { cleanDescription } from "./CleanDescription";
 export const generateKeyword = (text) => {
 
     text = cleanDescription(text);
-    let textArray = text.split(' ');
+    
+    let textArray = text.split(' ').filter(Boolean);
+    if(textArray.length === 0) return null;
+
     const result = [];
 
     for(let i=1;i<=3;i++){

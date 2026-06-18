@@ -4,9 +4,23 @@ import { generateKeyword } from '@/utils/NGramUtils';
 
 const inputText = ref('');
 const keywords = ref(null);
+const error = ref('');
 
 function generate() {
+    error.value = '';
     keywords.value = generateKeyword(inputText.value);
+
+    if(!keywords.value){
+        error.value = "Enter text!";
+        keywords.value = null;
+        return;
+    }
+}
+
+function resetKeywords(){
+    keywords.value = null;
+    error.value = '';
+    inputText.value = '';
 }
 </script>
 
@@ -16,6 +30,7 @@ function generate() {
             <h2>Keyword Generator</h2>
             <textarea v-model="inputText" rows="8"></textarea>
             <button @click="generate">Generate</button>
+            <button @click="resetKeywords">Reset Keywords</button>
         </div>
         <div class="ma-main">
             <div v-if="keywords">
@@ -26,6 +41,7 @@ function generate() {
                     </div>
                 </div>
             </div>
+            <p v-else-if="error" style="color: red;">{{ error }}</p>
             <p v-else>Results will be in here</p>
         </div>
     </div>
@@ -53,7 +69,7 @@ function generate() {
     box-sizing: border-box;
 }
 .ma-side button {
-    margin: 10px 0;
+    margin: 10px 10px;
     padding: 8px 24px;
     border: none;
     border-radius: 6px;
@@ -69,14 +85,22 @@ function generate() {
     margin-left: 32px;
 }
 .ma-main > div {
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 8px;
     margin-bottom: 20px;
+}
+.ma-main strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
 }
 .ma-main span {
     display: inline-block;
-    background: #eee;
-    padding: 3px 10px;
-    margin: 3px;
-    border-radius: 4px;
+    background: #e4e7ed;
+    padding: 5px 12px;
+    margin: 4px;
+    border-radius: 6px;
     font-size: 13px;
 }
 .ma-main p {
