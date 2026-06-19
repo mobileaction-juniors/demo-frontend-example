@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { cleanDescription } from '../../utils/CleanDescription';
 
 const inputText = ref('');
 
@@ -10,42 +11,46 @@ const nGrams = computed(() =>
 
     // Clean the text: lowercase, replace non-letter/number characters with spaces, 
     // and split by whitespace
-    const cleanedText = text
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const cleanedText = cleanDescription(text);
     
     if (!cleanedText) return { oneGrams: [], twoGrams: [], threeGrams: [] };
 
     const words = cleanedText.split(' ');
 
-    const oneGrams = new Set();
-    const twoGrams = new Set();
-    const threeGrams = new Set();
+    const oneGrams = [];
+    const twoGrams = [];
+    const threeGrams = [];
 
     for (let i = 0; i < words.length; i++) 
     {
         // 1-gram
-        oneGrams.add(words[i]);
+        if (!oneGrams.includes(words[i])) {
+            oneGrams.push(words[i]);
+        }
 
         // 2-gram
         if (i < words.length - 1) 
         {
-            twoGrams.add(`${words[i]} ${words[i+1]}`);
+            const twoGram = `${words[i]} ${words[i+1]}`;
+            if (!twoGrams.includes(twoGram)) {
+                twoGrams.push(twoGram);
+            }
         }
 
         // 3-gram
         if (i < words.length - 2) 
         {
-            threeGrams.add(`${words[i]} ${words[i+1]} ${words[i+2]}`);
+            const threeGram = `${words[i]} ${words[i+1]} ${words[i+2]}`;
+            if (!threeGrams.includes(threeGram)) {
+                threeGrams.push(threeGram);
+            }
         }
     }
 
     return {
-        oneGrams: Array.from(oneGrams),
-        twoGrams: Array.from(twoGrams),
-        threeGrams: Array.from(threeGrams),
+        oneGrams,
+        twoGrams,
+        threeGrams,
     };
 });
 </script>
