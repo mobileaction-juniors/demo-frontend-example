@@ -15,7 +15,7 @@ function generate() {
         return;
     }
 
-    keywords.value = generateKeyword(inputText.value, 1, 6);
+    keywords.value = generateKeyword(inputText.value, 1, 3);
 
     if (!keywords.value) {
         error.value = 'No keywords could be extracted.';
