@@ -18,23 +18,23 @@
     </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .ma-home-container {
     text-align: center;
-    padding-top: 50px;
-}
+    padding-top: 48px;
 
-.ma-keyword-generator-section {
-    margin-top: 40px;
-}
+    .ma-keyword-generator-section {
+        margin-top: 40px;
 
-.ma-keyword-generator-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #409eff;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
+        .ma-keyword-generator-button {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #409eff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    }
 }
 </style>

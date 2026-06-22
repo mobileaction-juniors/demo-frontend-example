@@ -8,7 +8,7 @@ const sourceDescriptionText = ref('');
 const generatedKeywordNGrams = computed(() => 
 {
     const text = sourceDescriptionText.value;
-    if (!text.trim()) return { singleWordKeywords: [], twoWordKeywords: [], threeWordKeywords: [] };
+    if (!text.trim()) return [];
 
     const cleanedText = cleanDescription(text);
     
@@ -73,7 +73,7 @@ const generatedKeywordNGrams = computed(() =>
     }
 
     .ma-text-input-section {
-        margin-bottom: 30px;
+        margin-bottom: 32px;
 
         textarea {
             width: 100%;
@@ -94,7 +94,7 @@ const generatedKeywordNGrams = computed(() =>
 
     .ma-ngram-results-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
         gap: 24px;
     }
 
@@ -116,9 +116,9 @@ const generatedKeywordNGrams = computed(() =>
         }
 
         .ma-keyword-count-badge {
-            font-size: 14px;
+            font-size: 16px;
             background: #e0e6ed;
-            padding: 2px 8px;
+            padding: 4px 8px;
             border-radius: 12px;
             color: #606266;
         }
@@ -134,14 +134,14 @@ const generatedKeywordNGrams = computed(() =>
                 padding: 8px 0;
                 border-bottom: 1px solid #ebeef5;
                 color: #606266;
-                font-size: 15px;
+                font-size: 16px;
             }
         }
 
         .ma-empty-results-message {
             color: #909399;
             font-style: italic;
-            margin-top: 10px;
+            margin-top: 12px;
         }
     }
 }

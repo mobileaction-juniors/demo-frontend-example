@@ -1,18 +1,19 @@
-export function generateNGrams(cleanedText, maxN = 3) {
+const MAX_N_GRAM_VALUE = 3
+
+export function generateNGrams(cleanedText, maxN = MAX_N_GRAM_VALUE) {
     const results = [];
     const cleanedWordsArray = cleanedText ? cleanedText.split(' ') : [];
 
     for (let n = 1; n <= maxN; n++) {
-        const keywords = [];
+        if (cleanedWordsArray.length < n) continue;
 
-        if (cleanedWordsArray.length >= n) {
-            for (let i = 0; i <= cleanedWordsArray.length - n; i++) {
-                const nGram = cleanedWordsArray.slice(i, i + n).join(' ');
-                if (nGram && !keywords.includes(nGram)) {
-                    keywords.push(nGram);
-                }
-            }
+        const nGrams = [];
+        for (let i = 0; i <= cleanedWordsArray.length - n; i++) {
+            nGrams.push(cleanedWordsArray.slice(i, i + n).join(' '));
         }
+
+        const keywords = [...new Set(nGrams)];
+        if (keywords.length === 0) continue;
 
         results.push({
             id: n,
