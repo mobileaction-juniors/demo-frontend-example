@@ -10,7 +10,6 @@ const generatedKeywordNGrams = computed(() =>
     const text = sourceDescriptionText.value;
     if (!text.trim()) return { singleWordKeywords: [], twoWordKeywords: [], threeWordKeywords: [] };
 
-    // Cleaning is done using CleanDescription.js
     const cleanedText = cleanDescription(text);
     
     return generateNGrams(cleanedText);
@@ -18,13 +17,13 @@ const generatedKeywordNGrams = computed(() =>
 </script>
 
 <template>
-    <div class="keyword-generator-page-wrapper">
-        <div class="page-header-section">
+    <div class="ma-keyword-generator-page-wrapper">
+        <div class="ma-page-header-section">
             <h1>Keyword Generator</h1>
             <p>Generate 1,2,3-gram keywords from your text without duplicates.</p>
         </div>
 
-        <div class="text-input-section">
+        <div class="ma-text-input-section">
             <textarea
                 v-model="sourceDescriptionText"
                 placeholder="Enter your text here (e.g., app description)..."
@@ -32,31 +31,31 @@ const generatedKeywordNGrams = computed(() =>
             ></textarea>
         </div>
 
-        <div v-if="sourceDescriptionText.trim().length > 0" class="ngram-results-grid">
-            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="ngram-category-card">
+        <div v-if="sourceDescriptionText.trim().length > 0" class="ma-ngram-results-grid">
+            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="ma-ngram-category-card">
                 <h2>
                     <span>{{ nGramCategory.title }}</span>
-                    <span class="keyword-count-badge">{{ nGramCategory.keywords.length }}</span>
+                    <span class="ma-keyword-count-badge">{{ nGramCategory.keywords.length }}</span>
                 </h2>
                 <ul>
-                    <li v-for="kw in nGramCategory.keywords" :key="kw">
-                        {{ kw }}
+                    <li v-for="keyword in nGramCategory.keywords" :key="keyword">
+                        {{ keyword }}
                     </li>
                 </ul>
-                <div v-if="nGramCategory.keywords.length === 0" class="empty-results-message">No {{ nGramCategory.id }}-grams generated</div>
+                <div v-if="nGramCategory.keywords.length === 0" class="ma-empty-results-message">No {{ nGramCategory.id }}-grams generated</div>
             </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.keyword-generator-page-wrapper {
+.ma-keyword-generator-page-wrapper {
     padding: 20px;
     max-width: 1000px;
     margin: 0 auto;
     font-family: sans-serif;
 
-    .page-header-section {
+    .ma-page-header-section {
         margin-bottom: 24px;
 
         h1 {
@@ -73,7 +72,7 @@ const generatedKeywordNGrams = computed(() =>
         }
     }
 
-    .text-input-section {
+    .ma-text-input-section {
         margin-bottom: 30px;
 
         textarea {
@@ -93,13 +92,13 @@ const generatedKeywordNGrams = computed(() =>
         }
     }
 
-    .ngram-results-grid {
+    .ma-ngram-results-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 24px;
     }
 
-    .ngram-category-card {
+    .ma-ngram-category-card {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 12px;
@@ -116,7 +115,7 @@ const generatedKeywordNGrams = computed(() =>
             justify-content: space-between;
         }
 
-        .keyword-count-badge {
+        .ma-keyword-count-badge {
             font-size: 14px;
             background: #e0e6ed;
             padding: 2px 8px;
@@ -139,7 +138,7 @@ const generatedKeywordNGrams = computed(() =>
             }
         }
 
-        .empty-results-message {
+        .ma-empty-results-message {
             color: #909399;
             font-style: italic;
             margin-top: 10px;
