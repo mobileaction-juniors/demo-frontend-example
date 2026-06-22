@@ -1,10 +1,18 @@
 <script setup>
 import { ref } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
+import { MaBadge, MaTextarea, MaButton, MaSelect2 } from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const keywords = ref(null);
 const error = ref('');
+
+const nGramSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const nGramOptions = nGramSizes.map((size) => ({
+    label: `${size}-gram`,
+    value: size,
+}));
+const selectedNGrams = ref([]);
 
 function generate() {
     error.value = '';
@@ -15,7 +23,13 @@ function generate() {
         return;
     }
 
-    keywords.value = generateKeyword(inputText.value, 1, 3);
+    if (!selectedNGrams.value.length) {
+        error.value = 'Select at least one n-gram size.';
+        keywords.value = null;
+        return;
+    }
+
+    keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
 
     if (!keywords.value) {
         error.value = 'No keywords could be extracted.';
@@ -34,16 +48,18 @@ function resetKeywords(){
     <div class="ma-keyword-generator">
         <div class="ma-input-panel">
             <h2>Keyword Generator</h2>
-            <textarea v-model="inputText" rows="8"></textarea>
-            <button @click="generate">Generate</button>
-            <button @click="resetKeywords">Reset Keywords</button>
+            <MaTextarea v-model="inputText" placeholder="Enter text" :rows="3"/>
+            <MaSelect2 multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
+            <MaButton color="dark" @click="generate">Generate</MaButton>
+            <MaButton variant="stroke" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
         <div class="ma-results-panel">
             <div v-if="keywords">
                 <div v-for="group in keywords" :key="group.ngram" class="ma-ngram-group">
                     <strong>{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
                     <div class="ma-tag-list">
-                        <span v-for="keyword in group.keywords" :key="keyword" class="ma-tag-item">{{ keyword }}</span>
+                        <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="blue">
+                            {{ keyword }}</MaBadge>
                     </div>
                 </div>
             </div>
@@ -56,43 +72,28 @@ function resetKeywords(){
 <style lang="scss" scoped>
 .ma-keyword-generator {
     display: flex;
+    gap: 40px;
     max-width: 960px;
     margin: 48px auto;
     padding: 0 20px;
     font-family: system-ui, sans-serif;
+    color: #2c3e50;
 
     .ma-input-panel {
         flex: 0 0 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
 
-        textarea {
-            width: 100%;
-            min-height: 40px;
-            padding: 12px;
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 16px;
-            resize: vertical;
-            box-sizing: border-box;
-        }
-
-        button {
-            margin: 12px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
+        h2 {
+            margin: 0;
         }
     }
 
     .ma-results-panel {
         flex: 1;
-        border-left: 1px solid #ddd;
-        padding-left: 32px;
-        margin-left: 32px;
+        border-left: 1px solid #eee;
+        padding-left: 40px;
 
         strong {
             display: block;
@@ -100,7 +101,7 @@ function resetKeywords(){
             font-size: 16px;
         }
 
-        p {
+        > p {
             color: #bbb;
         }
 
@@ -109,7 +110,7 @@ function resetKeywords(){
         }
 
         .ma-ngram-group {
-            padding: 16px;
+            padding: 18px;
             background: #fafafa;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -117,16 +118,7 @@ function resetKeywords(){
             .ma-tag-list {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 8px;
-
-                .ma-tag-item {
-                    display: inline-block;
-                    background: #e4e7ed;
-                    padding: 4px 12px;
-                    margin: 4px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                }
+                gap: 10px;
             }
         }
     }
