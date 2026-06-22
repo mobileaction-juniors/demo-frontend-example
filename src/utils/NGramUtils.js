@@ -1,8 +1,10 @@
-import { filterArr } from "@/cleanupResources";
 import { cleanDescription } from "./CleanDescription";
 
-export const generateKeyword = (text, min = 1, max = 3) => {
-    if(min > max) return null;
+const NGRAM_START = 1
+const NGRAM_END = 3
+
+export const generateKeyword = (text, min = NGRAM_START, max = NGRAM_END) => {
+    if(min < 1 || min > max) return null;
 
     text = cleanDescription(text);
     
@@ -21,12 +23,27 @@ export const generateKeyword = (text, min = 1, max = 3) => {
 
 const generateNGram = (array, ngram) => {
 
-    const newArray = [];
+    const nGrams = [];
 
     for(let i = 0; i <= array.length - ngram; i++){
         const element = array.slice(i, i + ngram).join(' ');
-        newArray.push(element);
+        nGrams.push(element);
     }
 
-    return [...new Set(newArray)];
+    return removeDuplicates(nGrams);
+}
+
+const removeDuplicates = (array) => {
+
+    const seen = new Set();
+    const result = [];
+
+    for (const item of array){
+        if(!seen.has(item)){
+            seen.add(item);
+            result.push(item);
+        }
+    }
+
+    return result;
 }

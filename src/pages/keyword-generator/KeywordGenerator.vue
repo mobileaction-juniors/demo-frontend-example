@@ -60,75 +60,75 @@ function resetKeywords(){
     margin: 48px auto;
     padding: 0 20px;
     font-family: system-ui, sans-serif;
-}
 
-.ma-input-panel {
-    flex: 0 0 400px;
+    .ma-input-panel {
+        flex: 0 0 400px;
 
-    textarea {
-        width: 100%;
-        min-height: 40px;
-        padding: 12px;
-        border: 1px solid #d0d0d0;
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 16px;
-        resize: vertical;
-        box-sizing: border-box;
+        textarea {
+            width: 100%;
+            min-height: 40px;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin: 12px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
     }
 
-    button {
-        margin: 12px;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        background: #1a1a1a;
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
+    .ma-results-panel {
+        flex: 1;
+        border-left: 1px solid #ddd;
+        padding-left: 32px;
+        margin-left: 32px;
+
+        strong {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        p {
+            color: #bbb;
+        }
+
+        .ma-error-text {
+            color: red;
+        }
+
+        .ma-ngram-group {
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+
+            .ma-tag-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+
+                .ma-tag-item {
+                    display: inline-block;
+                    background: #e4e7ed;
+                    padding: 4px 12px;
+                    margin: 4px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                }
+            }
+        }
     }
-}
-
-.ma-results-panel {
-    flex: 1;
-    border-left: 1px solid #ddd;
-    padding-left: 32px;
-    margin-left: 32px;
-
-    strong {
-        display: block;
-        margin-bottom: 12px;
-        font-size: 16px;
-    }
-
-    p {
-        color: #bbb;
-    }
-
-    .ma-error-text {
-        color: red;
-    }
-}
-
-.ma-ngram-group {
-    padding: 16px;
-    background: #fafafa;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.ma-tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.ma-tag-item {
-    display: inline-block;
-    background: #e4e7ed;
-    padding: 4px 12px;
-    margin: 4px;
-    border-radius: 4px;
-    font-size: 12px;
 }
 </style>

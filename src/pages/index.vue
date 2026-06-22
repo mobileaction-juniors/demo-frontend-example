@@ -17,8 +17,8 @@ const goToKeywordPage = () => {
     </div>
 </template>
 
-<style scoped>
-.ma-routing{
+<style lang="scss" scoped>
+.ma-routing {
     margin: 10px;
     padding: 8px 24px;
     border: none;
