@@ -35,12 +35,10 @@ const generateNGram = (array, ngram) => {
 
 const removeDuplicates = (array) => {
 
-    const seen = new Set();
     const result = [];
 
     for (const item of array){
-        if(!seen.has(item)){
-            seen.add(item);
+        if(!result.includes(item)){
             result.push(item);
         }
     }
