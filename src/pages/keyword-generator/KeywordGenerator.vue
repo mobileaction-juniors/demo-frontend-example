@@ -1,128 +1,62 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { cleanDescription } from '../../utils/CleanDescription';
+import { generateNGrams } from '../../utils/generateNGrams';
 
-const inputText = ref('');
+const sourceDescriptionText = ref('');
 
-const nGrams = computed(() => 
+const generatedKeywordNGrams = computed(() => 
 {
-    const text = inputText.value;
-    if (!text.trim()) return { oneGrams: [], twoGrams: [], threeGrams: [] };
+    const text = sourceDescriptionText.value;
+    if (!text.trim()) return { singleWordKeywords: [], twoWordKeywords: [], threeWordKeywords: [] };
 
     // Cleaning is done using CleanDescription.js
     const cleanedText = cleanDescription(text);
     
-    if (!cleanedText) return { oneGrams: [], twoGrams: [], threeGrams: [] };
-
-    const words = cleanedText.split(' ');
-
-    const oneGrams = [];
-    const twoGrams = [];
-    const threeGrams = [];
-
-    for (let i = 0; i < words.length; i++) 
-    {
-        // 1-gram
-        if (!oneGrams.includes(words[i])) {
-            oneGrams.push(words[i]);
-        }
-
-        // 2-gram
-        if (i < words.length - 1) 
-        {
-            const twoGram = `${words[i]} ${words[i+1]}`;
-            if (!twoGrams.includes(twoGram)) {
-                twoGrams.push(twoGram);
-            }
-        }
-
-        // 3-gram
-        if (i < words.length - 2) 
-        {
-            const threeGram = `${words[i]} ${words[i+1]} ${words[i+2]}`;
-            if (!threeGrams.includes(threeGram)) {
-                threeGrams.push(threeGram);
-            }
-        }
-    }
-
-    return {
-        oneGrams,
-        twoGrams,
-        threeGrams,
-    };
+    return generateNGrams(cleanedText);
 });
 </script>
 
 <template>
-    <div class="ma-keywords-generator">
-        <div class="ma-header">
+    <div class="keyword-generator-page-wrapper">
+        <div class="page-header-section">
             <h1>Keyword Generator</h1>
             <p>Generate 1,2,3-gram keywords from your text without duplicates.</p>
         </div>
 
-        <div class="input-container">
+        <div class="text-input-section">
             <textarea
-                v-model="inputText"
+                v-model="sourceDescriptionText"
                 placeholder="Enter your text here (e.g., app description)..."
                 rows="8"
             ></textarea>
         </div>
 
-        <div v-if="inputText.trim().length > 0" class="results-grid">
-            <!-- 1-grams -->
-            <div class="gram-card">
+        <div v-if="sourceDescriptionText.trim().length > 0" class="ngram-results-grid">
+            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="ngram-category-card">
                 <h2>
-                    <span>1-Gram</span>
-                    <span class="count-badge">{{ nGrams.oneGrams.length }}</span>
+                    <span>{{ nGramCategory.title }}</span>
+                    <span class="keyword-count-badge">{{ nGramCategory.keywords.length }}</span>
                 </h2>
                 <ul>
-                    <li v-for="kw in nGrams.oneGrams" :key="kw">
+                    <li v-for="kw in nGramCategory.keywords" :key="kw">
                         {{ kw }}
                     </li>
                 </ul>
-                <div v-if="nGrams.oneGrams.length === 0" class="empty-state">No 1-grams generated</div>
-            </div>
-
-            <!-- 2-grams -->
-            <div class="gram-card">
-                <h2>
-                    <span>2-Gram</span>
-                    <span class="count-badge">{{ nGrams.twoGrams.length }}</span>
-                </h2>
-                <ul>
-                    <li v-for="kw in nGrams.twoGrams" :key="kw">
-                        {{ kw }}
-                    </li>
-                </ul>
-                <div v-if="nGrams.twoGrams.length === 0" class="empty-state">No 2-grams generated</div>
-            </div>
-
-            <!-- 3-grams -->
-            <div class="gram-card">
-                <h2>
-                    <span>3-Gram</span>
-                    <span class="count-badge">{{ nGrams.threeGrams.length }}</span>
-                </h2>
-                <ul>
-                    <li v-for="kw in nGrams.threeGrams" :key="kw">
-                        {{ kw }}
-                    </li>
-                </ul>
-                <div v-if="nGrams.threeGrams.length === 0" class="empty-state">No 3-grams generated</div>
+                <div v-if="nGramCategory.keywords.length === 0" class="empty-results-message">No {{ nGramCategory.id }}-grams generated</div>
             </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.ma-keywords-generator {
+.keyword-generator-page-wrapper {
     padding: 20px;
     max-width: 1000px;
     margin: 0 auto;
     font-family: sans-serif;
 
-    .ma-header {
+    .page-header-section {
         margin-bottom: 24px;
 
         h1 {
@@ -139,7 +73,7 @@ const nGrams = computed(() =>
         }
     }
 
-    .input-container {
+    .text-input-section {
         margin-bottom: 30px;
 
         textarea {
@@ -159,13 +93,13 @@ const nGrams = computed(() =>
         }
     }
 
-    .results-grid {
+    .ngram-results-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 24px;
     }
 
-    .gram-card {
+    .ngram-category-card {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 12px;
@@ -182,7 +116,7 @@ const nGrams = computed(() =>
             justify-content: space-between;
         }
 
-        .count-badge {
+        .keyword-count-badge {
             font-size: 14px;
             background: #e0e6ed;
             padding: 2px 8px;
@@ -205,7 +139,7 @@ const nGrams = computed(() =>
             }
         }
 
-        .empty-state {
+        .empty-results-message {
             color: #909399;
             font-style: italic;
             margin-top: 10px;
