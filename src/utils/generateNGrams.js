@@ -1,3 +1,5 @@
+import { removeDuplicates } from './removeDuplicates.js';
+
 const MAX_N_GRAM_VALUE = 3
 
 export function generateNGrams(cleanedText, maxN = MAX_N_GRAM_VALUE) {
@@ -12,8 +14,7 @@ export function generateNGrams(cleanedText, maxN = MAX_N_GRAM_VALUE) {
             nGrams.push(cleanedWordsArray.slice(i, i + n).join(' '));
         }
 
-        const keywords = [...new Set(nGrams)];
-        if (keywords.length === 0) continue;
+        const keywords = removeDuplicates(nGrams);
 
         results.push({
             id: n,
