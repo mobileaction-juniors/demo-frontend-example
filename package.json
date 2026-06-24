@@ -13,7 +13,7 @@
     "@mobileaction/action-kit": "^1.58.18",
     "@tailwindcss/vite": "^4.3.1",
     "tailwindcss": "^4.3.1",
-    "vue": "^3.5.38",
+    "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
