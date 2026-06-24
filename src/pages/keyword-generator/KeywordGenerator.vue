@@ -1,44 +1,37 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
-import { MaBadge, MaTextarea, MaButton, MaSelect2 } from '@mobileaction/action-kit';
+import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect } from '@mobileaction/action-kit';
 
 const inputText = ref('');
+const selectedNGrams = ref([]);
 const keywords = ref(null);
-const error = ref('');
+const errors = ref({});
 
 const nGramSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const nGramOptions = nGramSizes.map((size) => ({
     label: `${size}-gram`,
     value: size,
 }));
-const selectedNGrams = ref([]);
 
-function generate(){
-    error.value = '';
+function generateKeywords() {
+    errors.value = {};
 
-    if (!inputText.value.trim()) {
-        error.value = 'Enter text!';
-        keywords.value = null;
-        return;
-    }
-
-    if (!selectedNGrams.value.length) {
-        error.value = 'Select at least one n-gram size.';
+    if (!inputText.value.trim() || !selectedNGrams.value.length) {
         keywords.value = null;
         return;
     }
 
     keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
 
-    if (!keywords.value) {
-        error.value = 'No keywords could be extracted.';
+    if (!keywords.value || !keywords.value.length) {
+        errors.value.text = 'No keywords could be extracted.';
     }
 }
 
-function resetKeywords(){
-    keywords.value = null;
-    error.value = '';
+watch([inputText, selectedNGrams], generateKeywords);
+
+function resetKeywords() {
     inputText.value = '';
     selectedNGrams.value = [];
 }
@@ -48,13 +41,16 @@ function resetKeywords(){
     <div class="flex gap-10 max-w-240 my-12 mx-auto text-gray-800">
         <div class="flex flex-col gap-3 w-100">
             <h2>Keyword Generator</h2>
-            <MaTextarea v-model="inputText" placeholder="Enter text" :rows="3"/>
-            <MaSelect2 multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
-            <MaButton color="dark" @click="generate">Generate</MaButton>
-            <MaButton variant="stroke" @click="resetKeywords">Reset Keywords</MaButton>
+            <div>
+                <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="3"/>
+                <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
+            </div>
+            <MaSelect multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
+            <!--<MaButton color="dark" @click="generateKeywords">Generate</MaButton> -->
+            <MaButton color="dark" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
         <div class="flex-1 border-l border-gray-200 pl-10">
-            <div v-if="keywords">
+            <div v-if="keywords && keywords.length">
                 <div v-for="group in keywords" :key="group.ngram" class="p-4 bg-gray-50 rounded-lg mb-5">
                     <strong class="block mb-3">{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
                     <div class="flex flex-wrap gap-2">
@@ -62,7 +58,6 @@ function resetKeywords(){
                     </div>
                 </div>
             </div>
-            <p v-else-if="error" class="text-red-500">{{ error }}</p>
             <p v-else class="text-gray-400">Results will be in here</p>
         </div>
     </div>
