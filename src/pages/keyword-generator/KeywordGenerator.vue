@@ -45,25 +45,25 @@ function resetKeywords(){
 </script>
 
 <template>
-    <div class="flex gap-10 max-w-[960px] my-12 mx-auto px-5 font-sans text-[#2c3e50]">
-        <div class="flex flex-col gap-3 basis-[400px] shrink-0">
-            <h2 class="m-0">Keyword Generator</h2>
+    <div class="flex gap-10 max-w-240 my-12 mx-auto text-gray-800">
+        <div class="flex flex-col gap-3 w-100">
+            <h2>Keyword Generator</h2>
             <MaTextarea v-model="inputText" placeholder="Enter text" :rows="3"/>
             <MaSelect2 multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
             <MaButton color="dark" @click="generate">Generate</MaButton>
             <MaButton variant="stroke" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
-        <div class="flex-1 border-l border-[#eee] pl-10">
+        <div class="flex-1 border-l border-gray-200 pl-10">
             <div v-if="keywords">
-                <div v-for="group in keywords" :key="group.ngram" class="p-4 bg-[#fafafa] rounded-lg mb-5">
-                    <strong class="block mb-3 text-base">{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
+                <div v-for="group in keywords" :key="group.ngram" class="p-4 bg-gray-50 rounded-lg mb-5">
+                    <strong class="block mb-3">{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
                     <div class="flex flex-wrap gap-2">
                         <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="teal">{{ keyword }}</MaBadge>
                     </div>
                 </div>
             </div>
-            <p v-else-if="error" class="text-[red]">{{ error }}</p>
-            <p v-else class="text-[#bbb]">Results will be in here</p>
+            <p v-else-if="error" class="text-red-500">{{ error }}</p>
+            <p v-else class="text-gray-400">Results will be in here</p>
         </div>
     </div>
 </template>
