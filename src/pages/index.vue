@@ -2,39 +2,18 @@
 
 </script>
 <template>
-    <div class="ma-home-container">
+    <div class="text-center pt-12">
         <h1>Welcome to Onboarding Progress</h1>
         <p>You can see the your first task details via link. Please continue that steps while coding.</p>
         <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank">Implement First Front-End Task</a>
         
-        <div class="ma-keyword-generator-section">
+        <div class="mt-10">
             <router-link 
                 to="/keyword-generator" 
-                class="ma-keyword-generator-button"
+                class="inline-block px-5 py-2 bg-[#409eff] text-white no-underline rounded font-bold"
             >
                 Open Keyword Generator
             </router-link>
         </div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-.ma-home-container {
-    text-align: center;
-    padding-top: 48px;
-
-    .ma-keyword-generator-section {
-        margin-top: 40px;
-
-        .ma-keyword-generator-button {
-            display: inline-block;
-            padding: 8px 20px;
-            background-color: #409eff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-    }
-}
-</style>

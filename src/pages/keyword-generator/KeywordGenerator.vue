@@ -32,152 +32,53 @@ const generatedKeywordNGrams = computed(() => {
 </script>
 
 <template>
-    <div class="ma-keyword-generator-page-wrapper">
-        <div class="ma-page-header-section">
-            <h1>Keyword Generator</h1>
-            <p>Generate 1-10 gram keywords from your text without duplicates.</p>
+    <div class="p-5 max-w-[1000px] mx-auto font-sans">
+        <div class="mb-6">
+            <h1 class="text-[28px] font-bold mb-2 text-[#2c3e50]">Keyword Generator</h1>
+            <p class="text-[#666] text-base m-0">Generate 1-10 gram keywords from your text without duplicates.</p>
         </div>
 
-        <div class="ma-filters-section">
+        <div class="mb-6 flex items-center justify-between">
             <MaSelect2
                 v-model:value="selectedNGrams"
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
-                class="ma-ngram-selector"
+                class="w-full max-w-[400px]"
             />
             <MaCheckbox v-model:checked="shouldRemoveStopWords">
                 Remove Stop Words
             </MaCheckbox>
         </div>
 
-        <div class="ma-text-input-section">
+        <div class="mb-8">
             <MaInput2
                 v-model="sourceDescriptionText"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="ma-action-buttons" v-if="sourceDescriptionText.trim().length > 0">
+            <div class="mt-3 flex justify-end" v-if="sourceDescriptionText.trim().length > 0">
                 <MaButton @click="sourceDescriptionText = ''">Clear Text</MaButton>
             </div>
         </div>
 
-        <div v-if="sourceDescriptionText.trim().length > 0" class="ma-ngram-results-grid">
-            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="ma-ngram-category-card">
-                <h2>
+        <div v-if="sourceDescriptionText.trim().length > 0" class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(248px,1fr))]">
+            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="bg-[#f8f9fa] p-5 rounded-xl border border-[#ebeef5] shadow-[0_2px_12px_0_rgba(0,0,0,0.05)]">
+                <h2 class="text-[20px] mb-4 text-[#303133] flex items-center justify-between mt-0">
                     <span>{{ nGramCategory.title }}</span>
-                    <span class="ma-keyword-count-badge">{{ nGramCategory.keywords.length }}</span>
+                    <span class="text-base bg-[#e0e6ed] py-1 px-2 rounded-xl text-[#606266]">{{ nGramCategory.keywords.length }}</span>
                 </h2>
-                <div class="ma-keyword-tags-container">
+                <div class="flex flex-wrap gap-2 max-h-[400px] overflow-y-auto">
                     <MaBadge 
                         v-for="keyword in nGramCategory.keywords" 
                         :key="keyword"
-                        class="ma-keyword-badge"
+                        class="mr-1 mb-1"
                     >
                         {{ keyword }}
                     </MaBadge>
                 </div>
-                <div v-if="nGramCategory.keywords.length === 0" class="ma-empty-results-message">No {{ nGramCategory.id }}-grams generated</div>
+                <div v-if="nGramCategory.keywords.length === 0" class="text-[#909399] italic mt-3">No {{ nGramCategory.id }}-grams generated</div>
             </div>
         </div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-.ma-keyword-generator-page-wrapper {
-    padding: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-    font-family: sans-serif;
-
-    .ma-page-header-section {
-        margin-bottom: 24px;
-
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 0 0 8px 0;
-            color: #2c3e50;
-        }
-
-        p {
-            color: #666;
-            margin: 0;
-            font-size: 16px;
-        }
-    }
-
-    .ma-filters-section {
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        
-        .ma-ngram-selector {
-            width: 100%;
-            max-width: 400px;
-        }
-    }
-
-    .ma-text-input-section {
-        margin-bottom: 32px;
-
-        .ma-action-buttons {
-            margin-top: 12px;
-            display: flex;
-            justify-content: flex-end;
-        }
-    }
-
-    .ma-ngram-results-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
-        gap: 24px;
-    }
-
-    .ma-ngram-category-card {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid #ebeef5;
-        box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
-
-        h2 {
-            font-size: 20px;
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: #303133;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .ma-keyword-count-badge {
-            font-size: 16px;
-            background: #e0e6ed;
-            padding: 4px 8px;
-            border-radius: 12px;
-            color: #606266;
-        }
-
-        .ma-keyword-tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            max-height: 400px;
-            overflow-y: auto;
-            
-            .ma-keyword-badge {
-                margin-right: 4px;
-                margin-bottom: 4px;
-            }
-        }
-
-        .ma-empty-results-message {
-            color: #909399;
-            font-style: italic;
-            margin-top: 12px;
-        }
-    }
-}
-</style>
