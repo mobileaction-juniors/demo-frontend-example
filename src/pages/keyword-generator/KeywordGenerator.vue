@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
-import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect } from '@mobileaction/action-kit';
+import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect, MaNotification } from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const selectedNGrams = ref([]);
@@ -27,14 +27,19 @@ function generateKeywords() {
 
     keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
 
-    if (!keywords.value || !keywords.value.length) {
-        errors.value.text = 'No keywords could be extracted.';
+    if (keywords.value?.length) {
+        MaNotification.success({ title: 'Keywords generated', description: `Found ${keywords.value.length} n-gram groups.` });
+    } else {
+        MaNotification.warning({ title: 'No keywords found', description: 'Try different text or smaller sizes.' });
     }
 }
 
 function resetKeywords() {
     inputText.value = '';
     selectedNGrams.value = [];
+    keywords.value = null;
+    errors.value = {};
+    MaNotification.info({ title: 'Cleared', description: 'Inputs and results cleared.' });
 }
 </script>
 
