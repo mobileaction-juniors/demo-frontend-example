@@ -1,19 +1,26 @@
 <script setup>
+import { MaButton } from '@mobileaction/action-kit';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const openTaskLink = () => {
+    window.open('https://mobileaction.atlassian.net/l/cp/7fw8MroM', '_blank');
+};
 </script>
 <template>
-    <div class="text-center pt-12">
-        <h1>Welcome to Onboarding Progress</h1>
-        <p>You can see the your first task details via link. Please continue that steps while coding.</p>
-        <a href="https://mobileaction.atlassian.net/l/cp/7fw8MroM" target="_blank">Implement First Front-End Task</a>
+    <div class="flex flex-col items-center justify-center pt-12 space-y-6 max-w-2xl mx-auto text-center font-sans">
+        <h1 class="text-3xl font-bold text-slate-800 m-0">Welcome to Onboarding Progress</h1>
+        <p class="text-gray-500 text-lg">You can see the your first task details via link. Please continue that steps while coding.</p>
         
-        <div class="mt-10">
-            <router-link 
-                to="/keyword-generator" 
-                class="inline-block px-5 py-2 bg-blue-500 text-white no-underline rounded font-bold"
-            >
+        <div class="flex flex-col sm:flex-row items-center gap-4 mt-6">
+            <MaButton @click="openTaskLink">
+                Implement First Front-End Task
+            </MaButton>
+            
+            <MaButton type="primary" @click="router.push('/keyword-generator')">
                 Open Keyword Generator
-            </router-link>
+            </MaButton>
         </div>
     </div>
 </template>

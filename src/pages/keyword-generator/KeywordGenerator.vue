@@ -4,29 +4,36 @@ import { cleanDescription } from '../../utils/CleanDescription';
 import { generateNGrams } from '../../utils/generateNGrams';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty } from '@mobileaction/action-kit';
 
-const sourceDescriptionText = ref('');
-const selectedNGrams = ref([1, 2, 3]);
-const shouldRemoveStopWords = ref(true);
-const maxNumberForNgram = 10;
+const SOURCE_DESCRIPTION_TEXT = ref('');
+const SELECTED_NGRAMS = ref([1, 2, 3]);
+const SHOULD_REMOVE_STOP_WORDS = ref(true);
+const MAX_NGRAM_SIZE = 10;
 
-const nGramOptions = Array.from({ length: maxNumberForNgram }, (_, i) => ({
+const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
     value: i + 1,
     label: `${i + 1}-Gram`
 }));
 
-const generatedKeywordNGrams = computed(() => {
-    const text = sourceDescriptionText.value;
-    if (!text.trim()) return [];
+const sortedSelectedNGrams = computed(() => [...SELECTED_NGRAMS.value].sort((a, b) => a - b));
 
-    const cleanedText = cleanDescription(text, shouldRemoveStopWords.value);
+const cleanedSourceText = computed(() => {
+    const text = SOURCE_DESCRIPTION_TEXT.value;
+    if (!text.trim()) return '';
     
-    const sortedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
-    return generateNGrams(cleanedText, sortedNGrams);
+    return cleanDescription(text, SHOULD_REMOVE_STOP_WORDS.value);
+});
+
+const generatedKeywordNGrams = computed(() => {
+    if (!cleanedSourceText.value) return [];
+    
+    return generateNGrams(cleanedSourceText.value, sortedSelectedNGrams.value);
 });
 
 const resetKeywordInput = () => {
-    sourceDescriptionText.value = '';
+    SOURCE_DESCRIPTION_TEXT.value = '';
 };
+
+const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0);
 </script>
 
 <template>
@@ -38,29 +45,29 @@ const resetKeywordInput = () => {
 
         <div class="mb-6 flex items-center justify-between">
             <MaSelect
-                v-model:value="selectedNGrams"
+                v-model:value="SELECTED_NGRAMS"
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
                 class="w-full max-w-md"
             />
-            <MaCheckbox v-model:checked="shouldRemoveStopWords">
+            <MaCheckbox v-model:checked="SHOULD_REMOVE_STOP_WORDS">
                 Remove Stop Words
             </MaCheckbox>
         </div>
 
         <div class="mb-8">
             <MaTextarea
-                v-model="sourceDescriptionText"
+                v-model="SOURCE_DESCRIPTION_TEXT"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="mt-3 flex justify-end" v-if="sourceDescriptionText.trim().length > 0">
+            <div class="mt-3 flex justify-end" v-if="hasInput">
                 <MaButton @click="resetKeywordInput">Clear Text</MaButton>
             </div>
         </div>
 
-        <div v-if="sourceDescriptionText.trim().length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-if="hasInput" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <MaCard v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id">
                 <h2 class="text-xl mb-4 text-gray-900 flex items-center justify-between mt-0">
                     <span>{{ nGramCategory.title }}</span>
