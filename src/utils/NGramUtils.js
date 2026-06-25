@@ -1,15 +1,14 @@
 import { filterArr } from "@/cleanupResources";
 import { cleanDescription } from "./CleanDescription";
 
-export const generateKeyword = (text, nGramArray) => {
+export const generateKeyword = (text, nGramSizes) => {
 
     text = cleanDescription(text);
     
     const textArray = text.split(' ').filter(Boolean).filter(word => !filterArr.includes(word));
-    if(textArray.length === 0) return null;
 
     const result = [];
-    const sortedNGrams = nGramArray.toSorted((a, b) => a - b);
+    const sortedNGrams = nGramSizes.toSorted((a, b) => a - b);
 
     for(const size of sortedNGrams){
         const keywords = generateNGram(textArray, size);

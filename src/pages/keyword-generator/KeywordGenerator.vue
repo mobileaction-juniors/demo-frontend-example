@@ -1,12 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
-import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect, MaNotification } from '@mobileaction/action-kit';
+import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect, MaNotification, MaEmpty, MaCollapse, MaCollapseItem, MaCard } from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const selectedNGrams = ref([]);
 const keywords = ref(null);
 const errors = ref({});
+const hasSearched = ref(false);
+const expandedGroups = ref([]);
 
 const nGramSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const nGramOptions = nGramSizes.map((size) => ({
@@ -25,9 +27,11 @@ function generateKeywords() {
         return;
     }
 
+    hasSearched.value = true;
     keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
 
     if (keywords.value?.length) {
+        expandedGroups.value = keywords.value.map((group) => String(group.ngram));
         MaNotification.success({ title: 'Keywords generated', description: `Found ${keywords.value.length} n-gram groups.` });
     } else {
         MaNotification.warning({ title: 'No keywords found', description: 'Try different text or smaller sizes.' });
@@ -39,32 +43,40 @@ function resetKeywords() {
     selectedNGrams.value = [];
     keywords.value = null;
     errors.value = {};
+    hasSearched.value = false;
+    expandedGroups.value = [];
     MaNotification.info({ title: 'Cleared', description: 'Inputs and results cleared.' });
 }
 </script>
 
 <template>
-    <div class="flex gap-10 max-w-240 my-12 mx-auto text-gray-800">
-        <div class="flex flex-col gap-3 w-100">
-            <h2>Keyword Generator</h2>
+    <div class="flex gap-10 max-w-360 my-12 mx-auto px-6 text-gray-800">
+        <div class="flex flex-col gap-3 w-120">
+            <h2 class="text-2xl font-bold text-gray-900">Keyword Generator</h2>
             <div>
-                <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="3"/>
+                <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
                 <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
             </div>
             <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
-            <MaButton color="dark" @click="generateKeywords">Generate</MaButton>
-            <MaButton variant="stroke" @click="resetKeywords">Reset Keywords</MaButton>
+            <MaButton color="dark" icon="ai-sparkle" @click="generateKeywords">Generate</MaButton>
+            <MaButton variant="stroke" icon="refresh" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
-        <div class="flex-1 border-l border-gray-200 pl-10">
-            <div v-if="keywords && keywords.length">
-                <div v-for="group in keywords" :key="group.ngram" class="p-4 bg-gray-50 rounded-lg mb-5">
-                    <strong class="block mb-3">{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
-                    <div class="flex flex-wrap gap-2">
-                        <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="teal">{{ keyword }}</MaBadge>
-                    </div>
-                </div>
-            </div>
-            <p v-else class="text-gray-400">Results will be in here</p>
-        </div>
+        <MaCard class="flex-1 min-w-0" title="Results" bordered>
+            <MaCollapse v-if="keywords && keywords.length" v-model:expanded-values="expandedGroups" mode="multiple">
+                <MaCollapseItem
+                    v-for="group in keywords"
+                    :key="group.ngram"
+                    :value="String(group.ngram)"
+                    :title="`${group.ngram}-gram (${group.keywords.length})`">
+                    <template #content>
+                        <div class="flex flex-wrap gap-2">
+                            <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="teal" class="whitespace-normal break-words">{{ keyword }}</MaBadge>
+                        </div>
+                    </template>
+                </MaCollapseItem>
+            </MaCollapse>
+            <MaEmpty v-else-if="hasSearched" title="No keywords found" description="Try different text or smaller sizes."/>
+            <MaEmpty v-else title="No results yet" description="Generate keywords to see them here."/>
+        </MaCard>
     </div>
 </template>
