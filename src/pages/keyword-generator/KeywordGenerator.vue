@@ -81,7 +81,11 @@ const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0)
                         {{ keyword }}
                     </MaBadge>
                 </div>
-                <MaEmpty v-if="nGramCategory.keywords.length === 0" :description="`No ${nGramCategory.id}-grams generated`" />
+                <MaEmpty v-if="nGramCategory.keywords.length === 0" :description="`No ${nGramCategory.id}-grams generated`">
+                    <template #icon>
+                        <span class="hidden"></span>
+                    </template>
+                </MaEmpty>
             </MaCard>
         </div>
     </div>
