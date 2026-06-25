@@ -1,134 +1,64 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
+import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect } from '@mobileaction/action-kit';
 
 const inputText = ref('');
+const selectedNGrams = ref([]);
 const keywords = ref(null);
-const error = ref('');
+const errors = ref({});
 
-function generate() {
-    error.value = '';
+const nGramSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const nGramOptions = nGramSizes.map((size) => ({
+    label: `${size}-gram`,
+    value: size,
+}));
 
-    if (!inputText.value.trim()) {
-        error.value = 'Enter text!';
+function generateKeywords() {
+    errors.value = {};
+
+    if (!inputText.value.trim() || !selectedNGrams.value.length) {
         keywords.value = null;
         return;
     }
 
-    keywords.value = generateKeyword(inputText.value, 1, 3);
+    keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
 
-    if (!keywords.value) {
-        error.value = 'No keywords could be extracted.';
-        keywords.value = null;
+    if (!keywords.value || !keywords.value.length) {
+        errors.value.text = 'No keywords could be extracted.';
     }
 }
 
-function resetKeywords(){
-    keywords.value = null;
-    error.value = '';
+watch([inputText, selectedNGrams], generateKeywords);
+
+function resetKeywords() {
     inputText.value = '';
+    selectedNGrams.value = [];
 }
 </script>
 
 <template>
-    <div class="ma-keyword-generator">
-        <div class="ma-input-panel">
+    <div class="flex gap-10 max-w-240 my-12 mx-auto text-gray-800">
+        <div class="flex flex-col gap-3 w-100">
             <h2>Keyword Generator</h2>
-            <textarea v-model="inputText" rows="8"></textarea>
-            <button @click="generate">Generate</button>
-            <button @click="resetKeywords">Reset Keywords</button>
+            <div>
+                <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="3"/>
+                <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
+            </div>
+            <MaSelect multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
+            <!--<MaButton color="dark" @click="generateKeywords">Generate</MaButton> -->
+            <MaButton color="dark" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
-        <div class="ma-results-panel">
-            <div v-if="keywords">
-                <div v-for="group in keywords" :key="group.ngram" class="ma-ngram-group">
-                    <strong>{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
-                    <div class="ma-tag-list">
-                        <span v-for="keyword in group.keywords" :key="keyword" class="ma-tag-item">{{ keyword }}</span>
+        <div class="flex-1 border-l border-gray-200 pl-10">
+            <div v-if="keywords && keywords.length">
+                <div v-for="group in keywords" :key="group.ngram" class="p-4 bg-gray-50 rounded-lg mb-5">
+                    <strong class="block mb-3">{{ group.ngram }}-gram ({{ group.keywords.length }})</strong>
+                    <div class="flex flex-wrap gap-2">
+                        <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="teal">{{ keyword }}</MaBadge>
                     </div>
                 </div>
             </div>
-            <p v-else-if="error" class="ma-error-text">{{ error }}</p>
-            <p v-else>Results will be in here</p>
+            <p v-else class="text-gray-400">Results will be in here</p>
         </div>
     </div>
 </template>
-
-<style lang="scss" scoped>
-.ma-keyword-generator {
-    display: flex;
-    max-width: 960px;
-    margin: 48px auto;
-    padding: 0 20px;
-    font-family: system-ui, sans-serif;
-
-    .ma-input-panel {
-        flex: 0 0 400px;
-
-        textarea {
-            width: 100%;
-            min-height: 40px;
-            padding: 12px;
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 16px;
-            resize: vertical;
-            box-sizing: border-box;
-        }
-
-        button {
-            margin: 12px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    }
-
-    .ma-results-panel {
-        flex: 1;
-        border-left: 1px solid #ddd;
-        padding-left: 32px;
-        margin-left: 32px;
-
-        strong {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        p {
-            color: #bbb;
-        }
-
-        .ma-error-text {
-            color: red;
-        }
-
-        .ma-ngram-group {
-            padding: 16px;
-            background: #fafafa;
-            border-radius: 8px;
-            margin-bottom: 20px;
-
-            .ma-tag-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-
-                .ma-tag-item {
-                    display: inline-block;
-                    background: #e4e7ed;
-                    padding: 4px 12px;
-                    margin: 4px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                }
-            }
-        }
-    }
-}
-</style>
