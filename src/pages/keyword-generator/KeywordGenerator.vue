@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { generateKeyword } from '@/utils/NGramUtils';
 import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect } from '@mobileaction/action-kit';
 
@@ -17,7 +17,10 @@ const nGramOptions = nGramSizes.map((size) => ({
 function generateKeywords() {
     errors.value = {};
 
-    if (!inputText.value.trim() || !selectedNGrams.value.length) {
+    if (!inputText.value.trim())      errors.value.text  = 'Enter text!';
+    if (!selectedNGrams.value.length) errors.value.ngram = 'Select at least one n-gram size.';
+
+    if (errors.value.text || errors.value.ngram) {
         keywords.value = null;
         return;
     }
@@ -28,8 +31,6 @@ function generateKeywords() {
         errors.value.text = 'No keywords could be extracted.';
     }
 }
-
-watch([inputText, selectedNGrams], generateKeywords);
 
 function resetKeywords() {
     inputText.value = '';
@@ -45,9 +46,9 @@ function resetKeywords() {
                 <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="3"/>
                 <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
             </div>
-            <MaSelect multiple :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
-            <!--<MaButton color="dark" @click="generateKeywords">Generate</MaButton> -->
-            <MaButton color="dark" @click="resetKeywords">Reset Keywords</MaButton>
+            <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
+            <MaButton color="dark" @click="generateKeywords">Generate</MaButton>
+            <MaButton variant="stroke" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
         <div class="flex-1 border-l border-gray-200 pl-10">
             <div v-if="keywords && keywords.length">
