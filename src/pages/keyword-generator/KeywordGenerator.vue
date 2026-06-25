@@ -32,10 +32,10 @@ const generatedKeywordNGrams = computed(() => {
 </script>
 
 <template>
-    <div class="p-5 max-w-[1000px] mx-auto font-sans">
+    <div class="p-5 max-w-5xl mx-auto font-sans">
         <div class="mb-6">
-            <h1 class="text-[28px] font-bold mb-2 text-[#2c3e50]">Keyword Generator</h1>
-            <p class="text-[#666] text-base m-0">Generate 1-10 gram keywords from your text without duplicates.</p>
+            <h1 class="text-3xl font-bold mb-2 text-slate-800">Keyword Generator</h1>
+            <p class="text-gray-500 text-base m-0">Generate 1-10 gram keywords from your text without duplicates.</p>
         </div>
 
         <div class="mb-6 flex items-center justify-between">
@@ -44,7 +44,7 @@ const generatedKeywordNGrams = computed(() => {
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
-                class="w-full max-w-[400px]"
+                class="w-full max-w-md"
             />
             <MaCheckbox v-model:checked="shouldRemoveStopWords">
                 Remove Stop Words
@@ -62,13 +62,13 @@ const generatedKeywordNGrams = computed(() => {
             </div>
         </div>
 
-        <div v-if="sourceDescriptionText.trim().length > 0" class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(248px,1fr))]">
-            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="bg-[#f8f9fa] p-5 rounded-xl border border-[#ebeef5] shadow-[0_2px_12px_0_rgba(0,0,0,0.05)]">
-                <h2 class="text-[20px] mb-4 text-[#303133] flex items-center justify-between mt-0">
+        <div v-if="sourceDescriptionText.trim().length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id" class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
+                <h2 class="text-xl mb-4 text-gray-900 flex items-center justify-between mt-0">
                     <span>{{ nGramCategory.title }}</span>
-                    <span class="text-base bg-[#e0e6ed] py-1 px-2 rounded-xl text-[#606266]">{{ nGramCategory.keywords.length }}</span>
+                    <span class="text-base bg-gray-200 py-1 px-2 rounded-xl text-gray-600">{{ nGramCategory.keywords.length }}</span>
                 </h2>
-                <div class="flex flex-wrap gap-2 max-h-[400px] overflow-y-auto">
+                <div class="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
                     <MaBadge 
                         v-for="keyword in nGramCategory.keywords" 
                         :key="keyword"
@@ -77,7 +77,7 @@ const generatedKeywordNGrams = computed(() => {
                         {{ keyword }}
                     </MaBadge>
                 </div>
-                <div v-if="nGramCategory.keywords.length === 0" class="text-[#909399] italic mt-3">No {{ nGramCategory.id }}-grams generated</div>
+                <div v-if="nGramCategory.keywords.length === 0" class="text-gray-400 italic mt-3">No {{ nGramCategory.id }}-grams generated</div>
             </div>
         </div>
     </div>

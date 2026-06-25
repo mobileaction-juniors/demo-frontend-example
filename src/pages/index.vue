@@ -10,7 +10,7 @@
         <div class="mt-10">
             <router-link 
                 to="/keyword-generator" 
-                class="inline-block px-5 py-2 bg-[#409eff] text-white no-underline rounded font-bold"
+                class="inline-block px-5 py-2 bg-blue-500 text-white no-underline rounded font-bold"
             >
                 Open Keyword Generator
             </router-link>
