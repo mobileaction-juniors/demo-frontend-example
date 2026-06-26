@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { cleanDescription } from '../../utils/CleanDescription';
 import { generateNGrams } from '../../utils/generateNGrams';
-import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty } from '@mobileaction/action-kit';
+import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
 const SOURCE_DESCRIPTION_TEXT = ref('');
 const SELECTED_NGRAMS = ref([1, 2, 3]);
@@ -23,14 +23,29 @@ const cleanedSourceText = computed(() => {
     return cleanDescription(text, SHOULD_REMOVE_STOP_WORDS.value);
 });
 
-const generatedKeywordNGrams = computed(() => {
-    if (!cleanedSourceText.value) return [];
+const generatedKeywordNGrams = ref([]);
+
+const generateKeywordsOnDemand = () => {
+    if (!cleanedSourceText.value) {
+        MaNotification.error({
+            title: 'No Input',
+            message: 'Please enter some text to generate keywords.'
+        });
+        generatedKeywordNGrams.value = [];
+        return;
+    }
     
-    return generateNGrams(cleanedSourceText.value, sortedSelectedNGrams.value);
-});
+    generatedKeywordNGrams.value = generateNGrams(cleanedSourceText.value, sortedSelectedNGrams.value);
+    
+    MaNotification.success({
+        title: 'Success',
+        message: 'Keywords generated successfully!'
+    });
+};
 
 const resetKeywordInput = () => {
     SOURCE_DESCRIPTION_TEXT.value = '';
+    generatedKeywordNGrams.value = [];
 };
 
 const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0);
@@ -62,8 +77,16 @@ const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0)
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="mt-3 flex justify-end" v-if="hasInput">
+            <div class="mt-3 flex justify-end gap-3" v-if="hasInput">
                 <MaButton @click="resetKeywordInput">Clear Text</MaButton>
+                <MaButton type="primary" @click="generateKeywordsOnDemand">
+                    <template #icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                        </svg>
+                    </template>
+                    Generate Keywords
+                </MaButton>
             </div>
         </div>
 
