@@ -109,12 +109,12 @@ const resetKeywordInput = () => {
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="mt-3 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p class="m-0 text-sm text-gray-500">
+            <div class="mt-3 flex flex-row items-center justify-between gap-4 overflow-x-auto">
+                <p class="m-0 shrink-0 whitespace-nowrap text-sm text-gray-500">
                     {{ hasInput ? 'Ready to generate keyword ideas.' : 'Paste a description to enable keyword actions.' }}
                 </p>
-                <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                    <MaButton :disabled="!hasInput" @click="resetKeywordInput">
+                <div class="flex shrink-0 flex-row gap-3">
+                    <MaButton class="w-36" :disabled="!hasInput" @click="resetKeywordInput">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 7.5h12M9.75 7.5v-.75A1.5 1.5 0 0 1 11.25 5.25h1.5a1.5 1.5 0 0 1 1.5 1.5v.75m-6.75 3v7.5m4.5-7.5v7.5m4.5-7.5v7.5M7.5 7.5l.75 12A1.5 1.5 0 0 0 9.75 21h4.5a1.5 1.5 0 0 0 1.5-1.5l.75-12" />
@@ -122,7 +122,7 @@ const resetKeywordInput = () => {
                         </template>
                         Clear Text
                     </MaButton>
-                    <MaButton type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48" type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
