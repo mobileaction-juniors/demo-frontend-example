@@ -4,9 +4,9 @@ import TheHeader from './components/TheHeader.vue';
 
 <template>
   <div class="min-h-screen bg-gray-50">
-      <the-header/>
+      <TheHeader/>
       <router-view v-slot="{ Component }">
-          <keep-alive>
+          <keep-alive :include="['KeywordGenerator']">
               <component :is="Component"/>
           </keep-alive>
       </router-view>

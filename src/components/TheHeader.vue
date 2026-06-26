@@ -4,6 +4,6 @@ import TheNav from './TheNav.vue';
 
 <template>
     <header class="sticky top-0 z-20 flex justify-center p-4">
-        <the-nav/>
+        <TheNav/>
     </header>
 </template>

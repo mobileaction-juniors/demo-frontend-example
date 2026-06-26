@@ -12,7 +12,8 @@ const navLinks = [
             :key="link.to"
             :to="link.to"
             class="rounded-full px-5 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-            active-class="bg-gray-900 text-white shadow-md">
+            active-class="bg-gray-900 text-white shadow-md"
+        >
             {{ link.label }}
         </router-link>
     </nav>
