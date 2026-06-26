@@ -25,11 +25,37 @@ const cleanedSourceText = computed(() => {
 
 const generatedKeywordNGrams = ref([]);
 
+const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0);
+const hasSelectedNGrams = computed(() => sortedSelectedNGrams.value.length > 0);
+const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
+const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
+const selectedNGramLabels = computed(() => sortedSelectedNGrams.value.map(nGram => `${nGram}-gram`).join(', '));
+
 const generateKeywordsOnDemand = () => {
+    if (!hasInput.value) {
+        MaNotification.error({
+            title: 'Text Required',
+            message: 'Paste an app description or keyword list before generating keyword ideas.'
+        });
+        generatedKeywordNGrams.value = [];
+        return;
+    }
+
+    if (!hasSelectedNGrams.value) {
+        MaNotification.error({
+            title: 'N-Gram Selection Required',
+            message: 'Select at least one n-gram size so the generator knows which keyword groups to build.'
+        });
+        generatedKeywordNGrams.value = [];
+        return;
+    }
+
     if (!cleanedSourceText.value) {
         MaNotification.error({
-            title: 'No Input',
-            message: 'Please enter some text to generate keywords.'
+            title: 'No Keywords After Cleaning',
+            message: SHOULD_REMOVE_STOP_WORDS.value
+                ? 'Your text only contains stop words or unsupported characters. Add more descriptive words or turn off stop word removal.'
+                : 'Your text only contains unsupported characters. Add words or phrases before generating keywords.'
         });
         generatedKeywordNGrams.value = [];
         return;
@@ -38,17 +64,23 @@ const generateKeywordsOnDemand = () => {
     generatedKeywordNGrams.value = generateNGrams(cleanedSourceText.value, sortedSelectedNGrams.value);
     
     MaNotification.success({
-        title: 'Success',
-        message: 'Keywords generated successfully!'
+        title: 'Keywords Generated',
+        message: `${totalGeneratedKeywordCount.value} unique keyword${totalGeneratedKeywordCount.value === 1 ? '' : 's'} created across ${selectedNGramLabels.value}.`
     });
 };
 
 const resetKeywordInput = () => {
+    const hadGeneratedKeywords = hasGeneratedKeywords.value;
     SOURCE_DESCRIPTION_TEXT.value = '';
     generatedKeywordNGrams.value = [];
-};
 
-const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0);
+    MaNotification.success({
+        title: 'Text Cleared',
+        message: hadGeneratedKeywords
+            ? 'The input and generated keyword results were cleared.'
+            : 'The input text was cleared. No generated keyword results were present.'
+    });
+};
 </script>
 
 <template>
@@ -58,7 +90,7 @@ const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0)
             <p class="text-gray-500 text-base m-0">Generate 1-10 gram keywords from your text without duplicates.</p>
         </div>
 
-        <div class="mb-6 flex items-center justify-between">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <MaSelect
                 v-model:value="SELECTED_NGRAMS"
                 :options="nGramOptions"
@@ -77,20 +109,32 @@ const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0)
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="mt-3 flex justify-end gap-3" v-if="hasInput">
-                <MaButton @click="resetKeywordInput">Clear Text</MaButton>
-                <MaButton type="primary" @click="generateKeywordsOnDemand">
-                    <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                        </svg>
-                    </template>
-                    Generate Keywords
-                </MaButton>
+            <div class="mt-3 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p class="m-0 text-sm text-gray-500">
+                    {{ hasInput ? 'Ready to generate keyword ideas.' : 'Paste a description to enable keyword actions.' }}
+                </p>
+                <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                    <MaButton :disabled="!hasInput" @click="resetKeywordInput">
+                        <template #icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 7.5h12M9.75 7.5v-.75A1.5 1.5 0 0 1 11.25 5.25h1.5a1.5 1.5 0 0 1 1.5 1.5v.75m-6.75 3v7.5m4.5-7.5v7.5m4.5-7.5v7.5M7.5 7.5l.75 12A1.5 1.5 0 0 0 9.75 21h4.5a1.5 1.5 0 0 0 1.5-1.5l.75-12" />
+                            </svg>
+                        </template>
+                        Clear Text
+                    </MaButton>
+                    <MaButton type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
+                        <template #icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                            </svg>
+                        </template>
+                        Generate Keywords
+                    </MaButton>
+                </div>
             </div>
         </div>
 
-        <div v-if="hasInput" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-if="hasGeneratedKeywords" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <MaCard v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id">
                 <h2 class="text-xl mb-4 text-gray-900 flex items-center justify-between mt-0">
                     <span>{{ nGramCategory.title }}</span>
@@ -111,5 +155,10 @@ const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0)
                 </MaEmpty>
             </MaCard>
         </div>
+        <MaEmpty v-else description="Generated keywords will appear here after you enter text and run the generator.">
+            <template #icon>
+                <span class="hidden"></span>
+            </template>
+        </MaEmpty>
     </div>
 </template>
