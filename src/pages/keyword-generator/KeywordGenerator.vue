@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { cleanDescription } from '../../utils/CleanDescription';
-import { validateInput, generateKeywords, showSuccessNotification } from '../../utils/keywordGeneratorActions';
+import { validateInput, showSuccessNotification } from '../../utils/keywordGeneratorActions';
+import { generateNGrams } from '../../utils/generateNGrams';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
 const sourceDescriptionText = ref('');
@@ -14,64 +15,34 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
     label: `${i + 1}-Gram`
 }));
 
+const generatedKeywordNGrams = ref([]);
+const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
+const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
+const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
 
-const cleanedSourceText = computed(() =>
-    sourceDescriptionText.value.trim()
+const generateKeywordsOnDemand = () => {
+    const cleanedText = sourceDescriptionText.value.trim()
         ? cleanDescription(
             sourceDescriptionText.value,
             shouldRemoveStopWords.value
         )
-        : ''
-);
+        : '';
 
-const generatedKeywordNGrams = ref([]);
-
-const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
-const hasSelectedNGrams = computed(() => selectedNGrams.value.length > 0);
-const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
-const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
-
-const lastGeneratedState = ref(null);
-
-const hasUnchangedInputs = computed(() => {
-    if (!lastGeneratedState.value) return false;
-    
-    const currentSorted = [...selectedNGrams.value].sort((a, b) => a - b);
-    const previousSorted = lastGeneratedState.value.nGrams;
-    const isNGramsEqual = currentSorted.length === previousSorted.length && 
-                          currentSorted.every((val, index) => val === previousSorted[index]);
-
-    return lastGeneratedState.value.text === sourceDescriptionText.value &&
-           isNGramsEqual &&
-           lastGeneratedState.value.removeStopWords === shouldRemoveStopWords.value;
-});
-
-const clearResults = () => {
-    generatedKeywordNGrams.value = [];
-};
-
-const generateKeywordsOnDemand = () => {
     const isValid = validateInput(
-        hasInput.value,
-        hasSelectedNGrams.value,
-        cleanedSourceText.value,
+        sourceDescriptionText.value,
+        selectedNGrams.value,
+        cleanedText,
         shouldRemoveStopWords.value
     );
 
     if (!isValid) {
-        clearResults();
+        generatedKeywordNGrams.value = [];
         return;
     }
     
     const sortedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
     
-    generatedKeywordNGrams.value = generateKeywords(cleanedSourceText.value, sortedNGrams);
-    
-    lastGeneratedState.value = {
-        text: sourceDescriptionText.value,
-        nGrams: sortedNGrams,
-        removeStopWords: shouldRemoveStopWords.value
-    };
+    generatedKeywordNGrams.value = generateNGrams(cleanedText, sortedNGrams);
     
     const labels = sortedNGrams.map(n => `${n}-gram`).join(', ');
     showSuccessNotification(totalGeneratedKeywordCount.value, labels);
@@ -80,8 +51,7 @@ const generateKeywordsOnDemand = () => {
 const resetKeywordInput = () => {
     const hadGeneratedKeywords = hasGeneratedKeywords.value;
     sourceDescriptionText.value = '';
-    clearResults();
-    lastGeneratedState.value = null;
+    generatedKeywordNGrams.value = [];
 
     MaNotification.success({
         title: 'Text Cleared',
@@ -96,7 +66,7 @@ const resetKeywordInput = () => {
     <div class="p-5 max-w-5xl mx-auto font-sans">
         <div class="mb-6">
             <h1 class="text-3xl font-bold mb-2 text-slate-800">Keyword Generator</h1>
-            <p class="text-gray-500 text-base m-0">Generate 1-10 gram keywords from your text without duplicates.</p>
+            <p class="text-gray-500 text-base m-0">Generate 1-{{ MAX_NGRAM_SIZE }} gram keywords from your text without duplicates.</p>
         </div>
 
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -126,7 +96,7 @@ const resetKeywordInput = () => {
                     <MaButton class="w-36" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" :disabled="!hasInput || hasUnchangedInputs" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -139,11 +109,14 @@ const resetKeywordInput = () => {
         </div>
 
         <div v-if="hasGeneratedKeywords" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <MaCard v-for="nGramCategory in generatedKeywordNGrams" :key="nGramCategory.id">
-                <h2 class="text-xl mb-4 text-gray-900 flex items-center justify-between mt-0">
-                    <span>{{ nGramCategory.title }}</span>
+            <MaCard 
+                v-for="nGramCategory in generatedKeywordNGrams" 
+                :key="nGramCategory.id"
+                :title="nGramCategory.title"
+            >
+                <template #headerActions>
                     <MaBadge>{{ nGramCategory.keywords.length }}</MaBadge>
-                </h2>
+                </template>
                 <div class="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
                     <MaBadge 
                         v-for="keyword in nGramCategory.keywords" 

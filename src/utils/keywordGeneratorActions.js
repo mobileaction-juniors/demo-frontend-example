@@ -1,8 +1,7 @@
 import { MaNotification } from '@mobileaction/action-kit';
-import { generateNGrams } from './generateNGrams';
 
-export function validateInput(hasInput, hasSelectedNGrams, cleanedSourceText, shouldRemoveStopWords) {
-    if (!hasInput) {
+export function validateInput(sourceDescriptionText, selectedNGrams, cleanedSourceText, shouldRemoveStopWords) {
+    if (!sourceDescriptionText || sourceDescriptionText.trim().length === 0) {
         MaNotification.error({
             title: 'Text Required',
             message: 'Paste an app description or keyword list before generating keyword ideas.'
@@ -10,7 +9,7 @@ export function validateInput(hasInput, hasSelectedNGrams, cleanedSourceText, sh
         return false;
     }
 
-    if (!hasSelectedNGrams) {
+    if (!selectedNGrams || selectedNGrams.length === 0) {
         MaNotification.error({
             title: 'N-Gram Selection Required',
             message: 'Select at least one n-gram size so the generator knows which keyword groups to build.'
@@ -27,12 +26,7 @@ export function validateInput(hasInput, hasSelectedNGrams, cleanedSourceText, sh
         });
         return false;
     }
-
     return true;
-}
-
-export function generateKeywords(cleanedSourceText, sortedSelectedNGrams) {
-    return generateNGrams(cleanedSourceText, sortedSelectedNGrams);
 }
 
 export function showSuccessNotification(totalGeneratedKeywordCount, selectedNGramLabels) {
