@@ -14,7 +14,6 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
     label: `${i + 1}-Gram`
 }));
 
-const sortedSelectedNGrams = computed(() => [...selectedNGrams.value].sort((a, b) => a - b));
 
 const cleanedSourceText = computed(() =>
     sourceDescriptionText.value.trim()
@@ -28,17 +27,22 @@ const cleanedSourceText = computed(() =>
 const generatedKeywordNGrams = ref([]);
 
 const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
-const hasSelectedNGrams = computed(() => sortedSelectedNGrams.value.length > 0);
+const hasSelectedNGrams = computed(() => selectedNGrams.value.length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
 const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
-const selectedNGramLabels = computed(() => sortedSelectedNGrams.value.map(nGram => `${nGram}-gram`).join(', '));
 
 const lastGeneratedState = ref(null);
 
-const isStale = computed(() => {
+const hasUnchangedInputs = computed(() => {
     if (!lastGeneratedState.value) return false;
+    
+    const currentSorted = [...selectedNGrams.value].sort((a, b) => a - b);
+    const previousSorted = lastGeneratedState.value.nGrams;
+    const isNGramsEqual = currentSorted.length === previousSorted.length && 
+                          currentSorted.every((val, index) => val === previousSorted[index]);
+
     return lastGeneratedState.value.text === sourceDescriptionText.value &&
-           lastGeneratedState.value.nGrams === sortedSelectedNGrams.value.join(',') &&
+           isNGramsEqual &&
            lastGeneratedState.value.removeStopWords === shouldRemoveStopWords.value;
 });
 
@@ -59,15 +63,18 @@ const generateKeywordsOnDemand = () => {
         return;
     }
     
-    generatedKeywordNGrams.value = generateKeywords(cleanedSourceText.value, sortedSelectedNGrams.value);
+    const sortedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
+    
+    generatedKeywordNGrams.value = generateKeywords(cleanedSourceText.value, sortedNGrams);
     
     lastGeneratedState.value = {
         text: sourceDescriptionText.value,
-        nGrams: sortedSelectedNGrams.value.join(','),
+        nGrams: sortedNGrams,
         removeStopWords: shouldRemoveStopWords.value
     };
     
-    showSuccessNotification(totalGeneratedKeywordCount.value, selectedNGramLabels.value);
+    const labels = sortedNGrams.map(n => `${n}-gram`).join(', ');
+    showSuccessNotification(totalGeneratedKeywordCount.value, labels);
 };
 
 const resetKeywordInput = () => {
@@ -119,7 +126,12 @@ const resetKeywordInput = () => {
                     <MaButton class="w-36" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" color="dark" variant="stroke" icon="data" type="primary" iconAlignment="left" :disabled="!hasInput || isStale" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" :disabled="!hasInput || hasUnchangedInputs" @click="generateKeywordsOnDemand">
+                        <template #icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                            </svg>
+                        </template>
                         Generate Keywords
                     </MaButton>
                 </div>

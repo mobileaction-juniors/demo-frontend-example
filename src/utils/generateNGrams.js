@@ -2,7 +2,7 @@ import { removeDuplicates } from './removeDuplicates.js';
 
 export function generateNGrams(cleanedText, selectedNGrams = [1, 2, 3]) {
     const results = [];
-    const cleanedWordsArray = cleanedText ? cleanedText.split(' ') : [];
+    const cleanedWordsArray = cleanedText ? cleanedText.trim().split(/\s+/) : [];
 
     for (const n of selectedNGrams) {
         const nGrams = [];
