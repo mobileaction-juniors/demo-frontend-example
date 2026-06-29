@@ -2,6 +2,7 @@
 const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/keyword-generator', label: 'Keyword Generator' },
+    { to: '/keyword-density', label: 'Keyword Density' },
 ];
 </script>
 

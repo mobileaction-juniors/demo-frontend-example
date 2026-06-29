@@ -8,6 +8,9 @@ const TASK_URL = 'https://mobileaction.atlassian.net/l/cp/7fw8MroM';
 const goToKeywordPage = () => {
     router.push('/keyword-generator');
 }
+const goToDensityPage = () => {
+    router.push('/keyword-density');
+}
 </script>
 
 <template>
@@ -17,6 +20,7 @@ const goToKeywordPage = () => {
         <div class="inline-flex gap-5">
             <MaButton variant="filled" color="dark" :href="TASK_URL" target="_blank">Implement First Front-End Task</MaButton>
             <MaButton variant="stroke" color="dark" @click="goToKeywordPage">Keyword Generator</MaButton>
+            <MaButton variant="stroke" color="dark" @click="goToDensityPage">Keyword Density</MaButton>
         </div>
     </div>
 </template>
