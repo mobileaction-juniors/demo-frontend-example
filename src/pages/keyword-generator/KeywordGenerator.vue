@@ -96,12 +96,7 @@ const resetKeywordInput = () => {
                     <MaButton class="w-36" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
-                        <template #icon>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                            </svg>
-                        </template>
+                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput" @click="generateKeywordsOnDemand">
                         Generate Keywords
                     </MaButton>
                 </div>
