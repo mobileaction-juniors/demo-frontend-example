@@ -10,32 +10,33 @@ const closeNavigationDrawer = () => {
 </script>
 
 <template>
-    <div class="relative m-4 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm">
-        <div class="mb-3 h-14 w-52 sm:absolute sm:left-4 sm:top-1/2 sm:mb-0 sm:-translate-y-1/2">
-            <MaImage2
-                src="/ma.png"
-                alt="MobileAction logo"
-                width="100%"
-                height="100%"
-                fit="contain"
-            />
+    <div class="m-4 grid grid-cols-1 items-center gap-4 rounded-lg border border-gray-100 bg-white px-4 py-1 shadow-sm sm:grid-cols-[150px_1fr_150px] sm:gap-0">
+        <div class="flex justify-center sm:justify-start">
+            <div class="flex items-center h-6 w-24">
+                <MaImage2
+                    src="/ma.png"
+                    alt="MobileAction logo"
+                    width="100%"
+                    height="100%"
+                    fit="contain"
+                />
+            </div>
         </div>
-        <div class="mx-auto flex max-w-5xl flex-col items-center gap-4 text-center lg:px-52">
-            <span class="text-gray-800 text-xl font-bold tracking-wide sm:text-xl">MA Frontend Demo</span>
-            <nav class="flex w-full flex-row flex-nowrap justify-center gap-4 overflow-x-auto sm:gap-6">
-                <router-link to="/" class="whitespace-nowrap text-blue-500 hover:text-blue-700 font-medium transition-colors">
-                    -Home-
+        <div class="flex justify-center overflow-x-auto">
+            <nav class="flex w-full flex-row flex-nowrap justify-center gap-2 sm:gap-4 items-center">
+                <router-link to="/" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-black hover:bg-gray-50 hover:text-blue-700 font-medium transition-colors">
+                    Home
                 </router-link>
-                <router-link to="/keyword-generator" class="whitespace-nowrap text-blue-500 hover:text-blue-700 font-medium transition-colors">
-                    -Keyword Generator-
+                <router-link to="/keyword-generator" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-black hover:bg-gray-50 hover:text-blue-700 font-medium transition-colors">
+                    Keyword Generator
                 </router-link>
-                <router-link to="/keyword-density" class="whitespace-nowrap text-blue-500 hover:text-blue-700 font-medium transition-colors">
-                    -Keyword Density-
+                <router-link to="/keyword-density" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-black hover:bg-gray-50 hover:text-blue-700 font-medium transition-colors">
+                    Keyword Density
                 </router-link>
             </nav>
         </div>
-        <div class="mt-4 flex justify-center sm:absolute sm:right-4 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2">
-            <MaButton @click="isNavigationDrawerOpen = true">
+        <div class="flex items-center justify-center sm:justify-end">
+            <MaButton size="small" @click="isNavigationDrawerOpen = true">
                 Menu
             </MaButton>
         </div>
