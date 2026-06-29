@@ -4,9 +4,9 @@ import { cleanDescription } from '../../utils/CleanDescription';
 import { generateNGrams } from '../../utils/generateNGrams';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
-const SOURCE_DESCRIPTION_TEXT = ref('');
-const SELECTED_NGRAMS = ref([1, 2, 3]);
-const SHOULD_REMOVE_STOP_WORDS = ref(true);
+const sourceDescriptionText = ref('');
+const selectedNGrams = ref([1, 2, 3]);
+const shouldRemoveStopWords = ref(true);
 const MAX_NGRAM_SIZE = 10;
 
 const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
@@ -14,22 +14,31 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
     label: `${i + 1}-Gram`
 }));
 
-const sortedSelectedNGrams = computed(() => [...SELECTED_NGRAMS.value].sort((a, b) => a - b));
+const sortedSelectedNGrams = computed(() => [...selectedNGrams.value].sort((a, b) => a - b));
 
 const cleanedSourceText = computed(() => {
-    const text = SOURCE_DESCRIPTION_TEXT.value;
+    const text = sourceDescriptionText.value;
     if (!text.trim()) return '';
     
-    return cleanDescription(text, SHOULD_REMOVE_STOP_WORDS.value);
+    return cleanDescription(text, shouldRemoveStopWords.value);
 });
 
 const generatedKeywordNGrams = ref([]);
 
-const hasInput = computed(() => SOURCE_DESCRIPTION_TEXT.value.trim().length > 0);
+const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
 const hasSelectedNGrams = computed(() => sortedSelectedNGrams.value.length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
 const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
 const selectedNGramLabels = computed(() => sortedSelectedNGrams.value.map(nGram => `${nGram}-gram`).join(', '));
+
+const lastGeneratedState = ref(null);
+
+const isStale = computed(() => {
+    if (!lastGeneratedState.value) return false;
+    return lastGeneratedState.value.text === sourceDescriptionText.value &&
+           lastGeneratedState.value.nGrams === sortedSelectedNGrams.value.join(',') &&
+           lastGeneratedState.value.removeStopWords === shouldRemoveStopWords.value;
+});
 
 const generateKeywordsOnDemand = () => {
     if (!hasInput.value) {
@@ -53,7 +62,7 @@ const generateKeywordsOnDemand = () => {
     if (!cleanedSourceText.value) {
         MaNotification.error({
             title: 'No Keywords After Cleaning',
-            message: SHOULD_REMOVE_STOP_WORDS.value
+            message: shouldRemoveStopWords.value
                 ? 'Your text only contains stop words or unsupported characters. Add more descriptive words or turn off stop word removal.'
                 : 'Your text only contains unsupported characters. Add words or phrases before generating keywords.'
         });
@@ -63,6 +72,12 @@ const generateKeywordsOnDemand = () => {
     
     generatedKeywordNGrams.value = generateNGrams(cleanedSourceText.value, sortedSelectedNGrams.value);
     
+    lastGeneratedState.value = {
+        text: sourceDescriptionText.value,
+        nGrams: sortedSelectedNGrams.value.join(','),
+        removeStopWords: shouldRemoveStopWords.value
+    };
+    
     MaNotification.success({
         title: 'Keywords Generated',
         message: `${totalGeneratedKeywordCount.value} unique keyword${totalGeneratedKeywordCount.value === 1 ? '' : 's'} created across ${selectedNGramLabels.value}.`
@@ -71,8 +86,9 @@ const generateKeywordsOnDemand = () => {
 
 const resetKeywordInput = () => {
     const hadGeneratedKeywords = hasGeneratedKeywords.value;
-    SOURCE_DESCRIPTION_TEXT.value = '';
+    sourceDescriptionText.value = '';
     generatedKeywordNGrams.value = [];
+    lastGeneratedState.value = null;
 
     MaNotification.success({
         title: 'Text Cleared',
@@ -92,25 +108,25 @@ const resetKeywordInput = () => {
 
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <MaSelect
-                v-model:value="SELECTED_NGRAMS"
+                v-model:value="selectedNGrams"
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
                 class="w-full max-w-md"
             />
-            <MaCheckbox v-model:checked="SHOULD_REMOVE_STOP_WORDS">
+            <MaCheckbox v-model:checked="shouldRemoveStopWords">
                 Remove Stop Words
             </MaCheckbox>
         </div>
 
         <div class="mb-8">
             <MaTextarea
-                v-model="SOURCE_DESCRIPTION_TEXT"
+                v-model="sourceDescriptionText"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
-            <div class="mt-3 flex flex-row items-center justify-between gap-4 overflow-x-auto">
-                <p class="m-0 shrink-0 whitespace-nowrap text-sm text-gray-500">
+            <div class="mt-3 flex flex-wrap items-center justify-between gap-4">
+                <p class="m-0 text-sm text-gray-500">
                     {{ hasInput ? 'Ready to generate keyword ideas.' : 'Paste a description to enable keyword actions.' }}
                 </p>
                 <div class="flex shrink-0 flex-row gap-3">
@@ -122,7 +138,7 @@ const resetKeywordInput = () => {
                         </template>
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" type="primary" :disabled="!hasInput" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48" type="primary" :disabled="!hasInput || isStale" @click="generateKeywordsOnDemand">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
