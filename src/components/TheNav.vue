@@ -1,9 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
-
-const props = defineProps({
-    isDesktop: { type: Boolean, default: false },
-});
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const navLinks = [
     { to: '/', label: 'Home' },
@@ -11,60 +7,62 @@ const navLinks = [
     { to: '/keyword-density', label: 'Keyword Density' },
 ];
 
-const linkClass = 'rounded-full px-5 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900';
-const activeLinkClass = 'bg-gray-900 text-white shadow-md';
-
 const isOpen = ref(false);
 
-watch(
-    () => props.isDesktop,
-    (isDesktop) => {
-        if (isDesktop) isOpen.value = false;
-    },
-);
+const closeOnEscape = (event) => {
+    if (event.key === 'Escape') isOpen.value = false;
+};
+
+onMounted(() => document.addEventListener('keydown', closeOnEscape));
+onBeforeUnmount(() => document.removeEventListener('keydown', closeOnEscape));
 </script>
 
 <template>
-    <nav class="relative z-10 flex items-center gap-1 rounded-full border border-gray-200/80 bg-white/70 p-1.5 shadow-lg shadow-gray-400/20 backdrop-blur-md">
-        <template v-if="isDesktop">
-            <router-link
-                v-for="link in navLinks"
-                :key="link.to"
-                :to="link.to"
-                :class="linkClass"
-                :active-class="activeLinkClass"
-            >
-                {{ link.label }}
-            </router-link>
-        </template>
+    <nav class="relative z-40">
+        <button
+            type="button"
+            aria-label="Toggle menu"
+            :aria-expanded="isOpen"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200/80 bg-white/80 text-gray-700 shadow-lg shadow-gray-400/20 backdrop-blur-md transition duration-200 ease-out hover:bg-gray-100 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+            @click="isOpen = !isOpen"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
 
-        <template v-else>
-            <button
-                type="button"
-                aria-label="Toggle menu"
-                :aria-expanded="isOpen"
-                class="flex items-center rounded-full p-2.5 text-gray-700 transition-colors hover:bg-gray-100"
-                @click="isOpen = !isOpen"
+        <Teleport to="body">
+            <transition
+                enter-active-class="transition duration-200 ease-out"
+                enter-from-class="opacity-0"
+                leave-active-class="transition duration-200 ease-in"
+                leave-to-class="opacity-0"
             >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
+                <div v-if="isOpen" class="fixed inset-0 z-30 bg-black/20" @click="isOpen = false"/>
+            </transition>
+        </Teleport>
+
+        <transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 -translate-y-2 scale-95"
+            leave-active-class="transition duration-200 ease-in"
+            leave-to-class="opacity-0 -translate-y-2 scale-95"
+        >
             <div
-                v-show="isOpen"
-                class="absolute left-0 top-full z-50 mt-2 flex w-56 flex-col gap-1 rounded-2xl border border-gray-200/80 bg-white p-1.5 shadow-lg shadow-gray-400/20"
+                v-if="isOpen"
+                class="absolute left-0 top-full mt-3 flex w-60 origin-top flex-col gap-1 rounded-2xl border border-gray-200/80 bg-white/90 p-2 shadow-xl shadow-gray-400/20 backdrop-blur-md"
             >
                 <router-link
                     v-for="link in navLinks"
                     :key="link.to"
                     :to="link.to"
-                    :class="linkClass"
-                    :active-class="activeLinkClass"
+                    class="rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                    active-class="bg-gray-900 text-white shadow-sm hover:!bg-gray-800 hover:!text-white"
                     @click="isOpen = false"
                 >
                     {{ link.label }}
                 </router-link>
             </div>
-        </template>
+        </transition>
     </nav>
 </template>

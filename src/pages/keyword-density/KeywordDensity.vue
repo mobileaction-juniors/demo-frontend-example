@@ -9,8 +9,8 @@ defineOptions({ name: 'KeywordDensity' });
 const STATIC_TEXT = 'The quick brown fox jumps over the lazy dog. The quick brown fox is quick and the lazy dog stays lazy.';
 
 const inputText = ref(STATIC_TEXT);
-const rows = ref([]);
-const lastCalculated = ref('');
+const rows = ref(computeKeywordDensity(STATIC_TEXT));
+const lastCalculated = ref(STATIC_TEXT);
 const isUnchanged = computed(() => inputText.value === lastCalculated.value);
 
 const columnDefs = [
@@ -27,8 +27,6 @@ function calculateDensity() {
     rows.value = computeKeywordDensity(inputText.value);
     lastCalculated.value = inputText.value;
 }
-
-calculateDensity();
 </script>
 
 <template>
