@@ -18,7 +18,7 @@ const closeNavigationDrawer = () => {
                 class="w-full h-full object-contain"
             />
         </div>
-        <nav class="desktop-nav flex w-full flex-row flex-nowrap justify-center gap-2 sm:gap-4 items-center overflow-x-auto">
+        <nav class="flex w-full flex-row flex-nowrap justify-center gap-2 sm:gap-4 items-center overflow-x-auto hidden sm:flex">
             <router-link to="/" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-black hover:bg-gray-50 hover:text-blue-700 font-medium transition-colors">
                 Home
             </router-link>
@@ -29,7 +29,7 @@ const closeNavigationDrawer = () => {
                 Keyword Density
             </router-link>
         </nav>
-        <MaButton class="mobile-menu-btn justify-self-center" size="small" @click="isNavigationDrawerOpen = true">
+        <MaButton class="justify-self-center block sm:hidden" size="small" @click="isNavigationDrawerOpen = true">
             Menu
         </MaButton>
         <MaDrawer
@@ -64,16 +64,3 @@ const closeNavigationDrawer = () => {
         </MaDrawer>
     </div>
 </template>
-
-<style scoped>
-@media (max-width: 639px) {
-    .desktop-nav {
-        display: none !important;
-    }
-}
-@media (min-width: 640px) {
-    .mobile-menu-btn {
-        display: none !important;
-    }
-}
-</style>
