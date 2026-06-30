@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
 import { cleanDescription } from '../../utils/CleanDescription';
+import { sharedKeywordText } from '../../utils/sharedState';
 
 const props = defineProps({
     initialText: {
@@ -17,9 +18,15 @@ const shouldRemoveStopWords = ref(false);
 const totalCharacters = computed(() => inputText.value.length);
 
 onMounted(() => {
-    if (props.initialText) {
+    if (sharedKeywordText.value) {
+        inputText.value = sharedKeywordText.value;
+    } else if (props.initialText) {
         inputText.value = props.initialText;
     }
+});
+
+watch(inputText, (newVal) => {
+    sharedKeywordText.value = newVal;
 });
 
 const calculateDensity = () => {
@@ -29,9 +36,12 @@ const calculateDensity = () => {
         return;
     }
 
-    const cleanedText = cleanDescription(inputText.value, shouldRemoveStopWords.value);
-    const words = cleanedText.split(/\s+/).filter(w => w.length > 0);
-    totalWords.value = words.length;
+    const baseCleanedText = cleanDescription(inputText.value, false);
+    const baseWords = baseCleanedText.split(/\s+/).filter(w => w.length > 0);
+    totalWords.value = baseWords.length;
+
+    const processedText = cleanDescription(inputText.value, shouldRemoveStopWords.value);
+    const words = processedText.split(/\s+/).filter(w => w.length > 0);
 
     if (words.length === 0) {
         keywordStats.value = [];
@@ -56,7 +66,7 @@ const calculateDensity = () => {
         return {
             word: wordsArray.join(', '),
             count,
-            percentage: ((count / words.length) * 100).toFixed(2)
+            percentage: ((count / totalWords.value) * 100).toFixed(1)
         };
     });
 
@@ -104,14 +114,14 @@ const copyToClipboard = async () => {
                     placeholder="Enter your text here..."
                     :rows="12"
                 />
-                <div class="flex items-center gap-2 px-1">
-                    <MaCheckbox v-model:checked="shouldRemoveStopWords">
-                        <span class="text-sm font-medium text-gray-700">Remove Stop Words</span>
-                    </MaCheckbox>
-                </div>
-                <div class="flex items-center justify-between">
-                    <p class="m-0 text-sm text-gray-500">Total Characters: {{ totalCharacters }}</p>
-                    <MaButton color="dark" type="primary" @click="calculateDensity" class="w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 px-1">
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+                        <MaCheckbox v-model:checked="shouldRemoveStopWords">
+                            <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Remove Stop Words</span>
+                        </MaCheckbox>
+                        <p class="m-0 text-sm text-gray-500 whitespace-nowrap">Total Characters: {{ totalCharacters }}</p>
+                    </div>
+                    <MaButton color="dark" type="primary" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0">
                         Calculate Density
                     </MaButton>
                 </div>

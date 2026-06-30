@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { processKeywords } from '../../utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
+import { sharedKeywordText } from '../../utils/sharedState';
 
 const sourceDescriptionText = ref('');
 const selectedNGrams = ref([1, 2, 3]);
@@ -16,6 +17,16 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
 const generatedKeywordNGrams = ref([]);
 const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
+
+onMounted(() => {
+    if (sharedKeywordText.value) {
+        sourceDescriptionText.value = sharedKeywordText.value;
+    }
+});
+
+watch(sourceDescriptionText, (newVal) => {
+    sharedKeywordText.value = newVal;
+});
 
 const generateKeywordsOnDemand = () => {
     const result = processKeywords(
