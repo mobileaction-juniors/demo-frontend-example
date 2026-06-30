@@ -1,8 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { cleanDescription } from '../../utils/CleanDescription';
-import { validateInput, showSuccessNotification } from '../../utils/keywordGeneratorActions';
-import { generateNGrams } from '../../utils/generateNGrams';
+import { processKeywords } from '../../utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
 const sourceDescriptionText = ref('');
@@ -18,34 +16,29 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
 const generatedKeywordNGrams = ref([]);
 const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
-const totalGeneratedKeywordCount = computed(() => generatedKeywordNGrams.value.reduce((total, nGramCategory) => total + nGramCategory.keywords.length, 0));
 
 const generateKeywordsOnDemand = () => {
-    const cleanedText = sourceDescriptionText.value.trim()
-        ? cleanDescription(
-            sourceDescriptionText.value,
-            shouldRemoveStopWords.value
-        )
-        : '';
-
-    const isValid = validateInput(
+    const result = processKeywords(
         sourceDescriptionText.value,
         selectedNGrams.value,
-        cleanedText,
         shouldRemoveStopWords.value
     );
 
-    if (!isValid) {
+    if (!result.success) {
         generatedKeywordNGrams.value = [];
+        MaNotification.error({
+            title: result.error.errorTitle,
+            message: result.error.errorMessage
+        });
         return;
     }
     
-    const sortedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
+    generatedKeywordNGrams.value = result.generatedKeywordNGrams;
     
-    generatedKeywordNGrams.value = generateNGrams(cleanedText, sortedNGrams);
-    
-    const labels = sortedNGrams.map(n => `${n}-gram`).join(', ');
-    showSuccessNotification(totalGeneratedKeywordCount.value, labels);
+    MaNotification.success({
+        title: 'Keywords Generated',
+        message: `${result.totalCount} unique keyword${result.totalCount === 1 ? '' : 's'} created across ${result.labels}.`
+    });
 };
 
 const resetKeywordInput = () => {
