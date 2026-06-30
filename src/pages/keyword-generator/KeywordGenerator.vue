@@ -14,7 +14,6 @@ const expandedGroups = ref([]);
 const currentInput = computed(() => `${inputText.value}|${selectedNGrams.value.join(',')}`);
 const lastGeneratedInput = ref(currentInput.value);
 const isUnchanged = computed(() => currentInput.value === lastGeneratedInput.value);
-const isEmpty = computed(() => !inputText.value.trim() && selectedNGrams.value.length === 0);
 
 const MAX_N_GRAM = 10;
 const nGramSizes = Array.from({ length: MAX_N_GRAM }, (_, i) => i + 1);
@@ -69,8 +68,8 @@ function resetKeywords() {
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row gap-6 md:gap-10 max-w-360 my-8 md:my-12 mx-auto px-6 text-gray-800">
-        <div class="flex flex-col gap-3 w-full md:w-120">
+    <div class="flex max-lg:flex-col gap-10 max-w-360 my-12 mx-auto px-6 text-gray-800">
+        <div class="flex flex-col gap-3 w-full lg:flex-1 lg:max-w-120">
             <h2 class="text-2xl font-bold text-gray-900">Keyword Generator</h2>
             <div>
                 <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
@@ -78,7 +77,7 @@ function resetKeywords() {
             </div>
             <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
             <MaButton color="dark" icon="ai-sparkle" :disabled="isUnchanged" @click="generateKeywords">Generate</MaButton>
-            <MaButton variant="stroke" icon="refresh" :disabled="isEmpty" @click="resetKeywords">Reset Keywords</MaButton>
+            <MaButton variant="stroke" icon="refresh" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
         <MaCard class="flex-1 min-w-0" title="Results" bordered>
             <MaCollapse v-if="keywords.length" v-model:expanded-values="expandedGroups" mode="multiple">
