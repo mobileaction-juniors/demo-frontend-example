@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { MaButton, MaDrawer, MaImage2 } from '@mobileaction/action-kit';
+import { MaButton, MaDrawer } from '@mobileaction/action-kit';
 
 const isNavigationDrawerOpen = ref(false);
 
@@ -12,15 +12,13 @@ const closeNavigationDrawer = () => {
 <template>
     <div class="m-4 grid grid-cols-1 items-center gap-4 rounded-lg border border-gray-100 bg-white px-4 py-1 shadow-sm sm:grid-cols-[150px_1fr_150px] sm:gap-0">
         <div class="flex h-6 w-24 items-center justify-self-center sm:justify-self-start">
-            <MaImage2
-                src="/ma.png"
+            <img
+                src="/mobileaction.svg"
                 alt="MobileAction logo"
-                width="100%"
-                height="100%"
-                fit="contain"
+                class="w-full h-full object-contain"
             />
         </div>
-        <nav class="flex w-full flex-row flex-nowrap justify-center gap-2 sm:gap-4 items-center overflow-x-auto">
+        <nav class="desktop-nav flex w-full flex-row flex-nowrap justify-center gap-2 sm:gap-4 items-center overflow-x-auto">
             <router-link to="/" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-black hover:bg-gray-50 hover:text-blue-700 font-medium transition-colors">
                 Home
             </router-link>
@@ -31,7 +29,7 @@ const closeNavigationDrawer = () => {
                 Keyword Density
             </router-link>
         </nav>
-        <MaButton class="justify-self-center sm:justify-self-end" size="small" @click="isNavigationDrawerOpen = true">
+        <MaButton class="mobile-menu-btn justify-self-center" size="small" @click="isNavigationDrawerOpen = true">
             Menu
         </MaButton>
         <MaDrawer
@@ -66,3 +64,16 @@ const closeNavigationDrawer = () => {
         </MaDrawer>
     </div>
 </template>
+
+<style scoped>
+@media (max-width: 639px) {
+    .desktop-nav {
+        display: none !important;
+    }
+}
+@media (min-width: 640px) {
+    .mobile-menu-btn {
+        display: none !important;
+    }
+}
+</style>
