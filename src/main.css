@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
-html {
-    scrollbar-gutter: stable;
+html.dark {
+    background: #fff;
+    filter: invert(0.92) hue-rotate(180deg);
+    scrollbar-color: #cccccc #f2f2f2;
 }

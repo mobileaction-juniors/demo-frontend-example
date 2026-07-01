@@ -1,33 +1,34 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { generateKeyword } from '@/utils/NGramUtils';
 import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect, MaNotification, MaEmpty, MaCollapse, MaCollapseItem, MaCard } from '@mobileaction/action-kit';
+import { generateKeyword } from '@/utils/NGramUtils';
+import { useTextStore } from '@/stores/text';
 
 defineOptions({ name: 'KeywordGenerator' });
 
-const inputText = ref('');
+const textStore = useTextStore();
+
 const selectedNGrams = ref([]);
 const keywords = ref([]);
 const errors = ref({ text: '', ngram: '' });
 const hasSearched = ref(false);
 const expandedGroups = ref([]);
-const currentInput = computed(() => `${inputText.value}|${selectedNGrams.value.join(',')}`);
+const currentInput = computed(() => `${textStore.text}|${selectedNGrams.value.join(',')}`);
 const lastGeneratedInput = ref(currentInput.value);
 const isUnchanged = computed(() => currentInput.value === lastGeneratedInput.value);
 const isResetDisabled = computed(() =>
-    !inputText.value.trim() && selectedNGrams.value.length === 0 && keywords.value.length === 0,
+    !textStore.text.trim() && selectedNGrams.value.length === 0 && keywords.value.length === 0,
 );
 
 const MAX_N_GRAM = 10;
-const nGramSizes = Array.from({ length: MAX_N_GRAM }, (_, i) => i + 1);
-const nGramOptions = nGramSizes.map((size) => ({
-    label: `${size}-gram`,
-    value: size,
+const nGramOptions = Array.from({ length: MAX_N_GRAM }, (_, i) => ({
+    label: `${i + 1}-gram`,
+    value: i + 1,
 }));
 
 function validate() {
     errors.value = { text: '', ngram: '' };
-    if (!inputText.value.trim())      errors.value.text  = 'Enter text!';
+    if (!textStore.text.trim())       errors.value.text  = 'Enter text!';
     if (!selectedNGrams.value.length) errors.value.ngram = 'Select at least one n-gram size.';
     return Object.values(errors.value).every((message) => !message);
 }
@@ -53,7 +54,7 @@ function generateKeywords() {
     }
 
     hasSearched.value = true;
-    keywords.value = generateKeyword(inputText.value, selectedNGrams.value);
+    keywords.value = generateKeyword(textStore.text, selectedNGrams.value);
     expandedGroups.value = keywords.value.map((group) => String(group.ngram));
 
     notifyResult(keywords.value.length);
@@ -61,7 +62,7 @@ function generateKeywords() {
 }
 
 function resetKeywords() {
-    inputText.value = '';
+    textStore.text = '';
     selectedNGrams.value = [];
     errors.value = { text: '', ngram: '' };
     lastGeneratedInput.value = currentInput.value;
@@ -75,7 +76,7 @@ function resetKeywords() {
         <div class="flex flex-col gap-3 w-full lg:flex-1 lg:max-w-120">
             <h2 class="text-2xl font-bold text-gray-900">Keyword Generator</h2>
             <div>
-                <MaTextarea v-model="inputText" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
+                <MaTextarea v-model="textStore.text" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
                 <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
             </div>
             <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>

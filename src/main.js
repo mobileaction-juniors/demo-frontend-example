@@ -5,6 +5,7 @@ import { ActionKit } from '@mobileaction/action-kit'
 import { ModuleRegistry, ClientSideRowModelModule } from 'ag-grid-community'
 import "@mobileaction/action-kit/dist/style.css"
 import "./main.css"
+import { createPinia } from 'pinia'
 
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 
@@ -12,5 +13,6 @@ const app = createApp(App)
 
 app.use(router)
 app.use(ActionKit)
+app.use(createPinia())
 
 app.mount('#app')
