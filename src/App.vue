@@ -6,7 +6,7 @@ import TheHeader from './components/TheHeader.vue';
   <div class="min-h-screen bg-gray-50">
       <TheHeader/>
       <router-view v-slot="{ Component }">
-          <keep-alive :include="['KeywordGenerator']">
+          <keep-alive :include="['KeywordGenerator', 'KeywordDensity']">
               <component :is="Component"/>
           </keep-alive>
       </router-view>
