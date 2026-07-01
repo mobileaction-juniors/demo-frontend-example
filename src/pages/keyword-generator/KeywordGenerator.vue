@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { processKeywords } from '../../utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 const sourceDescriptionText = ref('');

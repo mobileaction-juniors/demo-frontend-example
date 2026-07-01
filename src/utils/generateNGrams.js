@@ -1,8 +1,9 @@
 import { removeDuplicates } from './removeDuplicates.js';
+import { splitIntoWords } from './textUtils.js';
 
 export function generateNGrams(cleanedText, selectedNGrams = [1, 2, 3]) {
     const results = [];
-    const cleanedWordsArray = cleanedText ? cleanedText.trim().split(/\s+/) : [];
+    const cleanedWordsArray = splitIntoWords(cleanedText);
 
     for (const n of selectedNGrams) {
         const nGrams = [];

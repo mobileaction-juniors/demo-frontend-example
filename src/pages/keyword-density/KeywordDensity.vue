@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
 import { processKeywordDensity } from '../../utils/calculateDensity';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -11,6 +11,7 @@ const keywordStats = ref([]);
 const totalWords = ref(0);
 const shouldRemoveStopWords = ref(false);
 const totalCharacters = computed(() => inputText.value.length);
+const hasInput = computed(() => inputText.value.trim().length > 0);
 
 const columnDefs = ref([
     { headerName: 'Keyword', field: 'word', flex: 1, minWidth: 150 },
@@ -35,6 +36,14 @@ const calculateDensity = () => {
     const result = processKeywordDensity(inputText.value, shouldRemoveStopWords.value);
     keywordStats.value = result.stats;
     totalWords.value = result.totalWords;
+
+    if (result.stats.length > 0) {
+        MaNotification.success({
+            title: 'Density Calculated',
+            message: `Successfully calculated density for ${result.totalWords} words.`,
+            duration: 2000
+        });
+    }
 };
 
 const copyToClipboard = async () => {
@@ -46,15 +55,13 @@ const copyToClipboard = async () => {
 
     try {
         await navigator.clipboard.writeText(textToCopy);
-        MaNotification({
-            type: 'success',
+        MaNotification.success({
             title: 'Copied!',
             message: 'Table copied to clipboard.',
             duration: 2000
         });
     } catch (err) {
-        MaNotification({
-            type: 'error',
+        MaNotification.error({
             title: 'Error',
             message: 'Failed to copy to clipboard.',
             duration: 2000
@@ -84,7 +91,7 @@ const copyToClipboard = async () => {
                         </MaCheckbox>
                         <p class="m-0 text-sm text-gray-500 whitespace-nowrap">Total Characters: {{ totalCharacters }}</p>
                     </div>
-                    <MaButton color="dark" type="primary" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0">
+                    <MaButton color="dark" type="primary" :disabled="!hasInput" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0">
                         Calculate Density
                     </MaButton>
                 </div>

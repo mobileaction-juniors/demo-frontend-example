@@ -1,15 +1,6 @@
 import { cleanDescription } from './CleanDescription';
-
-function getWordCount(text) {
-    const cleanedText = cleanDescription(text, false);
-    const words = cleanedText.split(/\s+/).filter(w => w.length > 0);
-    return words.length;
-}
-
-function getWordsList(text, removeStopWords) {
-    const processedText = cleanDescription(text, removeStopWords);
-    return processedText.split(/\s+/).filter(w => w.length > 0);
-}
+import { removeStopWords } from './removeStopWords';
+import { splitIntoWords } from './textUtils';
 
 function countWordFrequencies(words) {
     const counts = {};
@@ -19,28 +10,22 @@ function countWordFrequencies(words) {
     return counts;
 }
 
-function groupWordsByFrequency(counts) {
-    const countGroups = {};
-    for (const [word, count] of Object.entries(counts)) {
-        if (!countGroups[count]) {
-            countGroups[count] = [];
+function createKeywordDensityStats(counts, totalWords) {
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const statsArray = [];
+    
+    for (const [word, count] of entries) {
+        if (statsArray.length > 0 && statsArray[statsArray.length - 1].count === count) {
+            statsArray[statsArray.length - 1].word += `, ${word}`;
+        } else {
+            statsArray.push({
+                word: word,
+                count: count,
+                percentage: ((count / totalWords) * 100).toFixed(1)
+            });
         }
-        countGroups[count].push(word);
     }
-    return countGroups;
-}
-
-function calculateStatsArray(countGroups, totalWords) {
-    const statsArray = Object.entries(countGroups).map(([countStr, wordsArray]) => {
-        const count = parseInt(countStr);
-        return {
-            word: wordsArray.join(', '),
-            count,
-            percentage: ((count / totalWords) * 100).toFixed(1)
-        };
-    });
-
-    statsArray.sort((a, b) => b.count - a.count);
+    
     return statsArray;
 }
 
@@ -49,16 +34,19 @@ export function processKeywordDensity(text, shouldRemoveStopWords) {
         return { stats: [], totalWords: 0 };
     }
 
-    const totalWords = getWordCount(text);
-    const words = getWordsList(text, shouldRemoveStopWords);
+    const baseCleanedText = cleanDescription(text, false);
+    const baseWords = splitIntoWords(baseCleanedText);
+    const totalWords = baseWords.length;
 
-    if (words.length === 0) {
-        return { stats: [], totalWords };
+    if (totalWords === 0) {
+        return { stats: [], totalWords: 0 };
     }
 
+    const finalCleanedText = shouldRemoveStopWords ? removeStopWords(baseCleanedText) : baseCleanedText;
+    const words = splitIntoWords(finalCleanedText);
+
     const counts = countWordFrequencies(words);
-    const countGroups = groupWordsByFrequency(counts);
-    const stats = calculateStatsArray(countGroups, totalWords);
+    const stats = createKeywordDensityStats(counts, totalWords);
 
     return { stats, totalWords };
 }
