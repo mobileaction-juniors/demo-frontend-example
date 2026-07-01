@@ -1,23 +1,12 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
-import { cleanDescription } from '../../utils/CleanDescription';
-import { sharedKeywordText } from '../../utils/sharedState';
+import { processKeywordDensity } from '../../utils/calculateDensity';
 import { AgGridVue } from 'ag-grid-vue3';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+const STATIC_PARENT_TEXT = 'Our Keyword Counter tool lets you count how many times keywords are repeated in any text, and also calculates the density of these keywords. The keyword density is the percentage of times a keyword appears in a text compared to the total number of words in that text. Simply write or paste your text here and hit "count".';
 
-const props = defineProps({
-    initialText: {
-        type: String,
-        default: ''
-    }
-});
-
-const inputText = ref('');
+const inputText = ref(STATIC_PARENT_TEXT);
 const keywordStats = ref([]);
 const totalWords = ref(0);
 const shouldRemoveStopWords = ref(false);
@@ -40,61 +29,12 @@ const columnDefs = ref([
     }
 ]);
 
-onMounted(() => {
-    if (sharedKeywordText.value) {
-        inputText.value = sharedKeywordText.value;
-    } else if (props.initialText) {
-        inputText.value = props.initialText;
-    }
-});
 
-watch(inputText, (newVal) => {
-    sharedKeywordText.value = newVal;
-});
 
 const calculateDensity = () => {
-    if (!inputText.value.trim()) {
-        keywordStats.value = [];
-        totalWords.value = 0;
-        return;
-    }
-
-    const baseCleanedText = cleanDescription(inputText.value, false);
-    const baseWords = baseCleanedText.split(/\s+/).filter(w => w.length > 0);
-    totalWords.value = baseWords.length;
-
-    const processedText = cleanDescription(inputText.value, shouldRemoveStopWords.value);
-    const words = processedText.split(/\s+/).filter(w => w.length > 0);
-
-    if (words.length === 0) {
-        keywordStats.value = [];
-        return;
-    }
-
-    const counts = {};
-    for (const word of words) {
-        counts[word] = (counts[word] || 0) + 1;
-    }
-
-    const countGroups = {};
-    for (const [word, count] of Object.entries(counts)) {
-        if (!countGroups[count]) {
-            countGroups[count] = [];
-        }
-        countGroups[count].push(word);
-    }
-
-    const statsArray = Object.entries(countGroups).map(([countStr, wordsArray]) => {
-        const count = parseInt(countStr);
-        return {
-            word: wordsArray.join(', '),
-            count,
-            percentage: ((count / totalWords.value) * 100).toFixed(1)
-        };
-    });
-
-    statsArray.sort((a, b) => b.count - a.count);
-    keywordStats.value = statsArray;
+    const result = processKeywordDensity(inputText.value, shouldRemoveStopWords.value);
+    keywordStats.value = result.stats;
+    totalWords.value = result.totalWords;
 };
 
 const copyToClipboard = async () => {
