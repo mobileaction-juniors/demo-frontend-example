@@ -14,6 +14,9 @@ const expandedGroups = ref([]);
 const currentInput = computed(() => `${inputText.value}|${selectedNGrams.value.join(',')}`);
 const lastGeneratedInput = ref(currentInput.value);
 const isUnchanged = computed(() => currentInput.value === lastGeneratedInput.value);
+const isResetDisabled = computed(() =>
+    !inputText.value.trim() && selectedNGrams.value.length === 0 && keywords.value.length === 0,
+);
 
 const MAX_N_GRAM = 10;
 const nGramSizes = Array.from({ length: MAX_N_GRAM }, (_, i) => i + 1);
@@ -77,7 +80,7 @@ function resetKeywords() {
             </div>
             <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
             <MaButton color="dark" icon="ai-sparkle" :disabled="isUnchanged" @click="generateKeywords">Generate</MaButton>
-            <MaButton variant="stroke" icon="refresh" @click="resetKeywords">Reset Keywords</MaButton>
+            <MaButton variant="stroke" icon="refresh" :disabled="isResetDisabled" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
         <MaCard class="flex-1 min-w-0" title="Results" bordered>
             <MaCollapse v-if="keywords.length" v-model:expanded-values="expandedGroups" mode="multiple">
