@@ -3,6 +3,12 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
 import { cleanDescription } from '../../utils/CleanDescription';
 import { sharedKeywordText } from '../../utils/sharedState';
+import { AgGridVue } from 'ag-grid-vue3';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const props = defineProps({
     initialText: {
@@ -16,6 +22,23 @@ const keywordStats = ref([]);
 const totalWords = ref(0);
 const shouldRemoveStopWords = ref(false);
 const totalCharacters = computed(() => inputText.value.length);
+
+const columnDefs = ref([
+    { headerName: 'Keyword', field: 'word', flex: 1, minWidth: 150 },
+    { 
+        headerName: 'Count', 
+        field: 'count', 
+        width: 120, 
+        type: 'numericColumn' 
+    },
+    { 
+        headerName: 'Density', 
+        field: 'percentage', 
+        width: 120, 
+        type: 'numericColumn',
+        valueFormatter: params => `${params.value}%`
+    }
+]);
 
 onMounted(() => {
     if (sharedKeywordText.value) {
@@ -127,33 +150,18 @@ const copyToClipboard = async () => {
                 </div>
             </div>
 
-            <div class="w-full lg:w-1/2">
-                <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-                    <table class="w-full text-left border-collapse bg-white">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-sm font-semibold text-gray-700 border-b border-gray-200">Keyword</th>
-                                <th class="px-6 py-3 text-sm font-semibold text-gray-700 border-b border-gray-200 text-right">Count</th>
-                                <th class="px-6 py-3 text-sm font-semibold text-gray-700 border-b border-gray-200 text-right">Density</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr v-if="keywordStats.length === 0">
-                                <td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">
-                                    No keywords to display. Enter text and calculate density.
-                                </td>
-                            </tr>
-                            <tr v-for="stat in keywordStats" :key="stat.word" class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ stat.word }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600 text-right">{{ stat.count }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600 text-right">
-                                    <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">
-                                        {{ stat.percentage }}%
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                <div v-if="keywordStats.length === 0" class="border border-gray-200 rounded-lg p-8 text-center text-gray-500 text-sm bg-white shadow-sm">
+                    No keywords to display. Enter text and calculate density.
+                </div>
+                <div v-else class="ag-theme-alpine w-full shadow-sm rounded-lg overflow-hidden border border-gray-200">
+                    <ag-grid-vue
+                        style="width: 100%;"
+                        :columnDefs="columnDefs"
+                        :rowData="keywordStats"
+                        domLayout="autoHeight"
+                    >
+                    </ag-grid-vue>
                 </div>
                 <div v-if="keywordStats.length > 0" class="mt-4">
                     <MaButton variant="stroke" type="primary" @click="copyToClipboard">

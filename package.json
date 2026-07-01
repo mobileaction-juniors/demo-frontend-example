@@ -12,6 +12,8 @@
   "dependencies": {
     "@mobileaction/action-kit": "^1.58.18",
     "@tailwindcss/vite": "^4.3.1",
+    "ag-grid-community": "^36.0.0",
+    "ag-grid-vue3": "^36.0.0",
     "tailwindcss": "^4.3.1",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
