@@ -2,30 +2,28 @@ import { cleanDescription } from './CleanDescription';
 import { filterArr as stopWords } from '@/cleanupResources';
 
 export const computeKeywordDensity = (text) => {
-    const allWords = cleanDescription(text).split(' ').filter(Boolean);
-    const totalWords = allWords.length;
+    const words = cleanDescription(text).split(' ').filter(Boolean);
+    const totalWords = words.length;
     if (totalWords === 0) return [];
 
-    const countByKeyword = {};
-    for (const word of allWords) {
+    const countByKeyword = new Map();
+    for (const word of words) {
         if (stopWords.includes(word)) continue;
-        countByKeyword[word] = (countByKeyword[word] || 0) + 1;
+        countByKeyword.set(word, (countByKeyword.get(word) ?? 0) + 1);
     }
 
-    const keywordsByCount = {};
-    for (const [keyword, count] of Object.entries(countByKeyword)) {
-        (keywordsByCount[count] ??= []).push(keyword);
+    const keywordsByCount = new Map();
+    for (const [keyword, count] of countByKeyword) {
+        const group = keywordsByCount.get(count) ?? [];
+        group.push(keyword);
+        keywordsByCount.set(count, group);
     }
 
-    const rows = [];
-    for (const [count, keywords] of Object.entries(keywordsByCount)) {
-        const occurrences = Number(count);
-        rows.push({
+    return [...keywordsByCount]
+        .map(([count, keywords]) => ({
             keyword: keywords.join(', '),
-            count: occurrences,
-            density: (occurrences / totalWords) * 100,
-        });
-    }
-
-    return rows.sort((a, b) => b.count - a.count);
+            count,
+            density: (count / totalWords) * 100,
+        }))
+        .sort((a, b) => b.count - a.count);
 };

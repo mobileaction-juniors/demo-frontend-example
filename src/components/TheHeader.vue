@@ -1,9 +1,9 @@
 <script setup>
-import TheNav from './TheNav.vue';
+import TheMenu from './TheMenu.vue';
 </script>
 
 <template>
     <header class="flex p-4">
-        <TheNav/>
+        <TheMenu/>
     </header>
 </template>
