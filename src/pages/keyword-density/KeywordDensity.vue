@@ -1,8 +1,14 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
 import { cleanDescription } from '../../utils/CleanDescription';
+import { sharedKeywordText } from '../../utils/sharedState';
 import { AgGridVue } from 'ag-grid-vue3';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const props = defineProps({
     initialText: {
@@ -35,9 +41,15 @@ const columnDefs = ref([
 ]);
 
 onMounted(() => {
-    if (props.initialText) {
+    if (sharedKeywordText.value) {
+        inputText.value = sharedKeywordText.value;
+    } else if (props.initialText) {
         inputText.value = props.initialText;
     }
+});
+
+watch(inputText, (newVal) => {
+    sharedKeywordText.value = newVal;
 });
 
 const calculateDensity = () => {
