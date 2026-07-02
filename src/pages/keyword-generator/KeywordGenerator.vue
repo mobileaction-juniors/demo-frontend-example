@@ -15,7 +15,7 @@ const errors = ref({ text: '', ngram: '' });
 const hasSearched = ref(false);
 const expandedGroups = ref([]);
 const currentInput = computed(() => `${textStore.text}|${selectedNGrams.value.join(',')}`);
-const lastGeneratedInput = ref(currentInput.value);
+const lastGeneratedInput = ref(null);
 const isUnchanged = computed(() => currentInput.value === lastGeneratedInput.value);
 const isResetDisabled = computed(() =>
     !textStore.text.trim() && selectedNGrams.value.length === 0 && keywords.value.length === 0,
@@ -40,9 +40,9 @@ function clearResults() {
     expandedGroups.value = [];
 }
 
-function notifyResult(groupCount) {
-    if (groupCount) {
-        MaNotification.success({ title: 'Keywords generated', description: `Found ${groupCount} n-gram groups.` });
+function notifyResult(keywordCount) {
+    if (keywordCount) {
+        MaNotification.success({ title: 'Keywords generated', description: `Found ${keywordCount} keywords.` });
     } else {
         MaNotification.warning({ title: 'No keywords found', description: 'Try different text or smaller sizes.' });
     }
@@ -58,7 +58,8 @@ function generateKeywords() {
     keywords.value = generateKeyword(textStore.text, selectedNGrams.value);
     expandedGroups.value = keywords.value.map((group) => String(group.ngram));
 
-    notifyResult(keywords.value.length);
+    const keywordCount = keywords.value.reduce((sum, group) => sum + group.keywords.length, 0);
+    notifyResult(keywordCount);
     lastGeneratedInput.value = currentInput.value;
 }
 
@@ -97,9 +98,10 @@ function resetKeywords() {
                     :title="`${group.ngram}-gram (${group.keywords.length})`"
                 >
                     <template #content>
-                        <div class="flex flex-wrap gap-2">
+                        <div v-if="group.keywords.length" class="flex flex-wrap gap-2">
                             <MaBadge v-for="keyword in group.keywords" :key="keyword" size="large" type="secondary" variant="teal" class="whitespace-normal break-words">{{ keyword }}</MaBadge>
                         </div>
+                        <p v-else class="text-sm text-gray-500">No n-gram result</p>
                     </template>
                 </MaCollapseItem>
             </MaCollapse>
