@@ -1,8 +1,16 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useKeywordStore } from '../../stores/keywordStore';
 import { processKeywords } from '../../utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
-const sourceDescriptionText = ref('');
+
+const store = useKeywordStore();
+const sourceDescriptionText = computed({
+    get: () => store.sharedInputText === store.STATIC_PARENT_TEXT ? '' : store.sharedInputText,
+    set: (val) => { store.sharedInputText = val; }
+});
+
 const selectedNGrams = ref([1, 2, 3]);
 const shouldRemoveStopWords = ref(true);
 const MAX_NGRAM_SIZE = 10;

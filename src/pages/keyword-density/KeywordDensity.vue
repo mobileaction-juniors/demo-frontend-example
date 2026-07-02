@@ -1,12 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useKeywordStore } from '../../stores/keywordStore';
 import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
 import { processKeywordDensity } from '../../utils/calculateDensity';
 import { AgGridVue } from 'ag-grid-vue3';
 
-const STATIC_PARENT_TEXT = 'Our Keyword Counter tool lets you count how many times keywords are repeated in any text, and also calculates the density of these keywords. The keyword density is the percentage of times a keyword appears in a text compared to the total number of words in that text. Simply write or paste your text here and hit "count".';
-
-const inputText = ref(STATIC_PARENT_TEXT);
+const store = useKeywordStore();
+store.initDensityText();
+const { sharedInputText: inputText } = storeToRefs(store);
 const keywordStats = ref([]);
 const totalWords = ref(0);
 const shouldRemoveStopWords = ref(false);
