@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 
+// Store the input and generated keyword groups as reactive state.
 const userInput = ref('');
 const generatedKeywords = ref({
     oneGram: [],
@@ -8,6 +9,8 @@ const generatedKeywords = ref({
     threeGram: [],
 });
 const hasGenerated = ref(false);
+
+// Provide a single data source for rendering each n-gram result section.
 const keywordSections = computed(() => [
     {
         title: '1-Gram',
@@ -23,12 +26,14 @@ const keywordSections = computed(() => [
     },
 ]);
 
+// Normalize the input into lowercase words separated by single spaces.
 const cleanInput = (input) => input
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()
     .replace(/\s+/g, ' ');
 
+// Build unique consecutive word groups while preserving their original order.
 const generateUniqueNGrams = (words, gramSize) => {
     const keywords = [];
 
@@ -39,6 +44,7 @@ const generateUniqueNGrams = (words, gramSize) => {
     return [...new Set(keywords)];
 };
 
+// Clean the current input and generate the required ONB-201 n-gram groups.
 const generateKeywords = () => {
     const cleanedInput = cleanInput(userInput.value);
     const words = cleanedInput ? cleanedInput.split(' ') : [];
@@ -83,12 +89,14 @@ const generateKeywords = () => {
 </template>
 
 <style scoped>
+/* Keep the generator content centered and comfortably spaced. */
 .ma-keyword-generator {
     max-width: 800px;
     margin: 0 auto;
     padding: 24px;
 }
 
+/* Let the text input fill the available content width. */
 .ma-keyword-input {
     display: block;
     width: 100%;
@@ -96,6 +104,7 @@ const generateKeywords = () => {
     box-sizing: border-box;
 }
 
+/* Arrange the result groups responsively across the available space. */
 .ma-keyword-results {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
