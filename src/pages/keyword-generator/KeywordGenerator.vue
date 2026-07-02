@@ -1,15 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useKeywordStore } from '../../stores/keywordStore';
-import { processKeywords } from '../../utils/keywordGeneratorActions';
+
+import { useKeywordStore } from '@/stores/keywordStore';
+import { processKeywords } from '@/utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
-const store = useKeywordStore();
-const sourceDescriptionText = computed({
-    get: () => store.sharedInputText === store.STATIC_PARENT_TEXT ? '' : store.sharedInputText,
-    set: (val) => { store.sharedInputText = val; }
-});
+const keywordStore = useKeywordStore();
 
 const selectedNGrams = ref([1, 2, 3]);
 const shouldRemoveStopWords = ref(true);
@@ -21,13 +17,25 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
 }));
 
 const generatedKeywordNGrams = ref([]);
-const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
+const hasInput = computed(() => keywordStore.sharedInputText.trim().length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
+
+const lastGeneratedState = ref({
+    text: null,
+    removeStopWords: null,
+    nGrams: null
+});
+const hasStateChanged = computed(() => {
+    const currentNGrams = [...selectedNGrams.value].sort().join(',');
+    return keywordStore.sharedInputText !== lastGeneratedState.value.text ||
+           shouldRemoveStopWords.value !== lastGeneratedState.value.removeStopWords ||
+           currentNGrams !== lastGeneratedState.value.nGrams;
+});
 
 
 const generateKeywordsOnDemand = () => {
     const result = processKeywords(
-        sourceDescriptionText.value,
+        keywordStore.sharedInputText,
         selectedNGrams.value,
         shouldRemoveStopWords.value
     );
@@ -43,6 +51,12 @@ const generateKeywordsOnDemand = () => {
     
     generatedKeywordNGrams.value = result.generatedKeywordNGrams;
     
+    lastGeneratedState.value = {
+        text: keywordStore.sharedInputText,
+        removeStopWords: shouldRemoveStopWords.value,
+        nGrams: [...selectedNGrams.value].sort().join(',')
+    };
+    
     MaNotification.success({
         title: 'Keywords Generated',
         message: `${result.totalCount} unique keyword${result.totalCount === 1 ? '' : 's'} created across ${result.labels}.`
@@ -51,8 +65,9 @@ const generateKeywordsOnDemand = () => {
 
 const resetKeywordInput = () => {
     const hadGeneratedKeywords = hasGeneratedKeywords.value;
-    sourceDescriptionText.value = '';
+    keywordStore.sharedInputText = '';
     generatedKeywordNGrams.value = [];
+    lastGeneratedState.value = { text: null, removeStopWords: null, nGrams: null };
 
     MaNotification.success({
         title: 'Text Cleared',
@@ -78,14 +93,14 @@ const resetKeywordInput = () => {
                 placeholder="Select N-Grams to generate"
                 class="w-full max-w-md dark:invert dark:hue-rotate-180"
             />
-            <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:invert dark:hue-rotate-180">
-                Remove Stop Words
+            <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:!text-slate-100">
+                <span class="dark:!text-slate-100">Remove Stop Words</span>
             </MaCheckbox>
         </div>
 
         <div class="mb-8">
             <MaTextarea
-                v-model="sourceDescriptionText"
+                v-model="keywordStore.sharedInputText"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
                 class="dark:invert dark:hue-rotate-180"
@@ -98,7 +113,7 @@ const resetKeywordInput = () => {
                     <MaButton class="w-36 dark:invert dark:hue-rotate-180" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48 dark:invert dark:hue-rotate-180" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48 dark:invert dark:hue-rotate-180" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput || !hasStateChanged" @click="generateKeywordsOnDemand">
                         Generate Keywords
                     </MaButton>
                 </div>

@@ -13,8 +13,6 @@ export const useKeywordStore = defineStore('keyword', () => {
     }
 
     return {
-        sharedInputText,
-        STATIC_PARENT_TEXT,
-        initDensityText
+        sharedInputText
     };
 });

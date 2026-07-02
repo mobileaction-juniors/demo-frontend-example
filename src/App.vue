@@ -1,6 +1,6 @@
 <script setup>
-import TheHeader from './components/TheHeader.vue';
-import { useThemeStore } from './stores/themeStore';
+import TheHeader from '@/components/TheHeader.vue';
+import { useThemeStore } from '@/stores/themeStore';
 
 useThemeStore();
 </script>

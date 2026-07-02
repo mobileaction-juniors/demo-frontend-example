@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { MaButton, MaDrawer } from '@mobileaction/action-kit';
-import { useThemeStore } from '../stores/themeStore';
+import { useThemeStore } from '@/stores/themeStore';
 
 const isNavigationDrawerOpen = ref(false);
 

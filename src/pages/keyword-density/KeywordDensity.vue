@@ -1,19 +1,35 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useKeywordStore } from '../../stores/keywordStore';
-import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification } from '@mobileaction/action-kit';
-import { processKeywordDensity } from '../../utils/calculateDensity';
+import { ref, computed, onMounted } from 'vue';
+
+import { useKeywordStore } from '@/stores/keywordStore';
+import { MaTextarea, MaButton, MaCheckbox2 as MaCheckbox, MaNotification, MaEmpty } from '@mobileaction/action-kit';
+import { processKeywordDensity } from '@/utils/calculateDensity';
 import { AgGridVue } from 'ag-grid-vue3';
 
-const store = useKeywordStore();
-store.initDensityText();
-const { sharedInputText: inputText } = storeToRefs(store);
+const keywordStore = useKeywordStore();
+
+const STATIC_PARENT_TEXT = 'Our Keyword Counter tool lets you count how many times keywords are repeated in any text, and also calculates the density of these keywords. The keyword density is the percentage of times a keyword appears in a text compared to the total number of words in that text. Simply write or paste your text here and hit "count".';
+
+onMounted(() => {
+    if (!keywordStore.sharedInputText) {
+        keywordStore.sharedInputText = STATIC_PARENT_TEXT;
+    }
+});
+
 const keywordStats = ref([]);
 const totalWords = ref(0);
 const shouldRemoveStopWords = ref(false);
-const totalCharacters = computed(() => inputText.value.length);
-const hasInput = computed(() => inputText.value.trim().length > 0);
+const totalCharacters = computed(() => keywordStore.sharedInputText.length);
+const hasInput = computed(() => keywordStore.sharedInputText.trim().length > 0);
+
+const lastCalculatedState = ref({
+    text: null,
+    removeStopWords: null
+});
+const hasStateChanged = computed(() => {
+    return keywordStore.sharedInputText !== lastCalculatedState.value.text ||
+           shouldRemoveStopWords.value !== lastCalculatedState.value.removeStopWords;
+});
 
 const columnDefs = ref([
     { headerName: 'Keyword', field: 'word', flex: 1, minWidth: 150 },
@@ -35,9 +51,14 @@ const columnDefs = ref([
 
 
 const calculateDensity = () => {
-    const result = processKeywordDensity(inputText.value, shouldRemoveStopWords.value);
+    const result = processKeywordDensity(keywordStore.sharedInputText, shouldRemoveStopWords.value);
     keywordStats.value = result.stats;
     totalWords.value = result.totalWords;
+
+    lastCalculatedState.value = {
+        text: keywordStore.sharedInputText,
+        removeStopWords: shouldRemoveStopWords.value
+    };
 
     if (result.stats.length > 0) {
         MaNotification.success({
@@ -82,28 +103,26 @@ const copyToClipboard = async () => {
         <div class="flex flex-col lg:flex-row gap-6 w-full items-start">
             <div class="w-full lg:w-1/2 flex flex-col gap-4">
                 <MaTextarea
-                    v-model="inputText"
+                    v-model="keywordStore.sharedInputText"
                     placeholder="Enter your text here..."
                     :rows="12"
                     class="dark:invert dark:hue-rotate-180"
                 />
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 px-1">
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-                        <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:invert dark:hue-rotate-180">
-                            <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Remove Stop Words</span>
+                        <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:!text-slate-100">
+                            <span class="text-sm font-medium text-gray-700 dark:!text-slate-100 whitespace-nowrap">Remove Stop Words</span>
                         </MaCheckbox>
                         <p class="m-0 text-sm text-gray-500 whitespace-nowrap">Total Characters: {{ totalCharacters }}</p>
                     </div>
-                    <MaButton color="dark" type="primary" :disabled="!hasInput" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0 dark:!bg-black dark:!border-black dark:!text-white">
+                    <MaButton color="dark" type="primary" :disabled="!hasInput || !hasStateChanged" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0 dark:!bg-black dark:!border-black dark:!text-white">
                         Calculate Density
                     </MaButton>
                 </div>
             </div>
 
             <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                <div v-if="keywordStats.length === 0" class="border border-gray-200 rounded-lg p-8 text-center text-gray-500 text-sm bg-white shadow-sm dark:!bg-slate-800 dark:!border-slate-700 dark:!text-gray-400">
-                    No keywords to display. Enter text and calculate density.
-                </div>
+                <MaEmpty v-if="keywordStats.length === 0" description="No keywords to display. Enter text and calculate density." class="dark:invert dark:hue-rotate-180"></MaEmpty>
                 <div v-else class="ag-theme-alpine w-full shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:invert dark:hue-rotate-180">
                     <ag-grid-vue
                         style="width: 100%;"
