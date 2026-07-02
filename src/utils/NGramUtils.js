@@ -11,7 +11,7 @@ export const generateKeyword = (text, nGramSizes) => {
 
     for (const size of sortedNGrams) {
         const keywords = generateNGram(textArray, size);
-        if (keywords.length > 0) result.push({ ngram: size, keywords });
+        result.push({ ngram: size, keywords });
     }
 
     return result;
