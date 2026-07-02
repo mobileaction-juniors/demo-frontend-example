@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const userInput = ref('');
 const generatedKeywords = ref({
@@ -8,6 +8,20 @@ const generatedKeywords = ref({
     threeGram: [],
 });
 const hasGenerated = ref(false);
+const keywordSections = computed(() => [
+    {
+        title: '1-Gram',
+        keywords: generatedKeywords.value.oneGram,
+    },
+    {
+        title: '2-Gram',
+        keywords: generatedKeywords.value.twoGram,
+    },
+    {
+        title: '3-Gram',
+        keywords: generatedKeywords.value.threeGram,
+    },
+]);
 
 const cleanInput = (input) => input
     .toLowerCase()
@@ -55,30 +69,10 @@ const generateKeywords = () => {
         </button>
 
         <section v-if="hasGenerated" class="ma-keyword-results" aria-live="polite">
-            <div>
-                <h2>1-Gram</h2>
-                <ul v-if="generatedKeywords.oneGram.length">
-                    <li v-for="keyword in generatedKeywords.oneGram" :key="keyword">
-                        {{ keyword }}
-                    </li>
-                </ul>
-                <p v-else>No keywords generated.</p>
-            </div>
-
-            <div>
-                <h2>2-Gram</h2>
-                <ul v-if="generatedKeywords.twoGram.length">
-                    <li v-for="keyword in generatedKeywords.twoGram" :key="keyword">
-                        {{ keyword }}
-                    </li>
-                </ul>
-                <p v-else>No keywords generated.</p>
-            </div>
-
-            <div>
-                <h2>3-Gram</h2>
-                <ul v-if="generatedKeywords.threeGram.length">
-                    <li v-for="keyword in generatedKeywords.threeGram" :key="keyword">
+            <div v-for="section in keywordSections" :key="section.title">
+                <h2>{{ section.title }}</h2>
+                <ul v-if="section.keywords.length">
+                    <li v-for="keyword in section.keywords" :key="keyword">
                         {{ keyword }}
                     </li>
                 </ul>
