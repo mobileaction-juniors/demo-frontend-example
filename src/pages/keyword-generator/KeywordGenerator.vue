@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onActivated } from 'vue';
 import { MaBadge, MaTextarea, MaButton, MaSelect2 as MaSelect, MaNotification, MaEmpty, MaCollapse, MaCollapseItem, MaCard } from '@mobileaction/action-kit';
 import { generateKeyword } from '@/utils/NGramUtils';
 import { useTextStore } from '@/stores/text';
@@ -8,7 +8,8 @@ defineOptions({ name: 'KeywordGenerator' });
 
 const textStore = useTextStore();
 
-const selectedNGrams = ref([1, 2, 3]);
+const DEFAULT_NGRAMS = [1, 2, 3];
+const selectedNGrams = ref([...DEFAULT_NGRAMS]);
 const keywords = ref([]);
 const errors = ref({ text: '', ngram: '' });
 const hasSearched = ref(false);
@@ -60,6 +61,10 @@ function generateKeywords() {
     notifyResult(keywords.value.length);
     lastGeneratedInput.value = currentInput.value;
 }
+
+onActivated(() => {
+    selectedNGrams.value = [...DEFAULT_NGRAMS];
+});
 
 function resetKeywords() {
     textStore.text = '';
