@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { MaTextarea, MaButton } from '@mobileaction/action-kit';
+import { MaTextarea, MaButton, MaNotification } from '@mobileaction/action-kit';
 import { AgGridVue } from 'ag-grid-vue3';
 import { computeKeywordDensity } from '@/utils/KeywordDensity';
 import { useTextStore } from '@/stores/text';
@@ -9,6 +9,7 @@ defineOptions({ name: 'KeywordDensity' });
 
 const textStore = useTextStore();
 
+const gridApi = ref(null);
 const rows = ref(computeKeywordDensity(textStore.text));
 const lastCalculated = ref(textStore.text);
 const isUnchanged = computed(() => textStore.text === lastCalculated.value);
@@ -27,6 +28,15 @@ function calculateDensity() {
     rows.value = computeKeywordDensity(textStore.text);
     lastCalculated.value = textStore.text;
 }
+
+async function copyCsv() {
+    try {
+        await navigator.clipboard.writeText(gridApi.value.getDataAsCsv());
+        MaNotification.success({ title: 'Copied', description: 'Table copied as CSV.' });
+    } catch {
+        MaNotification.warning({ title: 'Copy failed', description: 'Could not access clipboard.' });
+    }
+}
 </script>
 
 <template>
@@ -37,7 +47,10 @@ function calculateDensity() {
             <MaButton color="dark" :disabled="isUnchanged" @click="calculateDensity">Calculate</MaButton>
         </div>
         <div class="flex-1 min-w-0">
-            <AgGridVue :row-data="rows" :column-defs="columnDefs" class="h-150"/>
+            <div class="flex justify-end mb-3">
+                <MaButton variant="stroke" icon="copy" :disabled="!rows.length" @click="copyCsv">Copy as CSV</MaButton>
+            </div>
+            <AgGridVue :row-data="rows" :column-defs="columnDefs" class="h-150" @grid-ready="gridApi = $event.api"/>
         </div>
     </div>
 </template>

@@ -2,12 +2,12 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { ActionKit } from '@mobileaction/action-kit'
-import { ModuleRegistry, ClientSideRowModelModule } from 'ag-grid-community'
+import { ModuleRegistry, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community'
 import "@mobileaction/action-kit/dist/style.css"
 import "./main.css"
 import { createPinia } from 'pinia'
 
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule])
 
 const app = createApp(App)
 
