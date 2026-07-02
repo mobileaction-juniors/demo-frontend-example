@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue';
 import { processKeywords } from '../../utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
-
 const sourceDescriptionText = ref('');
 const selectedNGrams = ref([1, 2, 3]);
 const shouldRemoveStopWords = ref(true);
@@ -16,6 +15,7 @@ const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
 const generatedKeywordNGrams = ref([]);
 const hasInput = computed(() => sourceDescriptionText.value.trim().length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
+
 
 const generateKeywordsOnDemand = () => {
     const result = processKeywords(

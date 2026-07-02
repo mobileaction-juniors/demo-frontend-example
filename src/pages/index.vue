@@ -13,13 +13,17 @@ const openTaskLink = () => {
         <h1 class="text-3xl font-bold text-slate-800 m-0">Welcome to Onboarding Progress</h1>
         <p class="text-gray-500 text-lg">You can see the your first task details via link. Please continue that steps while coding.</p>
         
-        <div class="flex flex-col sm:flex-row items-center gap-4 mt-6">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6 flex-wrap">
             <MaButton @click="openTaskLink">
                 Implement First Front-End Task
             </MaButton>
             
             <MaButton type="primary" @click="router.push('/keyword-generator')">
                 Open Keyword Generator
+            </MaButton>
+
+            <MaButton type="primary" @click="router.push('/keyword-density')">
+                Open Keyword Density
             </MaButton>
         </div>
     </div>
