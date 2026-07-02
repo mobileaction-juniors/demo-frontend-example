@@ -8,7 +8,7 @@ defineOptions({ name: 'KeywordGenerator' });
 
 const textStore = useTextStore();
 
-const selectedNGrams = ref([]);
+const selectedNGrams = ref([1, 2, 3]);
 const keywords = ref([]);
 const errors = ref({ text: '', ngram: '' });
 const hasSearched = ref(false);
