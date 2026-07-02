@@ -75,8 +75,8 @@ const copyToClipboard = async () => {
 <template>
     <div class="p-5 max-w-7xl mx-auto font-sans">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold mb-2 text-slate-800">Keyword Density</h1>
-            <p class="text-gray-500 text-base m-0">Count keywords and calculate their density percentage from your text.</p>
+            <h1 class="text-3xl font-bold mb-2 text-slate-800 dark:text-slate-100">Keyword Density</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-base m-0">Count keywords and calculate their density percentage from your text.</p>
         </div>
 
         <div class="flex flex-col lg:flex-row gap-6 w-full items-start">
@@ -85,25 +85,26 @@ const copyToClipboard = async () => {
                     v-model="inputText"
                     placeholder="Enter your text here..."
                     :rows="12"
+                    class="dark:invert dark:hue-rotate-180"
                 />
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 px-1">
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-                        <MaCheckbox v-model:checked="shouldRemoveStopWords">
+                        <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:invert dark:hue-rotate-180">
                             <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Remove Stop Words</span>
                         </MaCheckbox>
                         <p class="m-0 text-sm text-gray-500 whitespace-nowrap">Total Characters: {{ totalCharacters }}</p>
                     </div>
-                    <MaButton color="dark" type="primary" :disabled="!hasInput" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0">
+                    <MaButton color="dark" type="primary" :disabled="!hasInput" @click="calculateDensity" class="px-6 sm:px-8 flex-shrink-0 dark:!bg-black dark:!border-black dark:!text-white">
                         Calculate Density
                     </MaButton>
                 </div>
             </div>
 
             <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                <div v-if="keywordStats.length === 0" class="border border-gray-200 rounded-lg p-8 text-center text-gray-500 text-sm bg-white shadow-sm">
+                <div v-if="keywordStats.length === 0" class="border border-gray-200 rounded-lg p-8 text-center text-gray-500 text-sm bg-white shadow-sm dark:!bg-slate-800 dark:!border-slate-700 dark:!text-gray-400">
                     No keywords to display. Enter text and calculate density.
                 </div>
-                <div v-else class="ag-theme-alpine w-full shadow-sm rounded-lg overflow-hidden border border-gray-200">
+                <div v-else class="ag-theme-alpine w-full shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:invert dark:hue-rotate-180">
                     <ag-grid-vue
                         style="width: 100%;"
                         :columnDefs="columnDefs"

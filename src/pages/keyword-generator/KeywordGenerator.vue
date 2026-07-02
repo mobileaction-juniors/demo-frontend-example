@@ -66,8 +66,8 @@ const resetKeywordInput = () => {
 <template>
     <div class="p-5 max-w-5xl mx-auto font-sans">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold mb-2 text-slate-800">Keyword Generator</h1>
-            <p class="text-gray-500 text-base m-0">Generate 1-{{ MAX_NGRAM_SIZE }} gram keywords from your text without duplicates.</p>
+            <h1 class="text-3xl font-bold mb-2 text-slate-800 dark:text-slate-100">Keyword Generator</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-base m-0">Generate 1-{{ MAX_NGRAM_SIZE }} gram keywords from your text without duplicates.</p>
         </div>
 
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -76,9 +76,9 @@ const resetKeywordInput = () => {
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
-                class="w-full max-w-md"
+                class="w-full max-w-md dark:invert dark:hue-rotate-180"
             />
-            <MaCheckbox v-model:checked="shouldRemoveStopWords">
+            <MaCheckbox v-model:checked="shouldRemoveStopWords" class="dark:invert dark:hue-rotate-180">
                 Remove Stop Words
             </MaCheckbox>
         </div>
@@ -88,16 +88,17 @@ const resetKeywordInput = () => {
                 v-model="sourceDescriptionText"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
+                class="dark:invert dark:hue-rotate-180"
             />
             <div class="mt-3 flex flex-wrap items-center justify-between gap-4">
                 <p class="m-0 text-sm text-gray-500">
                     {{ hasInput ? 'Ready to generate keyword ideas.' : 'Paste a description to enable keyword actions.' }}
                 </p>
                 <div class="flex shrink-0 flex-row gap-3">
-                    <MaButton class="w-36" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
+                    <MaButton class="w-36 dark:invert dark:hue-rotate-180" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48 dark:invert dark:hue-rotate-180" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput" @click="generateKeywordsOnDemand">
                         Generate Keywords
                     </MaButton>
                 </div>
@@ -109,6 +110,7 @@ const resetKeywordInput = () => {
                 v-for="nGramCategory in generatedKeywordNGrams" 
                 :key="nGramCategory.id"
                 :title="nGramCategory.title"
+                class="dark:invert dark:hue-rotate-180"
             >
                 <template #headerActions>
                     <MaBadge>{{ nGramCategory.keywords.length }}</MaBadge>
@@ -124,6 +126,6 @@ const resetKeywordInput = () => {
                 <MaEmpty v-if="nGramCategory.keywords.length === 0" :description="`No ${nGramCategory.id}-grams generated`"></MaEmpty>
             </MaCard>
         </div>
-        <MaEmpty v-else description="Generated keywords will appear here after you enter text and run the generator."></MaEmpty>
+        <MaEmpty v-else description="Generated keywords will appear here after you enter text and run the generator." class="dark:invert dark:hue-rotate-180"></MaEmpty>
     </div>
 </template>
