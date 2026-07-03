@@ -57,7 +57,7 @@ const generateKeywords = () => {
         : [];
 
     generatedKeywords.value = Object.fromEntries(
-        selectedGramSizes.value.map((gramSize) => [
+        gramSizeOptions.map((gramSize) => [
             gramSize,
             generateUniqueNGrams(words, gramSize),
         ]),
