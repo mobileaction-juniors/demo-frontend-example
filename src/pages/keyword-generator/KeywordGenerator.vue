@@ -168,9 +168,21 @@ const generateKeywords = () => {
     margin-top: 24px;
 }
 
+.ma-keyword-results > div {
+    min-width: 0;
+}
+
 .ma-keyword-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.ma-keyword-tags :deep(.ak-badge) {
+    max-width: 100%;
+    max-height: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1rem;
 }
 </style>
