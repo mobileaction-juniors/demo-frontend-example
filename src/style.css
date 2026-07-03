@@ -1,3 +1,62 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#app {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-200;
+    min-height: 100vh;
+}
+
+.dark html,
+.dark body,
+.dark #app {
+    @apply bg-slate-900 text-slate-100;
+}
+
+.dark h1 {
+    @apply !text-slate-100;
+}
+
+.dark p {
+    @apply !text-gray-400;
+}
+
+.dark a:not(.ma-button) {
+    @apply !text-white;
+}
+
+.dark a:hover:not(.ma-button) {
+    @apply !bg-slate-700 !text-blue-400;
+}
+
+.dark .bg-white {
+    @apply !bg-slate-800 !border-slate-700;
+}
+
+.dark .ma-select,
+.dark .ma-button[variant="stroke"] {
+    @apply invert hue-rotate-180;
+}
+
+.dark .ma-empty {
+    @apply !text-gray-400;
+}
+
+.dark .ma-button:not([variant="stroke"]) {
+    @apply !bg-white !border-gray-200 !text-slate-900 !filter-none;
+}
+
+.dark .ma-checkbox,
+.dark .ma-checkbox span {
+    @apply !text-slate-100;
+}
+
+.dark .ag-theme-alpine {
+    @apply !bg-white !text-slate-900;
+}
+
+.dark .ma-card {
+    @apply !bg-white !border-gray-200 !text-slate-900;
+}

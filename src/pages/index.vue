@@ -10,19 +10,19 @@ const openTaskLink = () => {
 </script>
 <template>
     <div class="flex flex-col items-center justify-center pt-12 space-y-6 max-w-2xl mx-auto text-center font-sans">
-        <h1 class="text-3xl font-bold text-slate-800 dark:!text-white m-0">Welcome to Onboarding Progress</h1>
-        <p class="text-gray-500 dark:!text-gray-300 text-lg">You can see the your first task details via link. Please continue that steps while coding.</p>
+        <h1 class="text-3xl font-bold text-slate-800 m-0">Welcome to Onboarding Progress</h1>
+        <p class="text-gray-500 text-lg">You can see the your first task details via link. Please continue that steps while coding.</p>
         
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6 flex-wrap">
-            <MaButton class="dark:!bg-black dark:!border-black dark:!text-white" @click="openTaskLink">
+            <MaButton @click="openTaskLink">
                 Implement First Front-End Task
             </MaButton>
             
-            <MaButton class="dark:!bg-black dark:!border-black dark:!text-white" type="primary" @click="router.push('/keyword-generator')">
+            <MaButton type="primary" @click="router.push('/keyword-generator')">
                 Open Keyword Generator
             </MaButton>
 
-            <MaButton class="dark:!bg-black dark:!border-black dark:!text-white" type="primary" @click="router.push('/keyword-density')">
+            <MaButton type="primary" @click="router.push('/keyword-density')">
                 Open Keyword Density
             </MaButton>
         </div>
