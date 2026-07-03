@@ -2,10 +2,15 @@
 import { MaBadge, MaTextarea } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
 
-// Store the input and generated keyword groups as reactive state.
 const userInput = ref('');
+
+// Keep the original ONB-201 result set visible by default while allowing 1–10 selection.
 const selectedGramSizes = ref([1, 2, 3]);
+
+// Seed the editable list with a short set of common words instead of imposing a large fixed stop-word dictionary.
 const unwantedWords = ref('is, a, an, the');
+
+// Define the supported range once so the selector and generation logic cannot drift apart.
 const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
 const generatedKeywords = ref({
     1: [],
@@ -49,6 +54,8 @@ const generateUniqueNGrams = (words, gramSize) => {
 const generateKeywords = () => {
     const cleanedInput = cleanInput(userInput.value);
     const cleanedUnwantedWords = cleanInput(unwantedWords.value);
+
+    // Normalize the editable comma/space-separated input before filtering for consistent matching.
     const unwantedWordSet = new Set(
         cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : [],
     );
@@ -56,6 +63,7 @@ const generateKeywords = () => {
         ? cleanedInput.split(' ').filter((word) => !unwantedWordSet.has(word))
         : [];
 
+    // Generate every supported size so changing the visible selection does not expose stale results.
     generatedKeywords.value = Object.fromEntries(
         gramSizeOptions.map((gramSize) => [
             gramSize,
@@ -110,6 +118,7 @@ const generateKeywords = () => {
             <div v-for="section in keywordSections" :key="section.title">
                 <h2>{{ section.title }}</h2>
                 <div v-if="section.keywords.length" class="ma-keyword-tags">
+                    <!-- Generated results are read-only, so badges are more appropriate than MaTagInput. -->
                     <MaBadge
                         v-for="keyword in section.keywords"
                         :key="keyword"
@@ -168,6 +177,7 @@ const generateKeywords = () => {
     margin-top: 24px;
 }
 
+/* Allow grid items to shrink instead of overflowing into adjacent columns. */
 .ma-keyword-results > div {
     min-width: 0;
 }
@@ -178,6 +188,7 @@ const generateKeywords = () => {
     gap: 8px;
 }
 
+/* Override ActionKit's single-line badge sizing for long generated n-grams. */
 .ma-keyword-tags :deep(.ak-badge) {
     max-width: 100%;
     max-height: none;
