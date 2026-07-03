@@ -207,7 +207,7 @@ const generateKeywords = () => {
                     <MaBadge
                         v-for="keyword in section.keywords"
                         :key="keyword"
-                        class="max-w-full max-h-none whitespace-normal [overflow-wrap:anywhere] leading-4"
+                        class="max-w-full max-h-none whitespace-normal break-anywhere leading-4"
                         shape="rounded"
                     >
                         {{ keyword }}

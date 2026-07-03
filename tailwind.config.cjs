@@ -1,4 +1,6 @@
 /* eslint-env node */
+const plugin = require('tailwindcss/plugin')
+
 module.exports = {
   mode: 'jit',
   purge: [
@@ -8,5 +10,16 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.max-h-none': {
+          maxHeight: 'none',
+        },
+        '.break-anywhere': {
+          overflowWrap: 'anywhere',
+        },
+      })
+    }),
+  ],
 }
