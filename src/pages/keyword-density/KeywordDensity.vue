@@ -43,14 +43,14 @@ async function copyCsv() {
     <div class="flex max-lg:flex-col gap-10 max-w-360 my-12 mx-auto px-6 text-gray-800">
         <div class="flex flex-col gap-3 w-full lg:flex-1 lg:max-w-120">
             <h2 class="text-2xl font-bold text-gray-900">Keyword Density</h2>
-            <MaTextarea v-model="textStore.text" placeholder="Enter text" :rows="16"/>
-            <MaButton color="dark" :disabled="isUnchanged" @click="calculateDensity">Calculate</MaButton>
+            <MaTextarea v-model="textStore.text" data-cy="density-text" placeholder="Enter text" :rows="16"/>
+            <MaButton color="dark" data-cy="calculate" :disabled="isUnchanged" @click="calculateDensity">Calculate</MaButton>
         </div>
         <div class="flex-1 min-w-0">
             <div class="flex justify-end mb-3">
-                <MaButton variant="stroke" icon="copy" :disabled="!rows.length" @click="copyCsv">Copy as CSV</MaButton>
+                <MaButton variant="stroke" icon="copy" data-cy="copy-csv" :disabled="!rows.length" @click="copyCsv">Copy as CSV</MaButton>
             </div>
-            <AgGridVue :row-data="rows" :column-defs="columnDefs" class="h-150" @grid-ready="gridApi = $event.api"/>
+            <AgGridVue :row-data="rows" :column-defs="columnDefs" class="h-150" data-cy="density-grid" @grid-ready="gridApi = $event.api"/>
         </div>
     </div>
 </template>

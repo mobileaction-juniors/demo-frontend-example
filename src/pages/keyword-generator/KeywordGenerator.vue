@@ -82,14 +82,14 @@ function resetKeywords() {
         <div class="flex flex-col gap-3 w-full lg:flex-1 lg:max-w-120">
             <h2 class="text-2xl font-bold text-gray-900">Keyword Generator</h2>
             <div>
-                <MaTextarea v-model="textStore.text" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
+                <MaTextarea v-model="textStore.text" data-cy="generator-text" :error="!!errors.text" placeholder="Enter text" :rows="16"/>
                 <p v-if="errors.text" class="mt-1 text-xs text-red-500">{{ errors.text }}</p>
             </div>
             <MaSelect multiple :has-error="!!errors.ngram" :hint="errors.ngram" :options="nGramOptions" v-model:value="selectedNGrams" placeholder="Select options"/>
-            <MaButton color="dark" icon="ai-sparkle" :disabled="isUnchanged" @click="generateKeywords">Generate</MaButton>
-            <MaButton variant="stroke" icon="refresh" :disabled="isResetDisabled" @click="resetKeywords">Reset Keywords</MaButton>
+            <MaButton color="dark" icon="ai-sparkle" data-cy="generate" :disabled="isUnchanged" @click="generateKeywords">Generate</MaButton>
+            <MaButton variant="stroke" icon="refresh" data-cy="reset" :disabled="isResetDisabled" @click="resetKeywords">Reset Keywords</MaButton>
         </div>
-        <MaCard class="flex-1 min-w-0" title="Results" bordered>
+        <MaCard class="flex-1 min-w-0" data-cy="results" title="Results" bordered>
             <MaCollapse v-if="keywords.length" v-model:expanded-values="expandedGroups" mode="multiple">
                 <MaCollapseItem
                     v-for="group in keywords"

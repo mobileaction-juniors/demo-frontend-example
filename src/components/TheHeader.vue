@@ -13,6 +13,7 @@ const theme = useThemeStore();
         <button
             type="button"
             aria-label="Toggle theme"
+            data-cy="theme-toggle"
             class="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200/80 bg-white/80 text-gray-700 shadow-lg backdrop-blur-md transition hover:bg-gray-100 active:scale-95"
             @click="theme.toggle"
         >
