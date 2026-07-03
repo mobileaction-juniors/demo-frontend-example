@@ -12,18 +12,9 @@ const closeNavigationDrawer = () => {
 const themeStore = useThemeStore();
 
 const themeOptions = [
-    { label: 'Light', value: 'light' },
-    { label: 'Dark', value: 'dark' }
+    { label: 'Light', value: false },
+    { label: 'Dark', value: true }
 ];
-
-const currentTheme = computed({
-    get: () => themeStore.isDarkMode ? 'dark' : 'light',
-    set: (val) => {
-        if ((val === 'dark') !== themeStore.isDarkMode) {
-            themeStore.toggleTheme();
-        }
-    }
-});
 </script>
 
 <template>
@@ -48,7 +39,8 @@ const currentTheme = computed({
         </nav>
         <div class="justify-self-end flex gap-2 items-center">
             <MaSwitch 
-                v-model:active="currentTheme"
+                :active="themeStore.isDarkMode"
+                @update:active="themeStore.setTheme"
                 :options="themeOptions"
             />
             <MaButton class="max-sm:!block sm:!hidden" size="small" icon="menu" @click="isNavigationDrawerOpen = true" />

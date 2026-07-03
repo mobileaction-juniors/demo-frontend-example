@@ -8,6 +8,10 @@ export const useThemeStore = defineStore('theme', () => {
         isDarkMode.value = !isDarkMode.value;
     }
 
+    function setTheme(isDark) {
+        isDarkMode.value = isDark;
+    }
+
     watch(isDarkMode, (dark) => {
         if (dark) {
             document.documentElement.classList.add('dark');
@@ -18,6 +22,7 @@ export const useThemeStore = defineStore('theme', () => {
 
     return {
         isDarkMode,
-        toggleTheme
+        toggleTheme,
+        setTheme
     };
 });

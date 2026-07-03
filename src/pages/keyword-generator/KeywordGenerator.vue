@@ -6,9 +6,6 @@ import { processKeywords } from '@/utils/keywordGeneratorActions';
 import { MaTextarea, MaSelect2 as MaSelect, MaBadge, MaButton, MaCheckbox2 as MaCheckbox, MaCard, MaEmpty, MaNotification } from '@mobileaction/action-kit';
 
 const keywordStore = useKeywordStore();
-
-const selectedNGrams = ref([1, 2, 3]);
-const shouldRemoveStopWords = ref(true);
 const MAX_NGRAM_SIZE = 10;
 
 const nGramOptions = Array.from({ length: MAX_NGRAM_SIZE }, (_, i) => ({
@@ -20,24 +17,12 @@ const generatedKeywordNGrams = ref([]);
 const hasInput = computed(() => keywordStore.sharedInputText.trim().length > 0);
 const hasGeneratedKeywords = computed(() => generatedKeywordNGrams.value.length > 0);
 
-const lastGeneratedState = ref({
-    text: null,
-    removeStopWords: null,
-    nGrams: null
-});
-const hasStateChanged = computed(() => {
-    const currentNGrams = [...selectedNGrams.value].sort().join(',');
-    return keywordStore.sharedInputText !== lastGeneratedState.value.text ||
-           shouldRemoveStopWords.value !== lastGeneratedState.value.removeStopWords ||
-           currentNGrams !== lastGeneratedState.value.nGrams;
-});
-
 
 const generateKeywordsOnDemand = () => {
     const result = processKeywords(
         keywordStore.sharedInputText,
-        selectedNGrams.value,
-        shouldRemoveStopWords.value
+        keywordStore.selectedNGrams,
+        keywordStore.shouldRemoveStopWords
     );
 
     if (!result.success) {
@@ -51,11 +36,7 @@ const generateKeywordsOnDemand = () => {
     
     generatedKeywordNGrams.value = result.generatedKeywordNGrams;
     
-    lastGeneratedState.value = {
-        text: keywordStore.sharedInputText,
-        removeStopWords: shouldRemoveStopWords.value,
-        nGrams: [...selectedNGrams.value].sort().join(',')
-    };
+    keywordStore.saveGeneratorState();
     
     MaNotification.success({
         title: 'Keywords Generated',
@@ -65,9 +46,9 @@ const generateKeywordsOnDemand = () => {
 
 const resetKeywordInput = () => {
     const hadGeneratedKeywords = hasGeneratedKeywords.value;
-    keywordStore.sharedInputText = '';
+    keywordStore.clearInput();
     generatedKeywordNGrams.value = [];
-    lastGeneratedState.value = { text: null, removeStopWords: null, nGrams: null };
+    keywordStore.resetGeneratorState();
 
     MaNotification.success({
         title: 'Text Cleared',
@@ -87,20 +68,25 @@ const resetKeywordInput = () => {
 
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <MaSelect
-                v-model:value="selectedNGrams"
+                :value="keywordStore.selectedNGrams"
+                @update:value="keywordStore.setSelectedNGrams"
                 :options="nGramOptions"
                 multiple
                 placeholder="Select N-Grams to generate"
                 class="w-full max-w-md"
             />
-            <MaCheckbox v-model:checked="shouldRemoveStopWords">
-                <span class="text-gray-700 dark:text-slate-200 font-medium">Remove Stop Words</span>
+            <MaCheckbox 
+                :checked="keywordStore.shouldRemoveStopWords"
+                @update:checked="keywordStore.setRemoveStopWords"
+            >
+                <span class="text-gray-700 font-medium">Remove Stop Words</span>
             </MaCheckbox>
         </div>
 
         <div class="mb-8">
             <MaTextarea
-                v-model="keywordStore.sharedInputText"
+                :modelValue="keywordStore.sharedInputText"
+                @update:modelValue="keywordStore.setInputText"
                 placeholder="Enter your text here (e.g., app description)..."
                 :rows="8"
             />
@@ -112,7 +98,7 @@ const resetKeywordInput = () => {
                     <MaButton class="w-36" variant="stroke" icon="danger" iconAlignment="left" :disabled="!hasInput" @click="resetKeywordInput">
                         Clear Text
                     </MaButton>
-                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput || !hasStateChanged" @click="generateKeywordsOnDemand">
+                    <MaButton class="w-48" color="dark" variant="stroke" type="primary" icon="data" iconAlignment="left" :disabled="!hasInput || !keywordStore.hasGeneratorStateChanged" @click="generateKeywordsOnDemand">
                         Generate Keywords
                     </MaButton>
                 </div>
@@ -121,19 +107,17 @@ const resetKeywordInput = () => {
 
         <div v-if="hasGeneratedKeywords" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <MaCard 
-                class="ma-card !text-black"
                 v-for="nGramCategory in generatedKeywordNGrams" 
                 :key="nGramCategory.id"
                 :title="nGramCategory.title"
             >
                 <template #headerActions>
-                    <MaBadge class="!text-white">{{ nGramCategory.keywords.length }}</MaBadge>
+                    <MaBadge>{{ nGramCategory.keywords.length }}</MaBadge>
                 </template>
                 <div class="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
                     <MaBadge 
                         v-for="keyword in nGramCategory.keywords" 
                         :key="keyword"
-                        class="!text-white"
                     >
                         {{ keyword }}
                     </MaBadge>
