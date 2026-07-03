@@ -1,29 +1,26 @@
 <script setup>
+import { MaBadge, MaTextarea } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
 
 // Store the input and generated keyword groups as reactive state.
 const userInput = ref('');
+const selectedGramSizes = ref([1, 2, 3]);
+const unwantedWords = ref('is, a, an, the');
+const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
 const generatedKeywords = ref({
-    oneGram: [],
-    twoGram: [],
-    threeGram: [],
+    1: [],
+    2: [],
+    3: [],
 });
 
 // Provide a single data source for rendering each n-gram result section.
-const keywordSections = computed(() => [
-    {
-        title: '1-Gram',
-        keywords: generatedKeywords.value.oneGram,
-    },
-    {
-        title: '2-Gram',
-        keywords: generatedKeywords.value.twoGram,
-    },
-    {
-        title: '3-Gram',
-        keywords: generatedKeywords.value.threeGram,
-    },
-]);
+const keywordSections = computed(() => selectedGramSizes.value
+    .slice()
+    .sort((firstSize, secondSize) => firstSize - secondSize)
+    .map((gramSize) => ({
+        title: `${gramSize}-Gram`,
+        keywords: generatedKeywords.value[gramSize] ?? [],
+    })));
 
 const hasGenerated = computed(() => keywordSections.value
     .some((section) => section.keywords.length > 0));
@@ -48,16 +45,23 @@ const generateUniqueNGrams = (words, gramSize) => {
     return [...new Set(keywords)];
 };
 
-// Clean the current input and generate the required ONB-201 n-gram groups.
+// Clean the current input and generate the selected n-gram groups.
 const generateKeywords = () => {
     const cleanedInput = cleanInput(userInput.value);
-    const words = cleanedInput ? cleanedInput.split(' ') : [];
+    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
+    const unwantedWordSet = new Set(
+        cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : [],
+    );
+    const words = cleanedInput
+        ? cleanedInput.split(' ').filter((word) => !unwantedWordSet.has(word))
+        : [];
 
-    generatedKeywords.value = {
-        oneGram: generateUniqueNGrams(words, 1),
-        twoGram: generateUniqueNGrams(words, 2),
-        threeGram: generateUniqueNGrams(words, 3),
-    };
+    generatedKeywords.value = Object.fromEntries(
+        selectedGramSizes.value.map((gramSize) => [
+            gramSize,
+            generateUniqueNGrams(words, gramSize),
+        ]),
+    );
 };
 </script>
 
@@ -66,13 +70,38 @@ const generateKeywords = () => {
         <h1>Keyword Generator</h1>
 
         <label for="keyword-input">Text</label>
-        <textarea
+        <MaTextarea
             id="keyword-input"
             v-model="userInput"
             class="ma-keyword-input"
-            rows="8"
+            :rows="8"
             placeholder="Enter text to generate keywords"
         />
+
+        <fieldset class="ma-keyword-options">
+            <legend>N-gram sizes</legend>
+            <label
+                v-for="gramSize in gramSizeOptions"
+                :key="gramSize"
+                class="ma-keyword-option"
+            >
+                <input
+                    v-model="selectedGramSizes"
+                    type="checkbox"
+                    :value="gramSize"
+                >
+                {{ gramSize }}
+            </label>
+        </fieldset>
+
+        <label for="unwanted-words">Unwanted words</label>
+        <input
+            id="unwanted-words"
+            v-model="unwantedWords"
+            class="ma-unwanted-words-input"
+            type="text"
+        >
+
         <button type="button" @click="generateKeywords">
             Generate Keywords
         </button>
@@ -80,11 +109,15 @@ const generateKeywords = () => {
         <section v-if="hasGenerated" class="ma-keyword-results" aria-live="polite">
             <div v-for="section in keywordSections" :key="section.title">
                 <h2>{{ section.title }}</h2>
-                <ul v-if="section.keywords.length">
-                    <li v-for="keyword in section.keywords" :key="keyword">
+                <div v-if="section.keywords.length" class="ma-keyword-tags">
+                    <MaBadge
+                        v-for="keyword in section.keywords"
+                        :key="keyword"
+                        shape="rounded"
+                    >
                         {{ keyword }}
-                    </li>
-                </ul>
+                    </MaBadge>
+                </div>
                 <p v-else>No keywords generated.</p>
             </div>
         </section>
@@ -107,11 +140,37 @@ const generateKeywords = () => {
     box-sizing: border-box;
 }
 
+.ma-keyword-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0 0 16px;
+}
+
+.ma-keyword-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ma-unwanted-words-input {
+    display: block;
+    width: 100%;
+    margin: 8px 0 16px;
+    box-sizing: border-box;
+}
+
 /* Arrange the result groups responsively across the available space. */
 .ma-keyword-results {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 24px;
     margin-top: 24px;
+}
+
+.ma-keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 </style>
