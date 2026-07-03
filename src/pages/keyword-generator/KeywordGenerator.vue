@@ -121,17 +121,19 @@ const resetKeywordInput = () => {
 
         <div v-if="hasGeneratedKeywords" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <MaCard 
+                class="ma-card !text-black"
                 v-for="nGramCategory in generatedKeywordNGrams" 
                 :key="nGramCategory.id"
                 :title="nGramCategory.title"
             >
                 <template #headerActions>
-                    <MaBadge>{{ nGramCategory.keywords.length }}</MaBadge>
+                    <MaBadge class="!text-white">{{ nGramCategory.keywords.length }}</MaBadge>
                 </template>
                 <div class="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
                     <MaBadge 
                         v-for="keyword in nGramCategory.keywords" 
                         :key="keyword"
+                        class="!text-white"
                     >
                         {{ keyword }}
                     </MaBadge>

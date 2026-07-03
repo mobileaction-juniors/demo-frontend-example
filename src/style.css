@@ -9,7 +9,7 @@ body,
     min-height: 100vh;
 }
 
-.dark html,
+html.dark,
 .dark body,
 .dark #app {
     @apply bg-slate-900 text-slate-100;
@@ -59,4 +59,14 @@ body,
 
 .dark .ma-card {
     @apply !bg-white !border-gray-200 !text-slate-900;
+}
+
+.ma-card h1,
+.ma-card h2,
+.ma-card h3,
+.ma-card h4,
+.ma-card h5,
+.ma-card h6,
+.ma-card [class*="title"] {
+    @apply !text-black;
 }
