@@ -122,10 +122,12 @@ const generateKeywords = () => {
 </script>
 
 <template>
+    <!-- Keep the generator content centered and comfortably spaced. -->
     <main class="max-w-[800px] mx-auto p-6">
         <h1>Keyword Generator</h1>
 
         <label for="keyword-input">Text</label>
+        <!-- Let the text input fill the available content width. -->
         <MaTextarea
             id="keyword-input"
             v-model="userInput"
@@ -135,6 +137,7 @@ const generateKeywords = () => {
             placeholder="Enter text to generate keywords"
         />
 
+        <!-- Wrap the options so all ten choices remain usable on narrow screens. -->
         <fieldset
             class="flex flex-wrap gap-3 mb-4"
             aria-describedby="keyword-validation"
@@ -171,6 +174,7 @@ const generateKeywords = () => {
             type="text"
         />
 
+        <!-- Use ActionKit for design-system consistency and ai-sparkle to clarify the generation action. -->
         <MaButton
             html-type="button"
             icon="ai-sparkle"
@@ -180,22 +184,26 @@ const generateKeywords = () => {
             Generate Keywords
         </MaButton>
 
+        <!-- Arrange the result groups responsively across the available space. -->
         <section
             v-if="hasGenerated"
             class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 mt-6"
             aria-live="polite"
         >
+            <!-- Allow grid items to shrink instead of overflowing their columns. -->
             <div
                 v-for="section in keywordSections"
                 :key="section.title"
                 class="min-w-0"
             >
                 <h2>{{ section.title }}</h2>
+                <!-- Let generated badges wrap onto additional rows when space is limited. -->
                 <div
                     v-if="section.keywords.length"
                     class="flex flex-wrap gap-2"
                 >
                     <!-- Generated results are read-only, so badges are more appropriate than MaTagInput. -->
+                    <!-- Override ActionKit's single-line badge sizing for long generated n-grams. -->
                     <MaBadge
                         v-for="keyword in section.keywords"
                         :key="keyword"
