@@ -22,6 +22,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', closeOnEscape));
         <button
             type="button"
             aria-label="Toggle menu"
+            data-cy="menu-button"
             :aria-expanded="isOpen"
             class="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200/80 bg-white/80 text-gray-700 shadow-lg shadow-gray-400/20 backdrop-blur-md transition duration-200 ease-out hover:bg-gray-100 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
             @click="isOpen = !isOpen"
@@ -50,6 +51,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', closeOnEscape));
         >
             <div
                 v-if="isOpen"
+                data-cy="menu"
                 class="absolute left-0 top-full mt-3 flex w-60 origin-top flex-col gap-1 rounded-2xl border border-gray-200/80 bg-white/90 p-2 shadow-xl shadow-gray-400/20 backdrop-blur-md"
             >
                 <router-link
