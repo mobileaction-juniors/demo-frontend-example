@@ -49,9 +49,17 @@ const cleanInput = (input) => input
 
 const cleanedUserInput = computed(() => cleanInput(userInput.value));
 const hasCleanInput = computed(() => Boolean(cleanedUserInput.value));
-const currentWordCount = computed(() => (hasCleanInput.value
-    ? cleanedUserInput.value.split(' ').length
-    : 0));
+const unwantedWordSet = computed(() => {
+    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
+
+    return new Set(cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : []);
+});
+const filteredWords = computed(() => (hasCleanInput.value
+    ? cleanedUserInput.value
+        .split(' ')
+        .filter((word) => !unwantedWordSet.value.has(word))
+    : []));
+const currentWordCount = computed(() => filteredWords.value.length);
 
 // The largest selection defines the word count required to generate every selected size.
 const largestSelectedGramSize = computed(() => (hasSelectedGramSizes.value
@@ -78,7 +86,7 @@ const validationMessage = computed(() => {
     }
 
     // Tell the user the exact threshold needed to produce all selected result groups.
-    return `Please enter at least ${largestSelectedGramSize.value} words to generate all selected n-gram sizes.`;
+    return `Please provide at least ${largestSelectedGramSize.value} words after unwanted words are removed.`;
 });
 
 // Build unique consecutive word groups while preserving their original order.
@@ -94,28 +102,16 @@ const generateUniqueNGrams = (words, gramSize) => {
 
 // Clean the current input and generate the selected n-gram groups.
 const generateKeywords = () => {
-    const cleanedInput = cleanInput(userInput.value);
-
     // Guard direct calls with the same selection, input, and word-count validation as the button.
-    if (!hasSelectedGramSizes.value || !cleanedInput || !hasEnoughWordsForSelectedGrams.value) {
+    if (!canGenerate.value) {
         return;
     }
-
-    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
-
-    // Normalize the editable comma/space-separated input before filtering for consistent matching.
-    const unwantedWordSet = new Set(
-        cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : [],
-    );
-    const words = cleanedInput
-        ? cleanedInput.split(' ').filter((word) => !unwantedWordSet.has(word))
-        : [];
 
     // Intentionally generate all 1–10 sizes so later selection changes never expose stale results.
     generatedKeywords.value = Object.fromEntries(
         gramSizeOptions.map((gramSize) => [
             gramSize,
-            generateUniqueNGrams(words, gramSize),
+            generateUniqueNGrams(filteredWords.value, gramSize),
         ]),
     );
 };
