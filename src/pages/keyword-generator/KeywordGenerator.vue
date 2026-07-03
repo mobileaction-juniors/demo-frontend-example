@@ -1,5 +1,5 @@
 <script setup>
-import { MaBadge, MaTextarea } from '@mobileaction/action-kit';
+import { MaBadge, MaInput, MaTextarea } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
 
 const userInput = ref('');
@@ -30,6 +30,9 @@ const keywordSections = computed(() => selectedGramSizes.value
 const hasGenerated = computed(() => keywordSections.value
     .some((section) => section.keywords.length > 0));
 
+// Require a selection so generation cannot run without a visible result section.
+const hasSelectedGramSizes = computed(() => selectedGramSizes.value.length > 0);
+
 // Normalize the input into lowercase words separated by single spaces.
 const cleanInput = (input) => input
     .toLowerCase()
@@ -38,6 +41,40 @@ const cleanInput = (input) => input
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()
     .replace(/\s+/g, ' ');
+
+const cleanedUserInput = computed(() => cleanInput(userInput.value));
+const hasCleanInput = computed(() => Boolean(cleanedUserInput.value));
+const currentWordCount = computed(() => (hasCleanInput.value
+    ? cleanedUserInput.value.split(' ').length
+    : 0));
+
+// The largest selection defines the word count required to generate every selected size.
+const largestSelectedGramSize = computed(() => (hasSelectedGramSizes.value
+    ? Math.max(...selectedGramSizes.value)
+    : 0));
+const hasEnoughWordsForSelectedGrams = computed(() => currentWordCount.value
+    >= largestSelectedGramSize.value);
+
+// Require enough words for the largest selection to avoid partially generated results.
+const canGenerate = computed(() => hasSelectedGramSizes.value
+    && hasCleanInput.value
+    && hasEnoughWordsForSelectedGrams.value);
+const validationMessage = computed(() => {
+    if (!hasCleanInput.value && !hasSelectedGramSizes.value) {
+        return 'Please enter text and select at least one n-gram size.';
+    }
+
+    if (!hasCleanInput.value) {
+        return 'Please enter text to generate keywords.';
+    }
+
+    if (!hasSelectedGramSizes.value) {
+        return 'Please select at least one n-gram size.';
+    }
+
+    // Tell the user the exact threshold needed to produce all selected result groups.
+    return `Please enter at least ${largestSelectedGramSize.value} words to generate all selected n-gram sizes.`;
+});
 
 // Build unique consecutive word groups while preserving their original order.
 const generateUniqueNGrams = (words, gramSize) => {
@@ -53,6 +90,12 @@ const generateUniqueNGrams = (words, gramSize) => {
 // Clean the current input and generate the selected n-gram groups.
 const generateKeywords = () => {
     const cleanedInput = cleanInput(userInput.value);
+
+    // Guard direct calls with the same selection, input, and word-count validation as the button.
+    if (!hasSelectedGramSizes.value || !cleanedInput || !hasEnoughWordsForSelectedGrams.value) {
+        return;
+    }
+
     const cleanedUnwantedWords = cleanInput(unwantedWords.value);
 
     // Normalize the editable comma/space-separated input before filtering for consistent matching.
@@ -63,7 +106,7 @@ const generateKeywords = () => {
         ? cleanedInput.split(' ').filter((word) => !unwantedWordSet.has(word))
         : [];
 
-    // Generate every supported size so changing the visible selection does not expose stale results.
+    // Intentionally generate all 1–10 sizes so later selection changes never expose stale results.
     generatedKeywords.value = Object.fromEntries(
         gramSizeOptions.map((gramSize) => [
             gramSize,
@@ -101,21 +144,33 @@ const generateKeywords = () => {
                 {{ gramSize }}
             </label>
         </fieldset>
+        <p v-if="!canGenerate" role="alert">
+            {{ validationMessage }}
+        </p>
 
         <label for="unwanted-words">Unwanted words</label>
-        <input
+        <!-- Use ActionKit's input for consistent form behavior and appearance. -->
+        <MaInput
             id="unwanted-words"
-            v-model="unwantedWords"
+            v-model:value="unwantedWords"
             class="ma-unwanted-words-input"
             type="text"
-        >
+        />
 
-        <button type="button" @click="generateKeywords">
+        <button
+            type="button"
+            :disabled="!canGenerate"
+            @click="generateKeywords"
+        >
             Generate Keywords
         </button>
 
         <section v-if="hasGenerated" class="ma-keyword-results" aria-live="polite">
-            <div v-for="section in keywordSections" :key="section.title">
+            <div
+                v-for="section in keywordSections"
+                :key="section.title"
+                class="ma-keyword-group"
+            >
                 <h2>{{ section.title }}</h2>
                 <div v-if="section.keywords.length" class="ma-keyword-tags">
                     <!-- Generated results are read-only, so badges are more appropriate than MaTagInput. -->
@@ -177,8 +232,8 @@ const generateKeywords = () => {
     margin-top: 24px;
 }
 
-/* Allow grid items to shrink instead of overflowing into adjacent columns. */
-.ma-keyword-results > div {
+/* An explicit group class avoids coupling this layout rule to direct-child markup. */
+.ma-keyword-group {
     min-width: 0;
 }
 
