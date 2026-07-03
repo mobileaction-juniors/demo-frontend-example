@@ -8,7 +8,6 @@ const generatedKeywords = ref({
     twoGram: [],
     threeGram: [],
 });
-const hasGenerated = ref(false);
 
 // Provide a single data source for rendering each n-gram result section.
 const keywordSections = computed(() => [
@@ -26,9 +25,14 @@ const keywordSections = computed(() => [
     },
 ]);
 
+const hasGenerated = computed(() => keywordSections.value
+    .some((section) => section.keywords.length > 0));
+
 // Normalize the input into lowercase words separated by single spaces.
 const cleanInput = (input) => input
     .toLowerCase()
+    // \p{L} matches Unicode letters and \p{N} matches Unicode numbers.
+    // This preserves Turkish/non-ASCII text while removing punctuation.
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()
     .replace(/\s+/g, ' ');
@@ -54,7 +58,6 @@ const generateKeywords = () => {
         twoGram: generateUniqueNGrams(words, 2),
         threeGram: generateUniqueNGrams(words, 3),
     };
-    hasGenerated.value = true;
 };
 </script>
 
