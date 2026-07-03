@@ -1,16 +1,24 @@
 <script setup>
-import { ref } from 'vue';
-import { MaButton, MaDrawer } from '@mobileaction/action-kit';
+import { ref, computed } from 'vue';
+import { MaButton, MaDrawer, MaSwitch } from '@mobileaction/action-kit';
+import { useThemeStore } from '@/stores/themeStore';
 
 const isNavigationDrawerOpen = ref(false);
 
 const closeNavigationDrawer = () => {
     isNavigationDrawerOpen.value = false;
 };
+
+const themeStore = useThemeStore();
+
+const themeOptions = [
+    { label: 'Light', value: false },
+    { label: 'Dark', value: true }
+];
 </script>
 
 <template>
-    <div class="m-4 flex flex-row justify-between items-center gap-4 rounded-lg border border-gray-100 bg-white px-4 py-1 shadow-sm sm:grid sm:grid-cols-[150px_1fr_150px] sm:gap-0">
+    <div class="m-4 flex flex-row justify-between items-center gap-4 rounded-lg border border-gray-100 bg-white px-4 py-1 shadow-sm sm:grid sm:grid-cols-[150px_1fr_150px] sm:gap-0 transition-colors">
         <div class="flex h-6 w-24 items-center justify-self-center sm:justify-self-start">
             <img
                 src="/mobileaction.svg"
@@ -29,7 +37,14 @@ const closeNavigationDrawer = () => {
                 Keyword Density
             </router-link>
         </nav>
-        <MaButton class="justify-self-center max-sm:!block sm:!hidden" size="small" icon="menu" @click="isNavigationDrawerOpen = true" />
+        <div class="justify-self-end flex gap-2 items-center">
+            <MaSwitch 
+                :active="themeStore.isDarkMode"
+                @update:active="themeStore.setTheme"
+                :options="themeOptions"
+            />
+            <MaButton class="max-sm:!block sm:!hidden" size="small" icon="menu" @click="isNavigationDrawerOpen = true" />
+        </div>
         <MaDrawer
             v-model:visible="isNavigationDrawerOpen"
             title="Navigation"

@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+html.dark {
+    background: #FFF;
+    filter: invert(1) hue-rotate(180deg);
+}

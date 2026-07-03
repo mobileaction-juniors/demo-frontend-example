@@ -1,6 +1,6 @@
-import { cleanDescription } from './CleanDescription';
-import { removeStopWords } from './removeStopWords';
-import { splitIntoWords } from './textUtils';
+import { cleanDescription } from '@/utils/CleanDescription';
+import { removeStopWords } from '@/utils/removeStopWords';
+import { splitIntoWords } from '@/utils/textUtils';
 
 function countWordFrequencies(words) {
     const counts = {};

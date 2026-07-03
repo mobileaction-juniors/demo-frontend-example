@@ -1,5 +1,5 @@
-import { removeDuplicates } from './removeDuplicates.js';
-import { splitIntoWords } from './textUtils.js';
+import { removeDuplicates } from '@/utils/removeDuplicates.js';
+import { splitIntoWords } from '@/utils/textUtils.js';
 
 export function generateNGrams(cleanedText, selectedNGrams = [1, 2, 3]) {
     const results = [];

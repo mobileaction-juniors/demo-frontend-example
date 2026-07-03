@@ -1,5 +1,5 @@
-import { cleanDescription } from './CleanDescription';
-import { generateNGrams } from './generateNGrams';
+import { cleanDescription } from '@/utils/CleanDescription';
+import { generateNGrams } from '@/utils/generateNGrams';
 
 export function validateInput(sourceDescriptionText, selectedNGrams, cleanedSourceText, shouldRemoveStopWords) {
     if (!sourceDescriptionText || sourceDescriptionText.trim().length === 0) {

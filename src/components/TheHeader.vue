@@ -1,5 +1,5 @@
 <script setup>
-import TheNav from './TheNav.vue';
+import TheNav from '@/components/TheNav.vue';
 </script>
 <template>
     <header>

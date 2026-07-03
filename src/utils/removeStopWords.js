@@ -1,5 +1,5 @@
-import { filterArr } from '../cleanupResources.js';
-import { splitIntoWords } from './textUtils.js';
+import { filterArr } from '@/cleanupResources.js';
+import { splitIntoWords } from '@/utils/textUtils.js';
 
 export function removeStopWords(text) {
     const stopWords = filterArr;
