@@ -1,5 +1,10 @@
 <script setup>
-import { MaBadge, MaInput, MaTextarea } from '@mobileaction/action-kit';
+import {
+    MaBadge,
+    MaButton,
+    MaInput,
+    MaTextarea,
+} from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
 
 const userInput = ref('');
@@ -117,24 +122,28 @@ const generateKeywords = () => {
 </script>
 
 <template>
-    <main class="ma-keyword-generator">
+    <main class="max-w-[800px] mx-auto p-6">
         <h1>Keyword Generator</h1>
 
         <label for="keyword-input">Text</label>
         <MaTextarea
             id="keyword-input"
             v-model="userInput"
-            class="ma-keyword-input"
+            class="block w-full mt-2 mb-4 box-border"
             :rows="8"
+            aria-describedby="keyword-validation"
             placeholder="Enter text to generate keywords"
         />
 
-        <fieldset class="ma-keyword-options">
+        <fieldset
+            class="flex flex-wrap gap-3 mb-4"
+            aria-describedby="keyword-validation"
+        >
             <legend>N-gram sizes</legend>
             <label
                 v-for="gramSize in gramSizeOptions"
                 :key="gramSize"
-                class="ma-keyword-option"
+                class="inline-flex items-center gap-1"
             >
                 <input
                     v-model="selectedGramSizes"
@@ -144,7 +153,12 @@ const generateKeywords = () => {
                 {{ gramSize }}
             </label>
         </fieldset>
-        <p v-if="!canGenerate" role="alert">
+        <!-- A polite status keeps validation accessible without interrupting users on every input change. -->
+        <p
+            v-if="!canGenerate"
+            id="keyword-validation"
+            role="status"
+        >
             {{ validationMessage }}
         </p>
 
@@ -153,30 +167,39 @@ const generateKeywords = () => {
         <MaInput
             id="unwanted-words"
             v-model:value="unwantedWords"
-            class="ma-unwanted-words-input"
+            class="block w-full mt-2 mb-4 box-border"
             type="text"
         />
 
-        <button
-            type="button"
+        <MaButton
+            html-type="button"
+            icon="ai-sparkle"
             :disabled="!canGenerate"
             @click="generateKeywords"
         >
             Generate Keywords
-        </button>
+        </MaButton>
 
-        <section v-if="hasGenerated" class="ma-keyword-results" aria-live="polite">
+        <section
+            v-if="hasGenerated"
+            class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 mt-6"
+            aria-live="polite"
+        >
             <div
                 v-for="section in keywordSections"
                 :key="section.title"
-                class="ma-keyword-group"
+                class="min-w-0"
             >
                 <h2>{{ section.title }}</h2>
-                <div v-if="section.keywords.length" class="ma-keyword-tags">
+                <div
+                    v-if="section.keywords.length"
+                    class="flex flex-wrap gap-2"
+                >
                     <!-- Generated results are read-only, so badges are more appropriate than MaTagInput. -->
                     <MaBadge
                         v-for="keyword in section.keywords"
                         :key="keyword"
+                        class="max-w-full max-h-none whitespace-normal [overflow-wrap:anywhere] leading-4"
                         shape="rounded"
                     >
                         {{ keyword }}
@@ -187,68 +210,3 @@ const generateKeywords = () => {
         </section>
     </main>
 </template>
-
-<style scoped>
-/* Keep the generator content centered and comfortably spaced. */
-.ma-keyword-generator {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px;
-}
-
-/* Let the text input fill the available content width. */
-.ma-keyword-input {
-    display: block;
-    width: 100%;
-    margin: 8px 0 16px;
-    box-sizing: border-box;
-}
-
-.ma-keyword-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 0 0 16px;
-}
-
-.ma-keyword-option {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.ma-unwanted-words-input {
-    display: block;
-    width: 100%;
-    margin: 8px 0 16px;
-    box-sizing: border-box;
-}
-
-/* Arrange the result groups responsively across the available space. */
-.ma-keyword-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
-}
-
-/* An explicit group class avoids coupling this layout rule to direct-child markup. */
-.ma-keyword-group {
-    min-width: 0;
-}
-
-.ma-keyword-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-/* Override ActionKit's single-line badge sizing for long generated n-grams. */
-.ma-keyword-tags :deep(.ak-badge) {
-    max-width: 100%;
-    max-height: none;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    line-height: 1rem;
-}
-</style>
