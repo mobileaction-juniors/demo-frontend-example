@@ -10,7 +10,8 @@ const props = defineProps({
 });
 
 const text = ref(props.initialText);
-const characterCount = computed(() => text.value.length);
+// Exclude spaces, tabs, and line breaks from the displayed character total.
+const characterCount = computed(() => text.value.replace(/\s/g, '').length);
 const results = ref([]);
 const hasCounted = ref(false);
 const copyStatus = ref('');
@@ -38,21 +39,31 @@ const countKeywords = () => {
         return counts;
     }, new Map());
 
-    results.value = [...keywordCounts.entries()]
-        .map(([keyword, count]) => ({
-            keyword,
+    const groupedKeywords = [...keywordCounts.entries()]
+        .reduce((groups, [keyword, count]) => {
+            const keywords = groups.get(count) ?? [];
+            keywords.push(keyword);
+            groups.set(count, keywords);
+            return groups;
+        }, new Map());
+
+    results.value = [...groupedKeywords.entries()]
+        .map(([count, keywords]) => ({
+            keywordText: keywords.sort((firstKeyword, secondKeyword) => (
+                firstKeyword.localeCompare(secondKeyword)
+            )).join(', '),
             count,
             // Density uses every word occurrence, not the number of unique keywords.
             density: `${((count / words.length) * 100).toFixed(1)}%`,
         }))
-        // Prioritize frequent keywords and use alphabetical order to break ties.
+        // Sort groups by frequency, then alphabetically for stable ties.
         .sort((firstResult, secondResult) => secondResult.count - firstResult.count
-            || firstResult.keyword.localeCompare(secondResult.keyword));
+            || firstResult.keywordText.localeCompare(secondResult.keywordText));
 };
 
 const copyResults = async () => {
-    const rows = results.value.map(({ keyword, count, density }) => (
-        `${keyword}\t${count}\t${density}`
+    const rows = results.value.map(({ keywordText, count, density }) => (
+        `${keywordText}\t${count}\t${density}`
     ));
     const clipboardText = ['Keyword\tCount\tDensity', ...rows].join('\n');
 
@@ -75,11 +86,13 @@ const copyResults = async () => {
             >
                 Text
             </label>
+            <!-- Treat Enter as submission and prevent multiline input. -->
             <MaTextarea
                 id="keyword-density-text"
                 v-model="text"
                 class="block w-full max-w-full box-border"
                 :rows="12"
+                @keydown.enter.prevent="countKeywords"
             />
 
             <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
@@ -127,11 +140,11 @@ const copyResults = async () => {
                         <tbody class="divide-y divide-gray-200">
                             <tr
                                 v-for="result in results"
-                                :key="result.keyword"
-                                class="even:bg-gray-50"
+                                :key="`${result.count}-${result.density}`"
+                                class="even:bg-indigo-100"
                             >
                                 <td class="p-3 text-gray-900 break-words">
-                                    {{ result.keyword }}
+                                    {{ result.keywordText }}
                                 </td>
                                 <td class="p-3 text-right text-gray-700">
                                     {{ result.count }}
