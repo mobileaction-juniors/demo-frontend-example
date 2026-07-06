@@ -1,5 +1,10 @@
 <script setup>
-import { MaBadge, MaInput, MaTextarea } from '@mobileaction/action-kit';
+import {
+    MaBadge,
+    MaButton,
+    MaInput,
+    MaTextarea,
+} from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
 
 const userInput = ref('');
@@ -44,9 +49,17 @@ const cleanInput = (input) => input
 
 const cleanedUserInput = computed(() => cleanInput(userInput.value));
 const hasCleanInput = computed(() => Boolean(cleanedUserInput.value));
-const currentWordCount = computed(() => (hasCleanInput.value
-    ? cleanedUserInput.value.split(' ').length
-    : 0));
+const unwantedWordSet = computed(() => {
+    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
+
+    return new Set(cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : []);
+});
+const filteredWords = computed(() => (hasCleanInput.value
+    ? cleanedUserInput.value
+        .split(' ')
+        .filter((word) => !unwantedWordSet.value.has(word))
+    : []));
+const currentWordCount = computed(() => filteredWords.value.length);
 
 // The largest selection defines the word count required to generate every selected size.
 const largestSelectedGramSize = computed(() => (hasSelectedGramSizes.value
@@ -73,7 +86,7 @@ const validationMessage = computed(() => {
     }
 
     // Tell the user the exact threshold needed to produce all selected result groups.
-    return `Please enter at least ${largestSelectedGramSize.value} words to generate all selected n-gram sizes.`;
+    return `Please provide at least ${largestSelectedGramSize.value} words after unwanted words are removed.`;
 });
 
 // Build unique consecutive word groups while preserving their original order.
@@ -89,52 +102,47 @@ const generateUniqueNGrams = (words, gramSize) => {
 
 // Clean the current input and generate the selected n-gram groups.
 const generateKeywords = () => {
-    const cleanedInput = cleanInput(userInput.value);
-
     // Guard direct calls with the same selection, input, and word-count validation as the button.
-    if (!hasSelectedGramSizes.value || !cleanedInput || !hasEnoughWordsForSelectedGrams.value) {
+    if (!canGenerate.value) {
         return;
     }
-
-    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
-
-    // Normalize the editable comma/space-separated input before filtering for consistent matching.
-    const unwantedWordSet = new Set(
-        cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : [],
-    );
-    const words = cleanedInput
-        ? cleanedInput.split(' ').filter((word) => !unwantedWordSet.has(word))
-        : [];
 
     // Intentionally generate all 1–10 sizes so later selection changes never expose stale results.
     generatedKeywords.value = Object.fromEntries(
         gramSizeOptions.map((gramSize) => [
             gramSize,
-            generateUniqueNGrams(words, gramSize),
+            generateUniqueNGrams(filteredWords.value, gramSize),
         ]),
     );
 };
 </script>
 
 <template>
-    <main class="ma-keyword-generator">
+    <!-- Keep the generator content centered and comfortably spaced. -->
+    <main class="max-w-[800px] mx-auto p-6">
         <h1>Keyword Generator</h1>
 
         <label for="keyword-input">Text</label>
+        <!-- Let the text input fill the available content width. -->
         <MaTextarea
             id="keyword-input"
             v-model="userInput"
-            class="ma-keyword-input"
+            class="block w-full mt-2 mb-4 box-border"
             :rows="8"
+            aria-describedby="keyword-validation"
             placeholder="Enter text to generate keywords"
         />
 
-        <fieldset class="ma-keyword-options">
+        <!-- Wrap the options so all ten choices remain usable on narrow screens. -->
+        <fieldset
+            class="flex flex-wrap gap-3 mb-4"
+            aria-describedby="keyword-validation"
+        >
             <legend>N-gram sizes</legend>
             <label
                 v-for="gramSize in gramSizeOptions"
                 :key="gramSize"
-                class="ma-keyword-option"
+                class="inline-flex items-center gap-1"
             >
                 <input
                     v-model="selectedGramSizes"
@@ -144,7 +152,12 @@ const generateKeywords = () => {
                 {{ gramSize }}
             </label>
         </fieldset>
-        <p v-if="!canGenerate" role="alert">
+        <!-- A polite status keeps validation accessible without interrupting users on every input change. -->
+        <p
+            v-if="!canGenerate"
+            id="keyword-validation"
+            role="status"
+        >
             {{ validationMessage }}
         </p>
 
@@ -153,30 +166,44 @@ const generateKeywords = () => {
         <MaInput
             id="unwanted-words"
             v-model:value="unwantedWords"
-            class="ma-unwanted-words-input"
+            class="block w-full mt-2 mb-4 box-border"
             type="text"
         />
 
-        <button
-            type="button"
+        <!-- Use ActionKit for design-system consistency and ai-sparkle to clarify the generation action. -->
+        <MaButton
+            html-type="button"
+            icon="ai-sparkle"
             :disabled="!canGenerate"
             @click="generateKeywords"
         >
             Generate Keywords
-        </button>
+        </MaButton>
 
-        <section v-if="hasGenerated" class="ma-keyword-results" aria-live="polite">
+        <!-- Arrange the result groups responsively across the available space. -->
+        <section
+            v-if="hasGenerated"
+            class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 mt-6"
+            aria-live="polite"
+        >
+            <!-- Allow grid items to shrink instead of overflowing their columns. -->
             <div
                 v-for="section in keywordSections"
                 :key="section.title"
-                class="ma-keyword-group"
+                class="min-w-0"
             >
                 <h2>{{ section.title }}</h2>
-                <div v-if="section.keywords.length" class="ma-keyword-tags">
+                <!-- Let generated badges wrap onto additional rows when space is limited. -->
+                <div
+                    v-if="section.keywords.length"
+                    class="flex flex-wrap gap-2"
+                >
                     <!-- Generated results are read-only, so badges are more appropriate than MaTagInput. -->
+                    <!-- Override ActionKit's single-line badge sizing for long generated n-grams. -->
                     <MaBadge
                         v-for="keyword in section.keywords"
                         :key="keyword"
+                        class="max-w-full max-h-none whitespace-normal break-anywhere leading-4"
                         shape="rounded"
                     >
                         {{ keyword }}
@@ -187,68 +214,3 @@ const generateKeywords = () => {
         </section>
     </main>
 </template>
-
-<style scoped>
-/* Keep the generator content centered and comfortably spaced. */
-.ma-keyword-generator {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px;
-}
-
-/* Let the text input fill the available content width. */
-.ma-keyword-input {
-    display: block;
-    width: 100%;
-    margin: 8px 0 16px;
-    box-sizing: border-box;
-}
-
-.ma-keyword-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 0 0 16px;
-}
-
-.ma-keyword-option {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.ma-unwanted-words-input {
-    display: block;
-    width: 100%;
-    margin: 8px 0 16px;
-    box-sizing: border-box;
-}
-
-/* Arrange the result groups responsively across the available space. */
-.ma-keyword-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
-}
-
-/* An explicit group class avoids coupling this layout rule to direct-child markup. */
-.ma-keyword-group {
-    min-width: 0;
-}
-
-.ma-keyword-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-/* Override ActionKit's single-line badge sizing for long generated n-grams. */
-.ma-keyword-tags :deep(.ak-badge) {
-    max-width: 100%;
-    max-height: none;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    line-height: 1rem;
-}
-</style>

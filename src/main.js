@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { ActionKit } from '@mobileaction/action-kit'
 import '@mobileaction/action-kit/dist/style.css'
+import './assets/tailwind.css'
 import App from './App.vue'
 import router from './router'
 
