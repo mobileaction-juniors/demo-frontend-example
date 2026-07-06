@@ -9,7 +9,6 @@ const props = defineProps({
     },
 });
 
-// Copy the prop into local state so edits do not mutate parent-owned data.
 const text = ref(props.initialText);
 const characterCount = computed(() => text.value.length);
 const results = ref([]);
@@ -67,7 +66,7 @@ const copyResults = async () => {
 </script>
 
 <template>
-    <!-- Stack panels by default, then place them side by side on desktop. -->
+    <!-- Stack panels on mobile; desktop columns and scroll containment prevent overflow. -->
     <section class="grid w-full gap-6 md:grid-cols-2 md:items-start">
         <div class="w-full min-w-0">
             <label
@@ -110,7 +109,6 @@ const copyResults = async () => {
             <div
                 v-if="results.length"
             >
-                <!-- Keep wide table content scrollable instead of overflowing small screens. -->
                 <div class="w-full max-w-full overflow-x-auto rounded border border-gray-200">
                     <table class="w-full min-w-[360px] border-collapse text-sm">
                         <thead class="bg-indigo-600 text-white">
