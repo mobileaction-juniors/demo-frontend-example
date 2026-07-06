@@ -15,6 +15,7 @@ const characterCount = computed(() => text.value.length);
 const results = ref([]);
 const hasCounted = ref(false);
 
+// Normalize case and separators so equivalent words share one count.
 const cleanText = (value) => value
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
@@ -40,8 +41,10 @@ const countKeywords = () => {
         .map(([keyword, count]) => ({
             keyword,
             count,
+            // Density uses every word occurrence, not the number of unique keywords.
             density: `${((count / words.length) * 100).toFixed(1)}%`,
         }))
+        // Prioritize frequent keywords and use alphabetical order to break ties.
         .sort((firstResult, secondResult) => secondResult.count - firstResult.count
             || firstResult.keyword.localeCompare(secondResult.keyword));
 };
