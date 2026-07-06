@@ -12,6 +12,39 @@ const props = defineProps({
 // Copy the prop into local state so edits do not mutate parent-owned data.
 const text = ref(props.initialText);
 const characterCount = computed(() => text.value.length);
+const results = ref([]);
+const hasCounted = ref(false);
+
+const cleanText = (value) => value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+
+const countKeywords = () => {
+    hasCounted.value = true;
+    const cleanedText = cleanText(text.value);
+
+    if (!cleanedText) {
+        results.value = [];
+        return;
+    }
+
+    const words = cleanedText.split(' ');
+    const keywordCounts = words.reduce((counts, keyword) => {
+        counts.set(keyword, (counts.get(keyword) ?? 0) + 1);
+        return counts;
+    }, new Map());
+
+    results.value = [...keywordCounts.entries()]
+        .map(([keyword, count]) => ({
+            keyword,
+            count,
+            density: `${((count / words.length) * 100).toFixed(1)}%`,
+        }))
+        .sort((firstResult, secondResult) => secondResult.count - firstResult.count
+            || firstResult.keyword.localeCompare(secondResult.keyword));
+};
 </script>
 
 <template>
@@ -30,13 +63,59 @@ const characterCount = computed(() => text.value.length);
         />
 
         <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
-            <!-- TODO: Add keyword frequency and density calculation in the next step. -->
-            <MaButton html-type="button">
+            <MaButton
+                html-type="button"
+                @click="countKeywords"
+            >
                 Count
             </MaButton>
             <p aria-live="polite">
                 Total characters: <strong>{{ characterCount }}</strong>
             </p>
         </div>
+
+        <div
+            v-if="results.length"
+            class="w-full mt-6 overflow-x-auto"
+        >
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="p-2 text-left border">
+                            Keyword
+                        </th>
+                        <th class="p-2 text-left border">
+                            Count
+                        </th>
+                        <th class="p-2 text-left border">
+                            Density
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="result in results"
+                        :key="result.keyword"
+                    >
+                        <td class="p-2 border">
+                            {{ result.keyword }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ result.count }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ result.density }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p
+            v-else-if="hasCounted"
+            class="mt-6"
+            role="status"
+        >
+            No keywords found.
+        </p>
     </section>
 </template>
