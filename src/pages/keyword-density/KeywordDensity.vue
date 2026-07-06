@@ -10,8 +10,8 @@ const props = defineProps({
 });
 
 const text = ref(props.initialText);
-// Derive a whitespace-free display total without changing the editable text.
-const characterCount = computed(() => text.value.replace(/\s/g, '').length);
+// Count every character in the raw textarea value, including whitespace.
+const characterCount = computed(() => text.value.length);
 const results = ref([]);
 const hasCounted = ref(false);
 const copyStatus = ref('');
