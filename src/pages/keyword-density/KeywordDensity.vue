@@ -125,9 +125,9 @@ const copyResults = async () => {
                 v-if="results.length"
             >
                 <!-- Horizontal scrolling contains grouped rows on narrow screens. -->
-                <div class="w-full max-w-full overflow-x-auto rounded border border-gray-200">
+                <div class="w-full max-w-full overflow-x-auto rounded border border-[#e8e7f0]">
                     <table class="w-full min-w-[360px] border-collapse text-sm">
-                        <thead class="bg-indigo-600 text-white">
+                        <thead class="bg-[#4f5cff] text-white">
                             <tr>
                                 <th class="px-3 py-2 text-left font-medium">
                                     Keyword
@@ -140,11 +140,11 @@ const copyResults = async () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="divide-y divide-[#e8e7f0]">
                             <tr
                                 v-for="result in results"
                                 :key="`${result.count}-${result.density}`"
-                                class="even:bg-gray-200"
+                                class="even:bg-[#f3f2fb]"
                             >
                                 <td class="px-3 py-2 text-gray-900 break-words">
                                     {{ result.keywordText }}
