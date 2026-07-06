@@ -1,0 +1,15 @@
+%%{init: { 'gitGraph': { 'mainBranchName': 'dev' } } }%%
+gitGraph
+    commit id: "latest dev"
+    branch name_surname_onboarding
+    checkout name_surname_onboarding
+    commit id: "start"
+    branch ONB-201-YOUR_NAME
+    commit id: "feat: n-gram utils"
+    commit id: "feat: keyword UI"
+    checkout name_surname_onboarding
+    merge ONB-201-YOUR_NAME id: "PR #1"
+    branch ONB-202-YOUR_NAME
+    commit id: "feat: multi-select"
+    checkout name_surname_onboarding
+    merge ONB-202-YOUR_NAME id: "PR #2"

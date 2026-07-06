@@ -1,0 +1,10 @@
+flowchart TD
+    A["Pull latest name_surname_onboarding"] --> B["Create task branch ONB-number-YOUR_NAME"]
+    B --> C["Implement with conventional commits"]
+    C --> D{"pnpm lint and pnpm build pass?"}
+    D -- "no" --> C
+    D -- "yes" --> E["Push and open PR into your umbrella branch"]
+    E --> F{"Review approved?"}
+    F -- "changes requested" --> C
+    F -- "approved" --> G["Merge PR"]
+    G --> A
