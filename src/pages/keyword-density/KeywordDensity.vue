@@ -124,18 +124,18 @@ const copyResults = async () => {
             <div
                 v-if="results.length"
             >
-                <!-- Horizontal scrolling contains grouped rows on narrow screens. -->
-                <div class="w-full max-w-full overflow-x-auto rounded border border-[#e8e7f0]">
-                    <table class="w-full min-w-[360px] border-collapse text-sm">
+                <!-- Fixed table layout keeps every column within narrow mobile screens. -->
+                <div class="w-full max-w-full overflow-hidden rounded border border-[#e8e7f0]">
+                    <table class="w-full table-fixed border-collapse text-sm">
                         <thead class="bg-[#4f5cff] text-white">
                             <tr>
-                                <th class="px-3 py-2 text-left font-medium">
+                                <th class="w-3/5 px-3 py-2 text-left font-medium">
                                     Keyword
                                 </th>
-                                <th class="px-3 py-2 text-right font-medium">
+                                <th class="w-1/5 px-2 py-2 text-right font-medium sm:px-3">
                                     Count
                                 </th>
-                                <th class="px-3 py-2 text-right font-medium">
+                                <th class="w-1/5 px-2 py-2 text-right font-medium sm:px-3">
                                     Density
                                 </th>
                             </tr>
@@ -146,13 +146,13 @@ const copyResults = async () => {
                                 :key="`${result.count}-${result.density}`"
                                 class="even:bg-[#f3f2fb]"
                             >
-                                <td class="px-3 py-2 text-gray-900 break-words">
+                                <td class="break-words px-3 py-2 text-gray-900">
                                     {{ result.keywordText }}
                                 </td>
-                                <td class="px-3 py-2 text-right text-gray-700">
+                                <td class="px-2 py-2 text-right text-gray-700 sm:px-3">
                                     {{ result.count }}
                                 </td>
-                                <td class="px-3 py-2 text-right text-gray-700">
+                                <td class="px-2 py-2 text-right text-gray-700 sm:px-3">
                                     {{ result.density }}
                                 </td>
                             </tr>
