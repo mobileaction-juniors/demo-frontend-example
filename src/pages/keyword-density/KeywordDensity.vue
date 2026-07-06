@@ -14,6 +14,7 @@ const text = ref(props.initialText);
 const characterCount = computed(() => text.value.length);
 const results = ref([]);
 const hasCounted = ref(false);
+const copyStatus = ref('');
 
 // Normalize case and separators so equivalent words share one count.
 const cleanText = (value) => value
@@ -24,6 +25,7 @@ const cleanText = (value) => value
 
 const countKeywords = () => {
     hasCounted.value = true;
+    copyStatus.value = '';
     const cleanedText = cleanText(text.value);
 
     if (!cleanedText) {
@@ -48,6 +50,20 @@ const countKeywords = () => {
         .sort((firstResult, secondResult) => secondResult.count - firstResult.count
             || firstResult.keyword.localeCompare(secondResult.keyword));
 };
+
+const copyResults = async () => {
+    const rows = results.value.map(({ keyword, count, density }) => (
+        `${keyword}\t${count}\t${density}`
+    ));
+    const clipboardText = ['Keyword\tCount\tDensity', ...rows].join('\n');
+
+    try {
+        await navigator.clipboard.writeText(clipboardText);
+        copyStatus.value = 'Copied to clipboard.';
+    } catch {
+        copyStatus.value = 'Clipboard access is unavailable.';
+    }
+};
 </script>
 
 <template>
@@ -70,6 +86,9 @@ const countKeywords = () => {
             <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
                 <MaButton
                     html-type="button"
+                    color="red"
+                    size="small"
+                    class="!border-red-700 !bg-red-700 !text-white hover:!border-red-800 hover:!bg-red-800"
                     @click="countKeywords"
                 >
                     Count
@@ -79,7 +98,7 @@ const countKeywords = () => {
                     aria-live="polite"
                 >
                     Total characters:
-                    <strong class="text-gray-900">{{ characterCount }}</strong>
+                    <strong class="ml-1 text-lg font-bold text-gray-900">{{ characterCount }}</strong>
                 </p>
             </div>
         </div>
@@ -88,43 +107,62 @@ const countKeywords = () => {
             <h2 class="mb-2 text-sm font-medium text-gray-700">
                 Results
             </h2>
-            <!-- Keep wide table content scrollable instead of overflowing small screens. -->
             <div
                 v-if="results.length"
-                class="w-full max-w-full overflow-x-auto rounded border border-gray-200"
             >
-                <table class="w-full min-w-[360px] border-collapse text-sm">
-                    <thead class="bg-indigo-600 text-white">
-                        <tr>
-                            <th class="p-3 text-left font-medium">
-                                Keyword
-                            </th>
-                            <th class="p-3 text-right font-medium">
-                                Count
-                            </th>
-                            <th class="p-3 text-right font-medium">
-                                Density
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr
-                            v-for="result in results"
-                            :key="result.keyword"
-                            class="even:bg-gray-50"
-                        >
-                            <td class="p-3 text-gray-900 break-words">
-                                {{ result.keyword }}
-                            </td>
-                            <td class="p-3 text-right text-gray-700">
-                                {{ result.count }}
-                            </td>
-                            <td class="p-3 text-right text-gray-700">
-                                {{ result.density }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Keep wide table content scrollable instead of overflowing small screens. -->
+                <div class="w-full max-w-full overflow-x-auto rounded border border-gray-200">
+                    <table class="w-full min-w-[360px] border-collapse text-sm">
+                        <thead class="bg-indigo-600 text-white">
+                            <tr>
+                                <th class="p-3 text-left font-medium">
+                                    Keyword
+                                </th>
+                                <th class="p-3 text-right font-medium">
+                                    Count
+                                </th>
+                                <th class="p-3 text-right font-medium">
+                                    Density
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr
+                                v-for="result in results"
+                                :key="result.keyword"
+                                class="even:bg-gray-50"
+                            >
+                                <td class="p-3 text-gray-900 break-words">
+                                    {{ result.keyword }}
+                                </td>
+                                <td class="p-3 text-right text-gray-700">
+                                    {{ result.count }}
+                                </td>
+                                <td class="p-3 text-right text-gray-700">
+                                    {{ result.density }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 mt-3">
+                    <MaButton
+                        html-type="button"
+                        variant="stroke"
+                        color="blue"
+                        size="small"
+                        @click="copyResults"
+                    >
+                        Copy to clipboard
+                    </MaButton>
+                    <span
+                        v-if="copyStatus"
+                        class="text-sm text-gray-600"
+                        role="status"
+                    >
+                        {{ copyStatus }}
+                    </span>
+                </div>
             </div>
             <p
                 v-else
