@@ -10,7 +10,7 @@ const props = defineProps({
 });
 
 const text = ref(props.initialText);
-// Exclude spaces, tabs, and line breaks from the displayed character total.
+// Derive a whitespace-free display total without changing the editable text.
 const characterCount = computed(() => text.value.replace(/\s/g, '').length);
 const results = ref([]);
 const hasCounted = ref(false);
@@ -39,6 +39,7 @@ const countKeywords = () => {
         return counts;
     }, new Map());
 
+    // Equal-frequency keywords share a density, so combine them into compact rows.
     const groupedKeywords = [...keywordCounts.entries()]
         .reduce((groups, [keyword, count]) => {
             const keywords = groups.get(count) ?? [];
@@ -62,6 +63,7 @@ const countKeywords = () => {
 };
 
 const copyResults = async () => {
+    // Mirror the visible columns in a readable tab-separated clipboard format.
     const rows = results.value.map(({ keywordText, count, density }) => (
         `${keywordText}\t${count}\t${density}`
     ));
@@ -77,7 +79,7 @@ const copyResults = async () => {
 </script>
 
 <template>
-    <!-- Stack panels on mobile; desktop columns and scroll containment prevent overflow. -->
+    <!-- Mobile stacks the panels; desktop keeps input and results side by side. -->
     <section class="grid w-full gap-6 md:grid-cols-2 md:items-start">
         <div class="w-full min-w-0">
             <label
@@ -86,12 +88,12 @@ const copyResults = async () => {
             >
                 Text
             </label>
-            <!-- Treat Enter as submission and prevent multiline input. -->
+            <!-- Enter submits through the same handler without creating a new line. -->
             <MaTextarea
                 id="keyword-density-text"
                 v-model="text"
                 class="block w-full max-w-full box-border"
-                :rows="12"
+                :rows="14"
                 @keydown.enter.prevent="countKeywords"
             />
 
@@ -122,17 +124,18 @@ const copyResults = async () => {
             <div
                 v-if="results.length"
             >
+                <!-- Horizontal scrolling contains grouped rows on narrow screens. -->
                 <div class="w-full max-w-full overflow-x-auto rounded border border-gray-200">
                     <table class="w-full min-w-[360px] border-collapse text-sm">
                         <thead class="bg-indigo-600 text-white">
                             <tr>
-                                <th class="p-3 text-left font-medium">
+                                <th class="px-3 py-2 text-left font-medium">
                                     Keyword
                                 </th>
-                                <th class="p-3 text-right font-medium">
+                                <th class="px-3 py-2 text-right font-medium">
                                     Count
                                 </th>
-                                <th class="p-3 text-right font-medium">
+                                <th class="px-3 py-2 text-right font-medium">
                                     Density
                                 </th>
                             </tr>
@@ -141,15 +144,15 @@ const copyResults = async () => {
                             <tr
                                 v-for="result in results"
                                 :key="`${result.count}-${result.density}`"
-                                class="even:bg-indigo-100"
+                                class="even:bg-gray-200"
                             >
-                                <td class="p-3 text-gray-900 break-words">
+                                <td class="px-3 py-2 text-gray-900 break-words">
                                     {{ result.keywordText }}
                                 </td>
-                                <td class="p-3 text-right text-gray-700">
+                                <td class="px-3 py-2 text-right text-gray-700">
                                     {{ result.count }}
                                 </td>
-                                <td class="p-3 text-right text-gray-700">
+                                <td class="px-3 py-2 text-right text-gray-700">
                                     {{ result.density }}
                                 </td>
                             </tr>
