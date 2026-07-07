@@ -3,6 +3,7 @@ import {
     MaBadge,
     MaButton,
     MaInput,
+    MaSelect2,
     MaTextarea,
 } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
@@ -19,6 +20,10 @@ const unwantedWords = ref(DEFAULT_STOP_WORDS);
 
 // Define the supported range once so the selector and generation logic cannot drift apart.
 const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
+const gramSizeSelectOptions = gramSizeOptions.map((gramSize) => ({
+    label: String(gramSize),
+    value: gramSize,
+}));
 const generatedKeywords = ref({
     1: [],
     2: [],
@@ -115,25 +120,16 @@ const generateKeywords = () => {
             placeholder="Enter text to generate keywords"
         />
 
-        <!-- Wrap the options so all ten choices remain usable on narrow screens. -->
-        <fieldset
-            class="flex flex-wrap gap-3 mb-4"
+        <label for="gram-size-select">N-gram sizes</label>
+        <MaSelect2
+            id="gram-size-select"
+            v-model:value="selectedGramSizes"
+            class="block w-full mt-2 mb-4"
             aria-describedby="keyword-validation"
-        >
-            <legend>N-gram sizes</legend>
-            <label
-                v-for="gramSize in gramSizeOptions"
-                :key="gramSize"
-                class="inline-flex items-center gap-1"
-            >
-                <input
-                    v-model="selectedGramSizes"
-                    type="checkbox"
-                    :value="gramSize"
-                >
-                {{ gramSize }}
-            </label>
-        </fieldset>
+            :options="gramSizeSelectOptions"
+            multiple
+            placeholder="Select n-gram sizes"
+        />
         <!-- A polite status keeps validation accessible without interrupting users on every input change. -->
         <p
             v-if="!canGenerate"
