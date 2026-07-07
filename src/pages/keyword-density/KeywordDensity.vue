@@ -108,13 +108,12 @@ const copyResults = async () => {
             >
                 Text
             </label>
-            <!-- Enter submits through the same handler without creating a new line. -->
+            <!-- Enter remains available for multiline input; counting is button-triggered. -->
             <MaTextarea
                 id="keyword-density-text"
                 v-model="editableText"
                 class="block w-full max-w-full box-border"
                 :rows="14"
-                @keydown.enter.prevent="countKeywords"
             />
 
             <div class="flex flex-wrap items-center justify-between gap-4 mt-4">

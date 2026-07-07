@@ -1,9 +1,9 @@
 <script setup>
 import {
-    MaBadge,
     MaButton,
     MaInput,
     MaSelect2,
+    MaTagInput,
     MaTextarea,
 } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
@@ -164,20 +164,39 @@ const generateKeywords = () => {
                 <h2>{{ section.title }}</h2>
                 <div
                     v-if="section.keywords.length"
-                    class="flex flex-wrap gap-2"
+                    class="max-w-full"
                 >
-                    <!-- Generated keywords are read-only; badges avoid the editing behavior of MaTagInput. -->
-                    <MaBadge
-                        v-for="keyword in section.keywords"
-                        :key="keyword"
-                        class="max-w-full max-h-none whitespace-normal break-anywhere leading-4"
-                        shape="rounded"
-                    >
-                        {{ keyword }}
-                    </MaBadge>
+                    <!-- Disabled tag input renders generated keywords as read-only ActionKit tags. -->
+                    <MaTagInput
+                        :tags="section.keywords"
+                        class="keyword-tags max-w-full max-h-none whitespace-normal break-anywhere leading-4"
+                        disabled
+                    />
                 </div>
                 <p v-else>No keywords generated.</p>
             </div>
         </section>
     </main>
 </template>
+
+<style scoped>
+.keyword-tags.ma-tag-input-wrapper {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    min-height: 0 !important;
+}
+
+.keyword-tags :deep(.ma-tag-input) {
+    display: none !important;
+}
+
+.keyword-tags :deep(.ak-icon--close) {
+    display: none !important;
+}
+
+.keyword-tags :deep(.single-tag) {
+    padding-right: 8px !important;
+}
+</style>

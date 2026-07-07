@@ -1,6 +1,9 @@
-// Preserve Unicode letters and numbers while normalizing case, punctuation, and whitespace.
+// Lowercasing Turkish İ adds U+0307; remove only that combining dot before filtering separators.
 export const cleanInput = (input) => input
+    .normalize('NFC')
     .toLowerCase()
+    .replace(/\u0307/g, '')
+    .normalize('NFC')
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()
     .replace(/\s+/g, ' ');
