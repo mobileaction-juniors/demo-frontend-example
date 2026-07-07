@@ -10,6 +10,6 @@ const initialText = `Our Keyword Counter tool lets you count how many times keyw
         <h1 class="mb-6 text-center text-xl font-medium">
             Keyword count and density
         </h1>
-        <KeywordDensity :initial-text="initialText" />
+        <KeywordDensity :text="initialText" />
     </main>
 </template>

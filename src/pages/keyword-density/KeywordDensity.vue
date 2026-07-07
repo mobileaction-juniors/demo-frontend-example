@@ -4,15 +4,15 @@ import { computed, ref } from 'vue';
 import { cleanInput } from '../../utils/keywordUtils';
 
 const props = defineProps({
-    initialText: {
+    text: {
         type: String,
         required: true,
     },
 });
 
-const text = ref(props.initialText);
+const editableText = ref(props.text);
 // Count every character in the raw textarea value, including whitespace.
-const characterCount = computed(() => text.value.length);
+const characterCount = computed(() => editableText.value.length);
 const results = ref([]);
 const hasCounted = ref(false);
 const copyStatus = ref('');
@@ -20,7 +20,7 @@ const copyStatus = ref('');
 const countKeywords = () => {
     hasCounted.value = true;
     copyStatus.value = '';
-    const cleanedText = cleanInput(text.value);
+    const cleanedText = cleanInput(editableText.value);
 
     if (!cleanedText) {
         results.value = [];
@@ -33,25 +33,14 @@ const countKeywords = () => {
         return counts;
     }, new Map());
 
-    // Equal-frequency keywords share a density, so combine them into compact rows.
-    const groupedKeywords = [...keywordCounts.entries()]
-        .reduce((groups, [keyword, count]) => {
-            const keywords = groups.get(count) ?? [];
-            keywords.push(keyword);
-            groups.set(count, keywords);
-            return groups;
-        }, new Map());
-
-    results.value = [...groupedKeywords.entries()]
-        .map(([count, keywords]) => ({
-            keywordText: keywords.sort((firstKeyword, secondKeyword) => (
-                firstKeyword.localeCompare(secondKeyword)
-            )).join(', '),
+    results.value = [...keywordCounts.entries()]
+        .map(([keyword, count]) => ({
+            keywordText: keyword,
             count,
             // Density uses every word occurrence, not the number of unique keywords.
             density: `${((count / words.length) * 100).toFixed(1)}%`,
         }))
-        // Sort groups by frequency, then alphabetically for stable ties.
+        // Sort keywords by frequency, then alphabetically for stable ties.
         .sort((firstResult, secondResult) => secondResult.count - firstResult.count
             || firstResult.keywordText.localeCompare(secondResult.keywordText));
 };
@@ -85,7 +74,7 @@ const copyResults = async () => {
             <!-- Enter submits through the same handler without creating a new line. -->
             <MaTextarea
                 id="keyword-density-text"
-                v-model="text"
+                v-model="editableText"
                 class="block w-full max-w-full box-border"
                 :rows="14"
                 @keydown.enter.prevent="countKeywords"
@@ -137,7 +126,7 @@ const copyResults = async () => {
                         <tbody class="divide-y divide-[#e8e7f0]">
                             <tr
                                 v-for="result in results"
-                                :key="`${result.count}-${result.density}`"
+                                :key="result.keywordText"
                                 class="even:bg-[#f3f2fb]"
                             >
                                 <td class="break-words px-3 py-2 text-gray-900">
