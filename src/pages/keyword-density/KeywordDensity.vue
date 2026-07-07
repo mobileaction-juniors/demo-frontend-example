@@ -1,6 +1,7 @@
 <script setup>
 import { MaButton, MaTextarea } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
+import { cleanInput } from '../../utils/keywordUtils';
 
 const props = defineProps({
     initialText: {
@@ -16,17 +17,10 @@ const results = ref([]);
 const hasCounted = ref(false);
 const copyStatus = ref('');
 
-// Normalize case and separators so equivalent words share one count.
-const cleanText = (value) => value
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim()
-    .replace(/\s+/g, ' ');
-
 const countKeywords = () => {
     hasCounted.value = true;
     copyStatus.value = '';
-    const cleanedText = cleanText(text.value);
+    const cleanedText = cleanInput(text.value);
 
     if (!cleanedText) {
         results.value = [];
