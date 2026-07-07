@@ -16,7 +16,7 @@ const userInput = ref('');
 const selectedGramSizes = ref([1, 2, 3]);
 
 // Start with common words while allowing users to edit the list.
-const unwantedWords = ref(DEFAULT_STOP_WORDS);
+const unwantedWords = ref(DEFAULT_STOP_WORDS.join(', '));
 
 // Define the supported range once so the selector and generation logic cannot drift apart.
 const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
@@ -180,23 +180,23 @@ const generateKeywords = () => {
 </template>
 
 <style scoped>
-.keyword-tags.ma-tag-input-wrapper {
-    border: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    min-height: 0 !important;
+:deep(.keyword-tags.ma-tag-input-wrapper) {
+    border: none;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    min-height: 0;
 }
 
-.keyword-tags :deep(.ma-tag-input) {
-    display: none !important;
+:deep(.keyword-tags .ma-tag-input) {
+    display: none;
 }
 
-.keyword-tags :deep(.ak-icon--close) {
-    display: none !important;
+:deep(.keyword-tags .ak-icon--close) {
+    display: none;
 }
 
-.keyword-tags :deep(.single-tag) {
-    padding-right: 8px !important;
+:deep(.keyword-tags .single-tag) {
+    padding-right: 8px;
 }
 </style>

@@ -47,9 +47,7 @@ const columnDefs = [
         minWidth: 70,
         headerClass: 'ag-right-aligned-header',
         cellClass: 'ag-right-aligned-cell',
-        comparator: (firstDensity, secondDensity) => (
-            Number.parseFloat(firstDensity) - Number.parseFloat(secondDensity)
-        ),
+        valueFormatter: (params) => (params.value != null ? `${params.value.toFixed(1)}%` : ''),
     },
 ];
 
@@ -75,7 +73,7 @@ const countKeywords = () => {
             keywordText: keyword,
             count,
             // Density uses every word occurrence, not the number of unique keywords.
-            density: `${((count / words.length) * 100).toFixed(1)}%`,
+            density: (count / words.length) * 100,
         }))
         // Sort keywords by frequency, then alphabetically for stable ties.
         .sort((firstResult, secondResult) => secondResult.count - firstResult.count
@@ -85,14 +83,15 @@ const countKeywords = () => {
 const copyResults = async () => {
     // Mirror the visible columns in a readable tab-separated clipboard format.
     const rows = results.value.map(({ keywordText, count, density }) => (
-        `${keywordText}\t${count}\t${density}`
+        `${keywordText}\t${count}\t${density.toFixed(1)}%`
     ));
     const clipboardText = ['Keyword\tCount\tDensity', ...rows].join('\n');
 
     try {
         await navigator.clipboard.writeText(clipboardText);
         copyStatus.value = 'Copied to clipboard.';
-    } catch {
+    } catch (error) {
+        console.error(error);
         copyStatus.value = 'Clipboard access is unavailable.';
     }
 };
@@ -119,9 +118,7 @@ const copyResults = async () => {
             <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
                 <MaButton
                     html-type="button"
-                    color="red"
                     size="small"
-                    class="!border-red-700 !bg-red-700 !text-white hover:!border-red-800 hover:!bg-red-800"
                     @click="countKeywords"
                 >
                     Count
