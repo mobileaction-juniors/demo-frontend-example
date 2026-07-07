@@ -6,6 +6,7 @@ import {
     MaTextarea,
 } from '@mobileaction/action-kit';
 import { computed, ref } from 'vue';
+import { DEFAULT_STOP_WORDS } from '../../constants/stopWords';
 import { cleanInput, generateUniqueNGrams } from '../../utils/keywordUtils';
 
 const userInput = ref('');
@@ -14,7 +15,7 @@ const userInput = ref('');
 const selectedGramSizes = ref([1, 2, 3]);
 
 // Seed the editable list with a short set of common words instead of imposing a large fixed stop-word dictionary.
-const unwantedWords = ref('is, a, an, the');
+const unwantedWords = ref(DEFAULT_STOP_WORDS);
 
 // Define the supported range once so the selector and generation logic cannot drift apart.
 const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
