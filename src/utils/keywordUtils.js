@@ -1,8 +1,6 @@
-// Normalize the input into lowercase words separated by single spaces.
+// Preserve Unicode letters and numbers while normalizing case, punctuation, and whitespace.
 export const cleanInput = (input) => input
     .toLowerCase()
-    // \p{L} matches Unicode letters and \p{N} matches Unicode numbers.
-    // This preserves Turkish/non-ASCII text while removing punctuation.
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim()
     .replace(/\s+/g, ' ');

@@ -5,6 +5,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 import { computed, ref } from 'vue';
 import { cleanInput } from '../../utils/keywordUtils';
 
+// Register Community features only; shared column defaults enable sorting.
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const props = defineProps({
@@ -14,6 +15,7 @@ const props = defineProps({
     },
 });
 
+// Seed local state once so textarea edits remain independent of the parent prop.
 const editableText = ref(props.text);
 // Count every character in the raw textarea value, including whitespace.
 const characterCount = computed(() => editableText.value.length);
@@ -67,6 +69,7 @@ const countKeywords = () => {
         return counts;
     }, new Map());
 
+    // Keep one row per keyword for direct sorting in AG Grid.
     results.value = [...keywordCounts.entries()]
         .map(([keyword, count]) => ({
             keywordText: keyword,

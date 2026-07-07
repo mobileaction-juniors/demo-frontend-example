@@ -1,7 +1,7 @@
 <script setup>
 import KeywordDensity from './KeywordDensity.vue';
 
-// The parent owns the seed text so ONB-204 can pass it to the child on first load.
+// Keep the first-load sample in the parent while the child owns subsequent edits.
 const initialText = `Our Keyword Counter tool lets you count how many times keywords are repeated in any text, and also calculates the density of these keywords. The keyword density is the percentage of times a keyword appears in a text compared to the total number of words in that text. Simply write or paste your text here and hit "count".`;
 </script>
 
