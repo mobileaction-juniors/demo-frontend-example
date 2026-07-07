@@ -1,7 +1,11 @@
 <script setup>
 import { MaButton, MaTextarea } from '@mobileaction/action-kit';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AgGridVue } from 'ag-grid-vue3';
 import { computed, ref } from 'vue';
 import { cleanInput } from '../../utils/keywordUtils';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const props = defineProps({
     text: {
@@ -16,6 +20,36 @@ const characterCount = computed(() => editableText.value.length);
 const results = ref([]);
 const hasCounted = ref(false);
 const copyStatus = ref('');
+const defaultColDef = {
+    sortable: true,
+};
+const columnDefs = [
+    {
+        field: 'keywordText',
+        headerName: 'Keyword',
+        flex: 3,
+        minWidth: 120,
+    },
+    {
+        field: 'count',
+        headerName: 'Count',
+        flex: 1,
+        minWidth: 70,
+        headerClass: 'ag-right-aligned-header',
+        cellClass: 'ag-right-aligned-cell',
+    },
+    {
+        field: 'density',
+        headerName: 'Density',
+        flex: 1,
+        minWidth: 70,
+        headerClass: 'ag-right-aligned-header',
+        cellClass: 'ag-right-aligned-cell',
+        comparator: (firstDensity, secondDensity) => (
+            Number.parseFloat(firstDensity) - Number.parseFloat(secondDensity)
+        ),
+    },
+];
 
 const countKeywords = () => {
     hasCounted.value = true;
@@ -107,40 +141,14 @@ const copyResults = async () => {
             <div
                 v-if="results.length"
             >
-                <!-- Fixed table layout keeps every column within narrow mobile screens. -->
                 <div class="w-full max-w-full overflow-hidden rounded border border-[#e8e7f0]">
-                    <table class="w-full table-fixed border-collapse text-sm">
-                        <thead class="bg-[#4f5cff] text-white">
-                            <tr>
-                                <th class="w-3/5 px-3 py-2 text-left font-medium">
-                                    Keyword
-                                </th>
-                                <th class="w-1/5 px-2 py-2 text-right font-medium sm:px-3">
-                                    Count
-                                </th>
-                                <th class="w-1/5 px-2 py-2 text-right font-medium sm:px-3">
-                                    Density
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-[#e8e7f0]">
-                            <tr
-                                v-for="result in results"
-                                :key="result.keywordText"
-                                class="even:bg-[#f3f2fb]"
-                            >
-                                <td class="break-words px-3 py-2 text-gray-900">
-                                    {{ result.keywordText }}
-                                </td>
-                                <td class="px-2 py-2 text-right text-gray-700 sm:px-3">
-                                    {{ result.count }}
-                                </td>
-                                <td class="px-2 py-2 text-right text-gray-700 sm:px-3">
-                                    {{ result.density }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <AgGridVue
+                        class="w-full"
+                        :column-defs="columnDefs"
+                        :default-col-def="defaultColDef"
+                        :row-data="results"
+                        dom-layout="autoHeight"
+                    />
                 </div>
                 <div class="flex flex-wrap items-center gap-3 mt-3">
                     <MaButton
