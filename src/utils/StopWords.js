@@ -1,5 +1,5 @@
 
-export const stopWords = [
+export const stopWords = new Set([
     'a',
     'an',
     'and',
@@ -33,4 +33,4 @@ export const stopWords = [
     'was',
     'will',
     'with'
-];
+]);
