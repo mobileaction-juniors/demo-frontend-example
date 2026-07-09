@@ -57,8 +57,10 @@ const unwantedWords = computed({
         />
 
         <label for="gram-size-select">N-gram sizes</label>
+        <!-- Stable Cypress hook around ActionKit's implementation-specific markup. -->
         <MaSelect2
             id="gram-size-select"
+            data-testid="gram-size-select"
             v-model:value="selectedGramSizes"
             class="block w-full mt-2 mb-4"
             aria-describedby="keyword-validation"
