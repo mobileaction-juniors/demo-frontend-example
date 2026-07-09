@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge, MaSelect} from "@mobileaction/action-kit";
@@ -28,6 +28,11 @@ const results = computed(() => {
     ngrams[nGram] = generateNGram(cleanedInput.value, i + 1)
   }
   return ngrams;
+})
+
+//to keep selected n-gram options sorted
+watch(selectedNGrams, (newVal) => {
+  selectedNGrams.value = newVal.sort();
 })
 
 </script>
