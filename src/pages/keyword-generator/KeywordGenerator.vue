@@ -11,17 +11,21 @@ const cleanedInput = computed(() => cleanInput(userInput.value))
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
   const options = [];
+  let nGram;
   for(let i = 0; i < ngramLimit; i++) {
-    options.push({label: `${i + 1}-Gram`, value: i + 1})
+    nGram = `${i + 1}-Gram`;
+    options.push({label: nGram, value: nGram})
   }
   return options;
 })
 
 //to generate n-gram keywords
 const results = computed(() => {
-  const ngrams = [];
+  const ngrams = {};
+  let nGram;
   for (let i = 0; i < ngramLimit; i++) {
-    ngrams.push(generateNGram(cleanedInput.value, i + 1))
+    nGram = `${i + 1}-Gram`;
+    ngrams[nGram] = generateNGram(cleanedInput.value, i + 1)
   }
   return ngrams;
 })
@@ -42,8 +46,8 @@ const results = computed(() => {
     <!--        Displaying the generated keywords-->
     <div>
       <ul v-for="nGram in selectedNGrams" :key="nGram">
-        {{ `${nGram}-Gram` }}
-        <MaBadge variant="blue" v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
+        {{nGram}}
+        <MaBadge variant="blue" v-for="(keyword, keywordIndex) in results[nGram]" :key="keywordIndex">
           {{ keyword }}
         </MaBadge>
       </ul>
