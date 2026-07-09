@@ -2,7 +2,7 @@
 import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
-import {MaTextInput} from "@mobileaction/action-kit";
+import {MaTextInput, MaBadge} from "@mobileaction/action-kit";
 
 const ngramLimit = ref(10);
 const userInput = ref('');
@@ -34,9 +34,9 @@ const results = computed(() => {
     <div>
       <ul v-for="nGram in selectedNGrams" :key="nGram">
         {{ `${nGram}-Gram` }}
-        <li v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
+        <MaBadge variant="blue" v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
           {{ keyword }}
-        </li>
+        </MaBadge>
       </ul>
     </div>
   </div>
