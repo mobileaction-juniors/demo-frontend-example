@@ -19,18 +19,19 @@ const results = computed(() => {
         <div class="ma-header">
             <span>Keyword Generator</span>
         </div>
+        <input v-model="userInput" placeholder="Type Something">
+        <p>Cleaned User Input: {{cleanedInput}}</p>
+        <hr>
+        //Displaying the generated keywords
+        <div>
+          <ul v-for="(nGram, index) in results" :key="index">
+            {{`${index + 1}-Gram`}}
+            <li v-for="(keyword, index) in nGram" :key="index">
+              {{keyword}}
+            </li>
+          </ul>
+        </div>
     </div>
-    <input v-model="userInput" placeholder="Type Something">
-    <p>Cleaned User Input: {{cleanedInput}}</p>
-    <hr>
-    //Displaying the generated keywords
-    <div>
-      <ul v-for="(nGram, index) in results" :key="index">
-        {{`${index + 1}-Gram`}}
-        <li v-for="(keyword, index) in nGram" :key="index">
-          {{keyword}}
-        </li>
-      </ul>
-    </div>
+
 
 </template>
