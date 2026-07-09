@@ -1,7 +1,7 @@
 import {stopWords} from "@/utils/StopWords.js";
 
 export function generateNGram(input, n) {
-    if (!input || input.length === 0) return []
+    if (!input || input.length < n) return []
     const keywords = input.split(' ')
     const cleanedKeywords = keywords.filter(keyword => !stopWords.has(keyword))
     const nGrams = new Set() //to remove duplicates
