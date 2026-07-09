@@ -4,7 +4,7 @@ import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge} from "@mobileaction/action-kit";
 
-const ngramLimit = ref(10);
+const ngramLimit = 10
 const userInput = ref('');
 const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
