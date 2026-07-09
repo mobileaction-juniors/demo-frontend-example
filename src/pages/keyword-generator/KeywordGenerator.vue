@@ -1,7 +1,9 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {cleanInput} from "@/utils/CleanInput.js";
 
 const userInput = ref('');
+const cleanedInput = computed(() => cleanInput(userInput.value))
 </script>
 <template>
     <div class="ma-keywords-generator">
@@ -10,5 +12,5 @@ const userInput = ref('');
         </div>
     </div>
     <input v-model="userInput" placeholder="Type Something">
-    <p>User Input: {{userInput}}</p>
+    <p>Cleaned User Input: {{cleanedInput}}</p>
 </template>
