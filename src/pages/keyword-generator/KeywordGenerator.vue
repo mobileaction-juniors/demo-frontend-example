@@ -5,6 +5,7 @@ import {generateNGram} from "@/utils/GenerateNGram.js";
 
 const ngramLimit = ref(3);
 const userInput = ref('');
+const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
 const results = computed(() => {
   const ngrams = [];
@@ -23,11 +24,15 @@ const results = computed(() => {
         <p>Cleaned User Input: {{cleanedInput}}</p>
         <hr>
 
+        <select v-model="selectedNGrams" multiple>
+          <option v-for="n in ngramLimit" :key="n" :value="n">{{n}}-Gram</option>/
+        </select>
+
 <!--        //Displaying the generated keywords-->
         <div>
-          <ul v-for="(nGram, gramIndex) in results" :key="gramIndex">
-            {{`${gramIndex + 1}-Gram`}}
-            <li v-for="(keyword, keywordIndex) in nGram" :key="keywordIndex">
+          <ul v-for="nGram in selectedNGrams" :key="nGram">
+            {{`${nGram}-Gram`}}
+            <li v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
               {{keyword}}
             </li>
           </ul>
