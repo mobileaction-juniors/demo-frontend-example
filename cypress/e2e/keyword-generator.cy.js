@@ -47,4 +47,16 @@ describe('Keyword Generator', () => {
             .and('not.contain.text', 'and');
         cy.contains('h2', '2-Gram').parent().should('contain.text', 'swift fox');
     });
+
+    // Covers deduplication of repeated words in 1-gram results.
+    it('does not render duplicate keywords multiple times in 1-gram results', () => {
+        cy.get('textarea#keyword-input').type('apple apple banana apple');
+        cy.contains('button', 'Generate Keywords').click();
+
+        cy.contains('h2', '1-Gram').parent().within(() => {
+            cy.get('.single-tag').should('have.length', 2);
+            cy.get('.single-tag').filter(':contains("apple")').should('have.length', 1);
+            cy.get('.single-tag').filter(':contains("banana")').should('have.length', 1);
+        });
+    });
 });
