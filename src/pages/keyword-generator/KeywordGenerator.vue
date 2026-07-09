@@ -22,7 +22,7 @@ const results = computed(() => {
         <input v-model="userInput" placeholder="Type Something">
         <p>Cleaned User Input: {{cleanedInput}}</p>
         <hr>
-        //Displaying the generated keywords
+<!--        //Displaying the generated keywords-->
         <div>
           <ul v-for="(nGram, index) in results" :key="index">
             {{`${index + 1}-Gram`}}
