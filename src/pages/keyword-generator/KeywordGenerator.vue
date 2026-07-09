@@ -8,15 +8,6 @@ const userInput = ref('');
 const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
 
-//to generate n-gram keywords
-const results = computed(() => {
-  const ngrams = [];
-  for (let i = 0; i < ngramLimit.value; i++) {
-    ngrams.push(generateNGram(cleanedInput.value, i + 1))
-  }
-  return ngrams;
-})
-
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
   const options = [];
@@ -25,6 +16,16 @@ const nGramSelectOptions = computed(() => {
   }
   return options;
 })
+
+//to generate n-gram keywords
+const results = computed(() => {
+  const ngrams = [];
+  for (let i = 0; i < ngramLimit; i++) {
+    ngrams.push(generateNGram(cleanedInput.value, i + 1))
+  }
+  return ngrams;
+})
+
 </script>
 
 <template>
