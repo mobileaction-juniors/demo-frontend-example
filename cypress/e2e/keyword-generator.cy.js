@@ -19,16 +19,19 @@ describe('Keyword Generator', () => {
     // Covers filtering generated results by selected n-gram sizes.
     it('filters generated results using the n-gram multi-select', () => {
         cy.get('textarea#keyword-input').type('alpha beta gamma delta');
-        cy.contains('button', 'Generate Keywords').click();
 
         cy.get('[data-testid="gram-size-select"]').click();
         cy.contains('.ma-select-option', /^1$/).click();
         cy.contains('.ma-select-option', /^3$/).click();
+        cy.contains('h1', 'Keyword Generator').click();
+        cy.get('.ma-select-option').should('not.exist');
 
-        cy.contains('h2', '2-Gram').should('be.visible');
-        cy.contains('h2', '1-Gram').should('not.exist');
-        cy.contains('h2', '3-Gram').should('not.exist');
-        cy.contains('h2', '2-Gram').parent().should('contain.text', 'alpha beta');
+        cy.contains('button', 'Generate Keywords').click();
+
+        cy.contains(/2-gram/i).should('be.visible');
+        cy.contains(/1-gram/i).should('not.exist');
+        cy.contains(/3-gram/i).should('not.exist');
+        cy.contains(/2-gram/i).parent().should('contain.text', 'alpha beta');
     });
 
     // Covers removing configured stop words before generation.
