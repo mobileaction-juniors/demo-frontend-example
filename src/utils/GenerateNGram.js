@@ -1,4 +1,5 @@
 export function generateNGram(input, n) {
+    if (!input || input.length < n) return []
     const keywords = input.split(' ')
     const nGrams = new Set() //to remove duplicates
     for (let i = 0; i < keywords.length - (n - 1); i++) {
