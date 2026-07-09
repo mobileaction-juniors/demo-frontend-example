@@ -2,12 +2,13 @@
 import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
-import {MaTextInput, MaBadge} from "@mobileaction/action-kit";
-
+import {MaTextInput, MaBadge, MaSelect} from "@mobileaction/action-kit";
 const ngramLimit = 10
 const userInput = ref('');
 const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
+
+//to generate n-gram keywords
 const results = computed(() => {
   const ngrams = [];
   for (let i = 0; i < ngramLimit.value; i++) {
@@ -15,7 +16,17 @@ const results = computed(() => {
   }
   return ngrams;
 })
+
+//to select multiple n-gram options
+const nGramSelectOptions = computed(() => {
+  const options = [];
+  for(let i = 0; i < ngramLimit; i++) {
+    options.push({label: `${i + 1}-Gram`, value: i + 1})
+  }
+  return options;
+})
 </script>
+
 <template>
   <div class="ma-keywords-generator">
     <div class="ma-header">
@@ -25,9 +36,7 @@ const results = computed(() => {
     <p>Cleaned User Input: {{ cleanedInput }}</p>
     <hr>
 
-    <select v-model="selectedNGrams" multiple>
-      <option v-for="n in ngramLimit" :key="n" :value="n">{{ n }}-Gram</option>
-    </select>
+    <ma-select v-model:value="selectedNGrams" allowClear :options="nGramSelectOptions" dropdownMatchSelectWidth mode="multiselect" placeholder="Select option..." />
 
     <!--        Displaying the generated keywords-->
     <div>
