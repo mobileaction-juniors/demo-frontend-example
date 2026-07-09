@@ -2,8 +2,8 @@
 import { MaButton, MaTextarea } from '@mobileaction/action-kit';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
-import { computed, ref } from 'vue';
-import { cleanInput } from '../../utils/keywordUtils';
+import { storeToRefs } from 'pinia';
+import { useKeywordStore } from '../../stores/keywordStore';
 
 // Register Community features only; shared column defaults enable sorting.
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -15,13 +15,21 @@ const props = defineProps({
     },
 });
 
+const store = useKeywordStore();
+
 // Seed local state once so textarea edits remain independent of the parent prop.
-const editableText = ref(props.text);
-// Count every character in the raw textarea value, including whitespace.
-const characterCount = computed(() => editableText.value.length);
-const results = ref([]);
-const hasCounted = ref(false);
-const copyStatus = ref('');
+store.initializeDensityText(props.text);
+
+const {
+    editableText,
+    characterCount,
+    results,
+    hasCounted,
+    copyStatus,
+} = storeToRefs(store);
+
+const { countKeywords, copyResults } = store;
+
 const defaultColDef = {
     sortable: true,
 };
@@ -50,51 +58,6 @@ const columnDefs = [
         valueFormatter: (params) => (params.value != null ? `${params.value.toFixed(1)}%` : ''),
     },
 ];
-
-const countKeywords = () => {
-    hasCounted.value = true;
-    copyStatus.value = '';
-    const cleanedText = cleanInput(editableText.value);
-
-    if (!cleanedText) {
-        results.value = [];
-        return;
-    }
-
-    const words = cleanedText.split(' ');
-    const keywordCounts = words.reduce((counts, keyword) => {
-        counts.set(keyword, (counts.get(keyword) ?? 0) + 1);
-        return counts;
-    }, new Map());
-
-    // Keep one row per keyword for direct sorting in AG Grid.
-    results.value = [...keywordCounts.entries()]
-        .map(([keyword, count]) => ({
-            keywordText: keyword,
-            count,
-            // Density uses every word occurrence, not the number of unique keywords.
-            density: (count / words.length) * 100,
-        }))
-        // Sort keywords by frequency, then alphabetically for stable ties.
-        .sort((firstResult, secondResult) => secondResult.count - firstResult.count
-            || firstResult.keywordText.localeCompare(secondResult.keywordText));
-};
-
-const copyResults = async () => {
-    // Mirror the visible columns in a readable tab-separated clipboard format.
-    const rows = results.value.map(({ keywordText, count, density }) => (
-        `${keywordText}\t${count}\t${density.toFixed(1)}%`
-    ));
-    const clipboardText = ['Keyword\tCount\tDensity', ...rows].join('\n');
-
-    try {
-        await navigator.clipboard.writeText(clipboardText);
-        copyStatus.value = 'Copied to clipboard.';
-    } catch (error) {
-        console.error(error);
-        copyStatus.value = 'Clipboard access is unavailable.';
-    }
-};
 </script>
 
 <template>

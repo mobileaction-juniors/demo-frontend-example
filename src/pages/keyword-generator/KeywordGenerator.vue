@@ -6,17 +6,9 @@ import {
     MaTagInput,
     MaTextarea,
 } from '@mobileaction/action-kit';
-import { computed, ref } from 'vue';
-import { DEFAULT_STOP_WORDS } from '../../constants/stopWords';
-import { cleanInput, generateUniqueNGrams } from '../../utils/keywordUtils';
-
-const userInput = ref('');
-
-// Keep the original ONB-201 result set visible by default while allowing 1–10 selection.
-const selectedGramSizes = ref([1, 2, 3]);
-
-// Start with common words while allowing users to edit the list.
-const unwantedWords = ref(DEFAULT_STOP_WORDS.join(', '));
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useKeywordStore } from '../../stores/keywordStore';
 
 // Define the supported range once so the selector and generation logic cannot drift apart.
 const gramSizeOptions = Array.from({ length: 10 }, (_, index) => index + 1);
@@ -24,81 +16,30 @@ const gramSizeSelectOptions = gramSizeOptions.map((gramSize) => ({
     label: String(gramSize),
     value: gramSize,
 }));
-const generatedKeywords = ref({
-    1: [],
-    2: [],
-    3: [],
+
+const store = useKeywordStore();
+const {
+    keywordSections,
+    hasGenerated,
+    canGenerate,
+    validationMessage,
+} = storeToRefs(store);
+
+const { generateKeywords } = store;
+
+// Use store actions via computed setters to ensure stale results are cleared when inputs change
+const userInput = computed({
+    get: () => store.userInput,
+    set: (value) => store.setUserInput(value),
 });
-
-const keywordSections = computed(() => selectedGramSizes.value
-    .slice()
-    .sort((firstSize, secondSize) => firstSize - secondSize)
-    .map((gramSize) => ({
-        title: `${gramSize}-Gram`,
-        keywords: generatedKeywords.value[gramSize] ?? [],
-    })));
-
-const hasGenerated = computed(() => keywordSections.value
-    .some((section) => section.keywords.length > 0));
-
-// Require a selection so generation cannot run without a visible result section.
-const hasSelectedGramSizes = computed(() => selectedGramSizes.value.length > 0);
-
-const cleanedUserInput = computed(() => cleanInput(userInput.value));
-const hasCleanInput = computed(() => Boolean(cleanedUserInput.value));
-const unwantedWordSet = computed(() => {
-    const cleanedUnwantedWords = cleanInput(unwantedWords.value);
-
-    return new Set(cleanedUnwantedWords ? cleanedUnwantedWords.split(' ') : []);
+const selectedGramSizes = computed({
+    get: () => store.selectedGramSizes,
+    set: (value) => store.setSelectedGramSizes(value),
 });
-const filteredWords = computed(() => (hasCleanInput.value
-    ? cleanedUserInput.value
-        .split(' ')
-        .filter((word) => !unwantedWordSet.value.has(word))
-    : []));
-const currentWordCount = computed(() => filteredWords.value.length);
-
-// The largest selection defines the word count required to generate every selected size.
-const largestSelectedGramSize = computed(() => (hasSelectedGramSizes.value
-    ? Math.max(...selectedGramSizes.value)
-    : 0));
-const hasEnoughWordsForSelectedGrams = computed(() => currentWordCount.value
-    >= largestSelectedGramSize.value);
-
-// Require enough words for the largest selection to avoid partially generated results.
-const canGenerate = computed(() => hasSelectedGramSizes.value
-    && hasCleanInput.value
-    && hasEnoughWordsForSelectedGrams.value);
-const validationMessage = computed(() => {
-    if (!hasCleanInput.value && !hasSelectedGramSizes.value) {
-        return 'Please enter text and select at least one n-gram size.';
-    }
-
-    if (!hasCleanInput.value) {
-        return 'Please enter text to generate keywords.';
-    }
-
-    if (!hasSelectedGramSizes.value) {
-        return 'Please select at least one n-gram size.';
-    }
-
-    return `Please provide at least ${largestSelectedGramSize.value} words after unwanted words are removed.`;
+const unwantedWords = computed({
+    get: () => store.unwantedWords,
+    set: (value) => store.setUnwantedWords(value),
 });
-
-const generateKeywords = () => {
-    // Guard direct calls with the same selection, input, and word-count validation as the button.
-    if (!canGenerate.value) {
-        return;
-    }
-
-    // Intentionally generate all 1–10 sizes so later selection changes never expose stale results.
-    generatedKeywords.value = Object.fromEntries(
-        gramSizeOptions.map((gramSize) => [
-            gramSize,
-            generateUniqueNGrams(filteredWords.value, gramSize),
-        ]),
-    );
-};
 </script>
 
 <template>

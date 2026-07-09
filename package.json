@@ -19,6 +19,7 @@
     "@mobileaction/action-kit": "^1.58.20",
     "ag-grid-community": "^36.0.0",
     "ag-grid-vue3": "^36.0.0",
+    "pinia": "^3.0.4",
     "vue": "^3.5.12",
     "vue-router": "^4.3.3"
   },
