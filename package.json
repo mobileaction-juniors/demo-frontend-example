@@ -12,7 +12,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "test:e2e": "start-server-and-test \"pnpm dev --host 127.0.0.1 --port 4173 --strictPort\" http://127.0.0.1:4173 \"cypress run\"",
+    "test:e2e": "start-server-and-test \"vite --host 127.0.0.1 --port 4173 --strictPort\" http://127.0.0.1:4173 \"cypress run\"",
     "test:e2e:open": "start-server-and-test \"pnpm dev --host 127.0.0.1 --port 4173 --strictPort\" http://127.0.0.1:4173 \"cypress open\""
   },
   "dependencies": {
