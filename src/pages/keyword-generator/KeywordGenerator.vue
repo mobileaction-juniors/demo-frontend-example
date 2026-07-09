@@ -3,7 +3,7 @@ import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 
-const ngramLimit = ref(3);
+const ngramLimit = ref(10);
 const userInput = ref('');
 const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
