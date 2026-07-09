@@ -24,9 +24,9 @@ const results = computed(() => {
         <hr>
 <!--        //Displaying the generated keywords-->
         <div>
-          <ul v-for="(nGram, index) in results" :key="index">
-            {{`${index + 1}-Gram`}}
-            <li v-for="(keyword, index) in nGram" :key="index">
+          <ul v-for="(nGram, gramIndex) in results" :key="gramIndex">
+            {{`${gramIndex + 1}-Gram`}}
+            <li v-for="(keyword, keywordIndex) in nGram" :key="keywordIndex">
               {{keyword}}
             </li>
           </ul>
