@@ -3,12 +3,12 @@ import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 
-const ngramLimit = 3;
+const ngramLimit = ref(3);
 const userInput = ref('');
 const cleanedInput = computed(() => cleanInput(userInput.value))
 const results = computed(() => {
   const ngrams = [];
-  for (let i = 0; i < ngramLimit; i++) {
+  for (let i = 0; i < ngramLimit.value; i++) {
     ngrams.push(generateNGram(cleanedInput.value, i + 1))
   }
   return ngrams;
@@ -22,6 +22,7 @@ const results = computed(() => {
         <input v-model="userInput" placeholder="Type Something">
         <p>Cleaned User Input: {{cleanedInput}}</p>
         <hr>
+
 <!--        //Displaying the generated keywords-->
         <div>
           <ul v-for="(nGram, gramIndex) in results" :key="gramIndex">
