@@ -27,7 +27,6 @@ const results = computed(() => {
 
     <select v-model="selectedNGrams" multiple>
       <option v-for="n in ngramLimit" :key="n" :value="n">{{ n }}-Gram</option>
-      /
     </select>
 
     <!--        Displaying the generated keywords-->
