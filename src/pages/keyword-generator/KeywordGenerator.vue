@@ -2,6 +2,7 @@
 import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
+import {MaTextInput} from "@mobileaction/action-kit";
 
 const ngramLimit = ref(10);
 const userInput = ref('');
@@ -16,28 +17,29 @@ const results = computed(() => {
 })
 </script>
 <template>
-    <div class="ma-keywords-generator">
-        <div class="ma-header">
-            <span>Keyword Generator</span>
-        </div>
-        <input v-model="userInput" placeholder="Type Something">
-        <p>Cleaned User Input: {{cleanedInput}}</p>
-        <hr>
-
-        <select v-model="selectedNGrams" multiple>
-          <option v-for="n in ngramLimit" :key="n" :value="n">{{n}}-Gram</option>/
-        </select>
-
-<!--        //Displaying the generated keywords-->
-        <div>
-          <ul v-for="nGram in selectedNGrams" :key="nGram">
-            {{`${nGram}-Gram`}}
-            <li v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
-              {{keyword}}
-            </li>
-          </ul>
-        </div>
+  <div class="ma-keywords-generator">
+    <div class="ma-header">
+      <span>Keyword Generator</span>
     </div>
+    <MaTextInput v-model="userInput" placeholder="Enter text..."/>
+    <p>Cleaned User Input: {{ cleanedInput }}</p>
+    <hr>
+
+    <select v-model="selectedNGrams" multiple>
+      <option v-for="n in ngramLimit" :key="n" :value="n">{{ n }}-Gram</option>
+      /
+    </select>
+
+    <!--        Displaying the generated keywords-->
+    <div>
+      <ul v-for="nGram in selectedNGrams" :key="nGram">
+        {{ `${nGram}-Gram` }}
+        <li v-for="(keyword, keywordIndex) in results[nGram - 1]" :key="keywordIndex">
+          {{ keyword }}
+        </li>
+      </ul>
+    </div>
+  </div>
 
 
 </template>
