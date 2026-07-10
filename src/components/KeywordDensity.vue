@@ -34,6 +34,18 @@ const getKeywordsCount = () => {
   return keywordsCount
 }
 
+const getKeywordsDensity = () => {
+  const keywordsCount = getKeywordsCount()
+  const totalCountOfKeywords = keywordsCount.length
+  const densityMap = {}
+  for (const keyword in keywordsCount) {
+    densityMap[keyword] = keywordsCount[keyword] / totalCountOfKeywords
+  }
+  console.log(densityMap)
+  return densityMap
+}
+
+
 </script>
 
 <template>
@@ -44,7 +56,7 @@ const getKeywordsCount = () => {
           v-model="inputText"
           placeholder=""
       />
-      <MaButton @click="getKeywordsCount" htmlType="button">
+      <MaButton @click="getKeywordsDensity" htmlType="button">
         Submit
       </MaButton>
     </div>
