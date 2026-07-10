@@ -30,8 +30,9 @@ const getKeywordsCount = () => {
       keywordsCount[keywords[i]] = 1
     }
   }
-  console.log(keywordsCount)
-  return keywordsCount
+  return Object.fromEntries(
+      Object.entries(keywordsCount).sort((a, b) => b[1] - a[1])
+  )
 }
 
 const getKeywordsDensity = () => {
@@ -47,26 +48,51 @@ const getKeywordsDensity = () => {
 }
 
 const densityOfKeywords = ref({})
-const keywordsCount = ref({})
+const countOfKeywords = ref({})
 
 const computeDensityAndCountOfKeywords = () => {
   densityOfKeywords.value = getKeywordsDensity()
-  keywordsCount.value = getKeywordsCount()
+  countOfKeywords.value = getKeywordsCount()
 }
 
 </script>
 
 <template>
-  <div>
-    <h1>Keyword Count & Density</h1>
-    <div>
+  <div class="flex flex-col gap-4 lg:flex-row">
+    <div class="flex w-full flex-col gap-3 lg:w-1/2">
+      <h1>Keyword Count & Density</h1>
       <MaTextarea
           v-model="inputText"
           placeholder=""
       />
-      <MaButton @click="getKeywordsDensity" htmlType="button">
+      <MaButton @click="computeDensityAndCountOfKeywords()" htmlType="button" class="self-start">
         Submit
       </MaButton>
+    </div>
+
+    <div class="w-full overflow-x-auto lg:w-1/2">
+      <div class="min-w-full rounded-lg border border-gray-200 bg-white">
+        <table class="min-w-full border-collapse text-left text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Keyword</th>
+              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Count</th>
+              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Density %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+                v-for="keyword in Object.keys(countOfKeywords)"
+                :key="keyword"
+                class="border-b border-gray-100 last:border-b-0"
+            >
+              <td class="px-4 py-3 text-gray-800">{{ keyword }}</td>
+              <td class="px-4 py-3 text-gray-800">{{ countOfKeywords[keyword] }}</td>
+              <td class="px-4 py-3 text-gray-800">{{ densityOfKeywords[keyword] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
