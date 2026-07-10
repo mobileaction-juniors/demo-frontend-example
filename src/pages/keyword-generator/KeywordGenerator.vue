@@ -64,6 +64,7 @@ watch(selectedNGrams, (newVal) => {
       <MaButton
           @click="generateKeywords"
           class="self-start"
+          icon="tag-2"
       >
         Generate
       </MaButton>
