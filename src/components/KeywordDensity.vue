@@ -28,8 +28,7 @@ const getKeywordsCount = () => {
   for (let i = 0; i < keywords.length; i++) {
     if (keywordsCount[keywords[i]]) {
       keywordsCount[keywords[i]]++
-    }
-    else {
+    } else {
       keywordsCount[keywords[i]] = 1
     }
   }
@@ -88,7 +87,9 @@ const computeDensityAndCountOfKeywords = () => {
     </div>
 
     <div class="w-full min-w-0 overflow-x-auto lg:flex-1">
-      <div class="ag-theme-quartz h-[360px] w-full max-w-full rounded-lg border border-gray-200 lg:h-[420px]">
+      <div class="ag-theme-quartz h-[360px] w-full max-w-full
+            rounded-lg border
+            border-gray-200 lg:h-[420px]">
         <AgGridVue
             class="h-full w-full min-w-0"
             :columnDefs="columnDefinitions"
