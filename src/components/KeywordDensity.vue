@@ -36,13 +36,14 @@ const getKeywordsCount = () => {
 
 const getKeywordsDensity = () => {
   const keywordsCount = getKeywordsCount()
-  const totalCountOfKeywords = keywordsCount.length
+  const totalCountOfKeywords = Object.values(keywordsCount).reduce((acc, curr) => acc + curr, 0)
   const densityMap = {}
-  for (const keyword in keywordsCount) {
-    densityMap[keyword] = keywordsCount[keyword] / totalCountOfKeywords
+  for (let keyword in keywordsCount) {
+    densityMap[keyword] = Math.round((keywordsCount[keyword] / totalCountOfKeywords) * 100)
   }
-  console.log(densityMap)
-  return densityMap
+  return Object.fromEntries(
+      Object.entries(densityMap).sort((a, b) => b[1] - a[1])
+  )
 }
 
 
