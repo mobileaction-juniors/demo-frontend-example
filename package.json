@@ -16,9 +16,14 @@
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.2",
     "@vitejs/plugin-vue": "^5.0.5",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
+    "tailwindcss": "^4.3.2",
     "vite": "^5.3.1"
-  }
+  },
+  "browserslist": [
+    "last 2 years"
+  ]
 }
