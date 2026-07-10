@@ -1,6 +1,9 @@
 <script setup>
 import {ref, watch} from "vue";
 import {MaTextarea, MaButton} from "@mobileaction/action-kit";
+import {AgGridVue} from "ag-grid-vue3";
+import "../../node_modules/.pnpm/ag-grid-community@36.0.0/node_modules/ag-grid-community/styles/ag-grid.css";
+import "../../node_modules/.pnpm/ag-grid-community@36.0.0/node_modules/ag-grid-community/styles/ag-theme-quartz.css";
 
 const props = defineProps({
   text: {
@@ -35,24 +38,37 @@ const getKeywordsCount = () => {
   )
 }
 
-const getKeywordsDensity = () => {
-  const keywordsCount = getKeywordsCount()
+const getKeywordsDensity = (keywordsCount) => {
   const totalCountOfKeywords = Object.values(keywordsCount).reduce((acc, curr) => acc + curr, 0)
+  if (!totalCountOfKeywords) return {}
   const densityMap = {}
   for (let keyword in keywordsCount) {
     densityMap[keyword] = Math.round((keywordsCount[keyword] / totalCountOfKeywords) * 100)
   }
-  return Object.fromEntries(
-      Object.entries(densityMap).sort((a, b) => a[1] - b[1])
-  )
+  return densityMap
 }
 
-const densityOfKeywords = ref({})
-const countOfKeywords = ref({})
+const columnDefinitions = [
+  {field: "keyword", headerName: "Keyword", sortable: true, flex: 1, minWidth: 140},
+  {field: "count", headerName: "Count", sortable: true, flex: 1, minWidth: 110},
+  {field: "density", headerName: "Density %", sortable: true, flex: 1, minWidth: 130},
+]
+
+const defaultColDef = {
+  resizable: true,
+}
+
+const rowData = ref([])
 
 const computeDensityAndCountOfKeywords = () => {
-  densityOfKeywords.value = getKeywordsDensity()
-  countOfKeywords.value = getKeywordsCount()
+  const countMap = getKeywordsCount()
+  const densityMap = getKeywordsDensity(countMap)
+
+  rowData.value = Object.keys(countMap).map((keyword) => ({
+    keyword,
+    count: countMap[keyword],
+    density: densityMap[keyword],
+  }))
 }
 
 </script>
@@ -71,27 +87,15 @@ const computeDensityAndCountOfKeywords = () => {
     </div>
 
     <div class="w-full overflow-x-auto lg:w-1/2">
-      <div class="min-w-full rounded-lg border border-gray-200 bg-white">
-        <table class="min-w-full border-collapse text-left text-sm">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Keyword</th>
-              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Count</th>
-              <th class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-700">Density %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-                v-for="keyword in Object.keys(countOfKeywords)"
-                :key="keyword"
-                class="border-b border-gray-100 last:border-b-0"
-            >
-              <td class="px-4 py-3 text-gray-800">{{ keyword }}</td>
-              <td class="px-4 py-3 text-gray-800">{{ countOfKeywords[keyword] }}</td>
-              <td class="px-4 py-3 text-gray-800">{{ densityOfKeywords[keyword] }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="ag-theme-quartz w-full rounded-lg border border-gray-200" style="height: 420px;">
+        <AgGridVue
+            class="h-full w-full"
+            :columnDefs="columnDefinitions"
+            :defaultColDef="defaultColDef"
+            :rowData="rowData"
+            :animateRows="true"
+            domLayout="normal"
+        />
       </div>
     </div>
   </div>
