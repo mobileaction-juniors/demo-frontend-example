@@ -50,9 +50,12 @@ watch(selectedNGrams, (newVal) => {
 
 <template>
   <div
-      class="ma-keywords-generator max-w-2xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col gap-5">
+      class="max-w-2xl mx-auto mt-8 p-6
+      bg-white rounded-xl shadow-sm border
+      border-gray-100 flex flex-col gap-5"
+  >
 
-    <div class="ma-header pb-3 border-b border-gray-200">
+    <div class="pb-3 border-b border-gray-200">
       <span class="text-xl font-bold text-gray-800">Keyword Generator</span>
     </div>
 
