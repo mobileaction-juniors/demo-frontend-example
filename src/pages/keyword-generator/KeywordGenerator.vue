@@ -20,8 +20,8 @@ const nGramSelectOptions = computed(() => {
   return options;
 })
 
-//to generate n-gram keywords
-const results = computed(() => {
+//generate keywords when button is clicked
+const getKeywords = () => {
   const ngrams = {};
   let nGram;
   for (let i = 0; i < ngramLimit; i++) {
@@ -29,12 +29,21 @@ const results = computed(() => {
     ngrams[nGram] = generateNGram(cleanedInput.value, i + 1)
   }
   return ngrams;
-})
+}
+
+//to generate n-gram keywords
+const results = ref({});
+
+const generateKeywords = () => {
+  results.value = getKeywords();
+}
 
 //to keep selected n-gram options sorted
 watch(selectedNGrams, (newVal) => {
   selectedNGrams.value = newVal.sort();
 })
+
+
 
 </script>
 
@@ -52,7 +61,10 @@ watch(selectedNGrams, (newVal) => {
           placeholder="Enter text..."
           class="w-full"
       />
-      <MaButton class="self-start">
+      <MaButton
+          @click="generateKeywords"
+          class="self-start"
+      >
         Generate
       </MaButton>
       <p class="text-sm text-gray-500 italic px-1">
