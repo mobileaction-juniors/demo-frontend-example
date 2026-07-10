@@ -1,6 +1,7 @@
+<!-- src/pages/index.vue -->
 <script setup>
-
 </script>
+
 <template>
     <div style="text-align: center">
         <h1>Welcome to Onboarding Progress </h1>

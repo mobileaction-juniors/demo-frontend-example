@@ -1,7 +1,10 @@
+<!-- src/components/TheHeader.vue -->
+<script setup>
+import TheNav from '@/components/TheNav.vue'
+</script>
+
 <template>
     <header>
-        <the-nav/>
+        <TheNav />
     </header>
 </template>
-
-
