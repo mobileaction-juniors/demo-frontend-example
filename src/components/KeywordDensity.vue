@@ -74,22 +74,23 @@ const computeDensityAndCountOfKeywords = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 lg:flex-row">
-    <div class="flex w-full flex-col gap-3 lg:w-1/2">
+  <div class="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start">
+    <div class="flex w-full min-w-0 flex-col gap-3 lg:flex-1">
       <h1>Keyword Count & Density</h1>
       <MaTextarea
           v-model="inputText"
           placeholder=""
+          class="w-full max-w-full"
       />
       <MaButton @click="computeDensityAndCountOfKeywords()" htmlType="button" class="self-start">
         Submit
       </MaButton>
     </div>
 
-    <div class="w-full overflow-x-auto lg:w-1/2">
-      <div class="ag-theme-quartz w-full rounded-lg border border-gray-200" style="height: 420px;">
+    <div class="w-full min-w-0 overflow-x-auto lg:flex-1">
+      <div class="ag-theme-quartz h-[360px] w-full max-w-full rounded-lg border border-gray-200 lg:h-[420px]">
         <AgGridVue
-            class="h-full w-full"
+            class="h-full w-full min-w-0"
             :columnDefs="columnDefinitions"
             :defaultColDef="defaultColDef"
             :rowData="rowData"
@@ -102,7 +103,3 @@ const computeDensityAndCountOfKeywords = () => {
 
 
 </template>
-
-<style scoped>
-
-</style>
