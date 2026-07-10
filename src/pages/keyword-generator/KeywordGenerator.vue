@@ -4,11 +4,13 @@ import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
+import {generateKeywords} from "@/utils/GenerateKeywords.js";
 
 const ngramLimit = 10
 const userInput = ref('');
 const selectedNGrams = ref([]);
 const cleanedInput = computed(() => cleanInput(userInput.value))
+const generatedKeywords = ref({});
 
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
@@ -22,29 +24,14 @@ const nGramSelectOptions = computed(() => {
 })
 
 //generate keywords when button is clicked
-const getKeywords = () => {
-  const ngrams = {};
-  let nGram;
-  for (let i = 0; i < ngramLimit; i++) {
-    nGram = `${i + 1}-Gram`;
-    ngrams[nGram] = generateNGram(cleanedInput.value, i + 1)
-  }
-  return ngrams;
-}
-
-//to generate n-gram keywords
-const results = ref({});
-
-const generateKeywords = () => {
-  results.value = getKeywords();
+const handleGenerate = () => {
+  generatedKeywords.value = generateKeywords(cleanedInput.value, ngramLimit)
 }
 
 //to keep selected n-gram options sorted
 watch(selectedNGrams, (newVal) => {
   selectedNGrams.value = newVal.sort();
 })
-
-
 
 </script>
 
@@ -66,7 +53,7 @@ watch(selectedNGrams, (newVal) => {
           class="w-full"
       />
       <MaButton
-          @click="generateKeywords"
+          @click="handleGenerate"
           class="self-start"
           icon="tag-2"
       >
@@ -99,7 +86,7 @@ watch(selectedNGrams, (newVal) => {
 
         <MaBadge
             variant="blue"
-            v-for="(keyword, keywordIndex) in results[nGram]"
+            v-for="(keyword, keywordIndex) in generatedKeywords[nGram]"
             :key="keywordIndex"
         >
           {{ keyword }}
