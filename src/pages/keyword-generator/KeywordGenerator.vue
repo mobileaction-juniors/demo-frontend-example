@@ -3,6 +3,7 @@ import {computed, ref, watch} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
+import KeywordDensity from "@/components/KeywordDensity.vue";
 
 const ngramLimit = 10
 const userInput = ref('');
@@ -102,7 +103,7 @@ watch(selectedNGrams, (newVal) => {
         </MaBadge>
       </ul>
     </div>
-
+    <KeywordDensity :text="cleanedInput"/>
   </div>
 
 </template>
