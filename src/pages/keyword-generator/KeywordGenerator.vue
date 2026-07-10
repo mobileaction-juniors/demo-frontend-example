@@ -1,7 +1,6 @@
 <script setup>
 import {computed, ref, watch} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
-import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
 import {generateKeywords} from "@/utils/GenerateKeywords.js";
