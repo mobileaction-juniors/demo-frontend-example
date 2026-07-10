@@ -3,6 +3,7 @@ import {computed, ref, watch} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
 import {MaTextInput, MaBadge, MaSelect} from "@mobileaction/action-kit";
+
 const ngramLimit = 10
 const userInput = ref('');
 const selectedNGrams = ref([]);
@@ -12,7 +13,7 @@ const cleanedInput = computed(() => cleanInput(userInput.value))
 const nGramSelectOptions = computed(() => {
   const options = [];
   let nGram;
-  for(let i = 0; i < ngramLimit; i++) {
+  for (let i = 0; i < ngramLimit; i++) {
     nGram = `${i + 1}-Gram`;
     options.push({label: nGram, value: nGram})
   }
@@ -38,26 +39,54 @@ watch(selectedNGrams, (newVal) => {
 </script>
 
 <template>
-  <div class="ma-keywords-generator">
-    <div class="ma-header">
-      <span>Keyword Generator</span>
+  <div
+      class="ma-keywords-generator max-w-2xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col gap-5">
+
+    <div class="ma-header pb-3 border-b border-gray-200">
+      <span class="text-xl font-bold text-gray-800">Keyword Generator</span>
     </div>
-    <MaTextInput v-model="userInput" placeholder="Enter text..."/>
-    <p>Cleaned User Input: {{ cleanedInput }}</p>
-    <hr>
 
-    <ma-select v-model:value="selectedNGrams" allowClear :options="nGramSelectOptions" dropdownMatchSelectWidth mode="multiselect" placeholder="Select option..." />
+    <div class="flex flex-col gap-2">
+      <MaTextInput
+          v-model="userInput"
+          placeholder="Enter text..."
+          class="w-full"
+      />
+      <p class="text-sm text-gray-500 italic px-1">
+        <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
+      </p>
+    </div>
 
-    <!--        Displaying the generated keywords-->
-    <div>
-      <ul v-for="nGram in selectedNGrams" :key="nGram">
-        {{nGram}}
-        <MaBadge variant="blue" v-for="(keyword, keywordIndex) in results[nGram]" :key="keywordIndex">
+    <hr class="border-gray-200">
+
+    <ma-select
+        v-model:value="selectedNGrams"
+        allowClear
+        :options="nGramSelectOptions"
+        dropdownMatchSelectWidth
+        mode="multiselect"
+        placeholder="Select option..."
+        class="w-full"
+    />
+
+    <div class="mt-2 flex flex-col gap-3">
+      <ul
+          v-for="nGram in selectedNGrams"
+          :key="nGram"
+          class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
+      >
+        <span class="font-semibold text-gray-700 min-w-[40px]">{{ nGram }}:</span>
+
+        <MaBadge
+            variant="blue"
+            v-for="(keyword, keywordIndex) in results[nGram]"
+            :key="keywordIndex"
+        >
           {{ keyword }}
         </MaBadge>
       </ul>
     </div>
-  </div>
 
+  </div>
 
 </template>
