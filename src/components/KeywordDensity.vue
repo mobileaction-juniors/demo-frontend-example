@@ -48,9 +48,27 @@ const getKeywordsDensity = (keywordsCount) => {
 }
 
 const columnDefinitions = [
-  {field: "keyword", headerName: "Keyword", sortable: true, flex: 1, minWidth: 140},
-  {field: "count", headerName: "Count", sortable: true, flex: 1, minWidth: 110},
-  {field: "density", headerName: "Density %", sortable: true, flex: 1, minWidth: 130},
+  {
+    field: "keyword",
+    headerName: "Keyword",
+    sortable: true,
+    flex: 1,
+    minWidth: 84,
+  },
+  {
+    field: "count",
+    headerName: "Count",
+    sortable: true,
+    flex: 0.6,
+    minWidth: 64,
+  },
+  {
+    field: "density",
+    headerName: "Density %",
+    sortable: true,
+    flex: 0.8,
+    minWidth: 72,
+  },
 ]
 
 const defaultColDef = {
@@ -73,34 +91,41 @@ const computeDensityAndCountOfKeywords = () => {
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-start">
-    <div class="flex w-full min-w-0 flex-col gap-3 lg:flex-1">
-      <h1>Keyword Count & Density</h1>
-      <MaTextarea
-          v-model="inputText"
-          placeholder=""
-          class="w-full max-w-full"
-      />
-      <MaButton @click="computeDensityAndCountOfKeywords()" htmlType="button" class="self-start">
-        Submit
-      </MaButton>
-    </div>
+  <div class="mx-auto w-full min-w-0 max-w-6xl px-3 sm:px-4">
+    <h1 class="mb-4 text-lg font-semibold text-gray-800 sm:text-xl">
+      Keyword Count & Density
+    </h1>
 
-    <div class="w-full min-w-0 overflow-x-auto lg:flex-1">
-      <div class="ag-theme-quartz h-[360px] w-full max-w-full
-            rounded-lg border
-            border-gray-200 lg:h-[420px]">
-        <AgGridVue
-            class="h-full w-full min-w-0"
-            :columnDefs="columnDefinitions"
-            :defaultColDef="defaultColDef"
-            :rowData="rowData"
-            :animateRows="true"
-            domLayout="normal"
+    <div class="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-4">
+      <section class="flex min-h-[220px] min-w-0 flex-col gap-3 rounded-lg border border-gray-200 p-4 sm:p-5">
+        <MaTextarea
+            v-model="inputText"
+            placeholder=""
+            :rows="9"
+            class="w-full max-w-full"
         />
-      </div>
+
+        <MaButton
+            @click="computeDensityAndCountOfKeywords"
+            htmlType="button"
+            class="self-start"
+        >
+          Submit
+        </MaButton>
+      </section>
+
+      <section class="min-w-0 rounded-lg border border-gray-200 p-3 sm:p-4">
+        <div class="ag-theme-quartz h-[300px] w-full max-w-full sm:h-[340px] lg:h-[420px]">
+          <AgGridVue
+              class="h-full w-full min-w-0"
+              :columnDefs="columnDefinitions"
+              :defaultColDef="defaultColDef"
+              :rowData="rowData"
+              :animateRows="true"
+              domLayout="normal"
+          />
+        </div>
+      </section>
     </div>
   </div>
-
-
 </template>
