@@ -42,10 +42,17 @@ const getKeywordsDensity = () => {
     densityMap[keyword] = Math.round((keywordsCount[keyword] / totalCountOfKeywords) * 100)
   }
   return Object.fromEntries(
-      Object.entries(densityMap).sort((a, b) => b[1] - a[1])
+      Object.entries(densityMap).sort((a, b) => a[1] - b[1])
   )
 }
 
+const densityOfKeywords = ref({})
+const keywordsCount = ref({})
+
+const computeDensityAndCountOfKeywords = () => {
+  densityOfKeywords.value = getKeywordsDensity()
+  keywordsCount.value = getKeywordsCount()
+}
 
 </script>
 
