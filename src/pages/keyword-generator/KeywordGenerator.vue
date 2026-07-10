@@ -2,7 +2,7 @@
 import {computed, ref, watch} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {generateNGram} from "@/utils/GenerateNGram.js";
-import {MaTextInput, MaBadge, MaSelect} from "@mobileaction/action-kit";
+import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 
 const ngramLimit = 10
 const userInput = ref('');
@@ -52,6 +52,9 @@ watch(selectedNGrams, (newVal) => {
           placeholder="Enter text..."
           class="w-full"
       />
+      <MaButton class="self-start">
+        Generate
+      </MaButton>
       <p class="text-sm text-gray-500 italic px-1">
         <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
       </p>
