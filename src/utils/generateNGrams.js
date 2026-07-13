@@ -1,4 +1,3 @@
-// src/utils/generateNGrams.js
 export const MAX_N_GRAM = 3;
 
 export function generateNGrams(words = [], maxN = MAX_N_GRAM) {
@@ -10,11 +9,11 @@ export function generateNGrams(words = [], maxN = MAX_N_GRAM) {
 
     for (let i = 0; i < words.length; i++) {
         let currentGram = words[i];
-        sets[1].add(currentGram); // Unigrams
+        sets[1].add(currentGram);
 
         for (let n = 1; n < maxN; n++) {
             if (i + n < words.length) {
-                currentGram += ' ' + words[i + n];
+                currentGram += ` ${words[i + n]}`;
                 sets[n + 1].add(currentGram);
             } else {
                 break;

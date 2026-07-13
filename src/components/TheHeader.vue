@@ -1,4 +1,3 @@
-<!-- src/components/TheHeader.vue -->
 <script setup>
 import TheNav from '@/components/TheNav.vue'
 </script>
