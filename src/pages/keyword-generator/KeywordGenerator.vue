@@ -1,12 +1,13 @@
 <script setup>
+import { computed, ref } from "vue";
+
 import { cleanDescription } from "../../utils/CleanDescription";
 import {
   oneGramGeneration,
-  twoGramGeneration,
   threeGramGeneration,
+  twoGramGeneration,
 } from "../../utils/nGramGeneration";
 
-import { ref, computed } from "vue";
 const description = ref("");
 const cleanedDescription = computed(() => cleanDescription(description.value));
 
