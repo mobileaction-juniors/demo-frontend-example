@@ -2,23 +2,19 @@
 import { computed, ref } from "vue";
 
 import { cleanDescription } from "../../utils/CleanDescription";
-import {
-  oneGramGeneration,
-  threeGramGeneration,
-  twoGramGeneration,
-} from "../../utils/nGramGeneration";
+import { nGramGenerater } from "../../utils/nGramGeneration";
 
 const description = ref("");
 const cleanedDescription = computed(() => cleanDescription(description.value));
 
-const oneGramKeywords = computed(() =>
-  oneGramGeneration(cleanedDescription.value),
+const oneGramGenerated = computed(() =>
+  nGramGenerater(cleanedDescription.value, 1),
 );
-const twoGramKeywords = computed(() =>
-  twoGramGeneration(cleanedDescription.value),
+const twoGramGenerated = computed(() =>
+  nGramGenerater(cleanedDescription.value, 2),
 );
-const threeGramKeywords = computed(() =>
-  threeGramGeneration(cleanedDescription.value),
+const threeGramGenerated = computed(() =>
+  nGramGenerater(cleanedDescription.value, 3),
 );
 </script>
 <template>
@@ -37,20 +33,20 @@ const threeGramKeywords = computed(() =>
     <div class="ma-keywords">
       <div class="ma-keywords-section">
         <h3>1-Gram Keywords</h3>
-        <p v-if="oneGramKeywords.length > 0">
-          {{ oneGramKeywords.join(", ") }}
+        <p v-if="oneGramGenerated.length > 0">
+          {{ oneGramGenerated.join(", ") }}
         </p>
       </div>
       <div class="ma-keywords-section">
         <h3>2-Gram Keywords</h3>
-        <p v-if="twoGramKeywords.length > 0">
-          {{ twoGramKeywords.join(", ") }}
+        <p v-if="twoGramGenerated.length > 0">
+          {{ twoGramGenerated.join(", ") }}
         </p>
       </div>
       <div class="ma-keywords-section">
         <h3>3-Gram Keywords</h3>
-        <p v-if="threeGramKeywords.length > 0">
-          {{ threeGramKeywords.join(", ") }}
+        <p v-if="threeGramGenerated.length > 0">
+          {{ threeGramGenerated.join(", ") }}
         </p>
       </div>
     </div>
