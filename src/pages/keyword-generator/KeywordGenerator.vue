@@ -6,16 +6,6 @@ import { nGramGenerater } from "../../utils/nGramGeneration";
 
 const description = ref("");
 const cleanedDescription = computed(() => cleanDescription(description.value));
-
-const oneGramGenerated = computed(() =>
-  nGramGenerater(cleanedDescription.value, 1),
-);
-const twoGramGenerated = computed(() =>
-  nGramGenerater(cleanedDescription.value, 2),
-);
-const threeGramGenerated = computed(() =>
-  nGramGenerater(cleanedDescription.value, 3),
-);
 </script>
 <template>
   <div class="ma-keywords-generator">
@@ -33,20 +23,20 @@ const threeGramGenerated = computed(() =>
     <div class="ma-keywords">
       <div class="ma-keywords-section">
         <h3>1-Gram Keywords</h3>
-        <p v-if="oneGramGenerated.length > 0">
-          {{ oneGramGenerated.join(", ") }}
+        <p v-if="nGramGenerater(cleanedDescription, 1).length > 0">
+          {{ nGramGenerater(cleanedDescription, 1).join(", ") }}
         </p>
       </div>
       <div class="ma-keywords-section">
         <h3>2-Gram Keywords</h3>
-        <p v-if="twoGramGenerated.length > 0">
-          {{ twoGramGenerated.join(", ") }}
+        <p v-if="nGramGenerater(cleanedDescription, 2).length > 0">
+          {{ nGramGenerater(cleanedDescription, 2).join(", ") }}
         </p>
       </div>
       <div class="ma-keywords-section">
         <h3>3-Gram Keywords</h3>
-        <p v-if="threeGramGenerated.length > 0">
-          {{ threeGramGenerated.join(", ") }}
+        <p v-if="nGramGenerater(cleanedDescription, 3).length > 0">
+          {{ nGramGenerater(cleanedDescription, 3).join(", ") }}
         </p>
       </div>
     </div>
