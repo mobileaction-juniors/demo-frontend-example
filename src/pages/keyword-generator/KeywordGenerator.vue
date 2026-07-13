@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { cleanDescription } from '@/utils/cleanDescription';
-import { generateNGrams, MAX_N_GRAM } from '@/utils/generateNGrams';
+import { cleanDescription } from '@/utils/CleanDescription';
+import { generateNGrams, MAX_N_GRAM } from '@/utils/GenerateNGrams';
 
 const inputText = ref('')
 
@@ -40,7 +40,6 @@ const keywordDisplayText = computed(() => {
         <div class="keywords-generator-header">
             <h1>Keyword Generator</h1>
         </div>
-
         <div class="keywords-generator-input-section">
             <textarea
                 v-model="inputText"
@@ -49,7 +48,6 @@ const keywordDisplayText = computed(() => {
                 rows="8"
             ></textarea>
         </div>
-
         <div
             v-if="inputText.trim()"
             class="keywords-generator-results-section"
@@ -62,7 +60,6 @@ const keywordDisplayText = computed(() => {
                 <h3 class="keywords-generator-ngram-title">
                     {{ n }}-gram:
                 </h3>
-
                 <p class="keywords-generator-ngram-keywords">
                     {{ keywordDisplayText[n] }}
                 </p>

@@ -1,6 +1,6 @@
 <script setup>
-</script>
 
+</script>
 <template>
     <div style="text-align: center">
         <h1>Welcome to Onboarding Progress </h1>
