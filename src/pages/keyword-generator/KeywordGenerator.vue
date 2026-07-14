@@ -36,7 +36,7 @@ watch(selectedNGrams, (newVal) => {
 
 <template>
   <div
-      class="mx-auto mt-8 flex w-full max-w-[92rem] flex-col gap-5 rounded-xl border
+      class="mx-auto mt-8 flex w-full max-w-368 flex-col gap-5 rounded-xl border
       border-gray-100 bg-white p-6 shadow-sm"
   >
 
@@ -80,7 +80,7 @@ watch(selectedNGrams, (newVal) => {
           :key="nGram"
           class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
       >
-        <span class="font-semibold text-gray-700 min-w-[40px]">{{ nGram }}:</span>
+        <span class="font-semibold text-gray-700 min-w-10">{{ nGram }}:</span>
 
         <MaBadge
             variant="blue"
