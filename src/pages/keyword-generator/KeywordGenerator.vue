@@ -2,11 +2,31 @@
 import { computed, ref } from "vue";
 
 import { cleanDescription } from "../../utils/CleanDescription";
-import { nGramGenerater } from "../../utils/nGramGeneration";
 import KeywordsSection from "@/components/KeywordsSection.vue";
+import MultiSelectButtons from "@/components/MultiSelectButtons.vue";
+import { nGramGenerater } from "../../utils/nGramGeneration";
 
 const description = ref("");
 const cleanedDescription = computed(() => cleanDescription(description.value));
+
+const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
+const gramSizeOptions = gramSizeArray.map((n) => ({
+  label: `${n}-Gram`,
+  value: n,
+}));
+
+const selectedGramSizes = ref([]);
+
+const sections = computed(() =>
+  selectedGramSizes.value
+    .slice()
+    .sort((a, b) => a - b)
+    .map((n) => ({
+      title: `${n}-Gram Keywords`,
+      keywords: nGramGenerater(cleanedDescription.value, n),
+    })),
+);
+
 </script>
 <template>
   <div class="ma-keywords-generator">
@@ -28,25 +48,21 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
       <p v-if="description">Cleaned Description: {{ cleanedDescription }}</p>
     </div>
 
+    <MultiSelectButtons :options="gramSizeOptions" v-model="selectedGramSizes" />
+
     <div class="ma-keywords-main-section">
       <KeywordsSection
-        :title="'1-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 1)"
-      ></KeywordsSection>
-      <KeywordsSection
-        :title="'2-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 2)"
-      ></KeywordsSection>
-      <KeywordsSection
-        :title="'3-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 3)"
+        v-for="section in sections"
+        :key="section.title"
+        :title="section.title"
+        :keywords="section.keywords"
       ></KeywordsSection>
     </div>
 
   </div>
 </template>
 
-<style scope>
+<style scoped>
 .ma-header {
   color: #1bcf6c;
   display: flex;
