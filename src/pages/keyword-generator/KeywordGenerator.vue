@@ -12,6 +12,7 @@ const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
 const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
 const generatedKeywords = ref({});
+const sampleInput = 'Quick brown fox jump over fox';
 
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
@@ -26,6 +27,10 @@ const nGramSelectOptions = computed(() => {
 //generate keywords when button is clicked
 const handleGenerate = () => {
   generatedKeywords.value = generateKeywords(cleanedInput.value, ngramLimit)
+}
+
+const handleFillSampleInput = () => {
+  userInputStore.userInput = sampleInput
 }
 
 </script>
@@ -46,13 +51,22 @@ const handleGenerate = () => {
           placeholder="Enter text..."
           class="w-full"
       />
-      <MaButton
-          @click="handleGenerate"
-          class="self-start"
-          icon="tag-2"
-      >
-        Generate
-      </MaButton>
+      <div class="flex flex-wrap gap-2">
+        <MaButton
+            @click="handleFillSampleInput"
+            class="self-start"
+            icon="download"
+        >
+          Fill Example
+        </MaButton>
+        <MaButton
+            @click="handleGenerate"
+            class="self-start"
+            icon="tag-2"
+        >
+          Generate
+        </MaButton>
+      </div>
       <p class="text-sm text-gray-500 italic px-1">
         <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
       </p>
