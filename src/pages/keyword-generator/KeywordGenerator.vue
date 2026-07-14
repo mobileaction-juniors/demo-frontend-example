@@ -2,8 +2,15 @@
 import { ref, computed } from 'vue';
 import { cleanDescription } from '@/utils/CleanDescription';
 import { generateNGrams, MAX_N_GRAM } from '@/utils/GenerateNGrams';
+import { MaBadge, MaSelect, MaTextarea } from '@mobileaction/action-kit';
 
-const inputText = ref('')
+const inputText = ref('');
+const selectedNGrams = ref([]);
+
+const nGramOptions = Array.from({ length: MAX_N_GRAM }, (_, index) => ({
+    label: `${index + 1}-gram`,
+    value: index + 1
+}));
 
 const wordsArray = computed(() => {
     const cleanedText = cleanDescription(inputText.value);
@@ -23,15 +30,8 @@ const generatedKeywords = computed(() => {
     return generateNGrams(wordsArray.value, MAX_N_GRAM);
 });
 
-const keywordDisplayText = computed(() => {
-    const result = {};
-
-    for (let n = 1; n <= MAX_N_GRAM; n++) {
-        const keywords = generatedKeywords.value[n] || [];
-        result[n] = keywords.length > 0 ? keywords.join(', ') : 'None';
-    }
-
-    return result;
+const sortedSelectedNGrams = computed(() => {
+    return [...selectedNGrams.value].sort((a, b) => a - b);
 });
 </script>
 
@@ -41,28 +41,51 @@ const keywordDisplayText = computed(() => {
             <h1>Keyword Generator</h1>
         </div>
         <div class="keywords-generator-input-section">
-            <textarea
+            <MaTextarea
                 v-model="inputText"
                 class="keywords-generator-textarea"
                 placeholder="Paste your App Store description here..."
-                rows="8"
-            ></textarea>
+                :rows="8"
+            />
+        </div>
+        <div class="keywords-generator-select-section">
+            <MaSelect
+                v-model:value="selectedNGrams"
+                :options="nGramOptions"
+                mode="multiple"
+                placeholder="Select n-grams"
+            />
         </div>
         <div
             v-if="inputText.trim()"
             class="keywords-generator-results-section"
         >
             <div
-                v-for="n in MAX_N_GRAM"
+                v-for="n in sortedSelectedNGrams"
                 :key="n"
                 class="keywords-generator-ngram-group"
             >
                 <h3 class="keywords-generator-ngram-title">
                     {{ n }}-gram:
                 </h3>
-                <p class="keywords-generator-ngram-keywords">
-                    {{ keywordDisplayText[n] }}
+                <p
+                    v-if="!generatedKeywords[n] || generatedKeywords[n].length === 0"
+                    class="keywords-generator-empty-message"
+                >
+                    None
                 </p>
+                <div
+                    v-else
+                    class="keywords-generator-tags"
+                >
+                    <MaBadge
+                        v-for="keyword in generatedKeywords[n]"
+                        :key="keyword"
+                        class="keywords-generator-tag"
+                    >
+                        {{ keyword }}
+                    </MaBadge>
+                </div>
             </div>
         </div>
     </div>
@@ -86,7 +109,10 @@ const keywordDisplayText = computed(() => {
 .keywords-generator-textarea {
   width: 100%;
   max-width: 800px;
-  padding: 10px;
+}
+
+.keywords-generator-select-section {
+  margin-top: 20px;
 }
 
 .keywords-generator-results-section {
@@ -94,14 +120,24 @@ const keywordDisplayText = computed(() => {
 }
 
 .keywords-generator-ngram-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .keywords-generator-ngram-title {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
-.keywords-generator-ngram-keywords {
+.keywords-generator-empty-message {
   margin-top: 0;
+}
+
+.keywords-generator-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keywords-generator-tag {
+  width: fit-content;
 }
 </style>
