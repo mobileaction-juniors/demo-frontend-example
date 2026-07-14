@@ -98,7 +98,6 @@ const computeDensityAndCountOfKeywords = () => {
       <section class="flex min-h-55 min-w-0 flex-col gap-3 rounded-lg border border-gray-200 p-4 sm:p-5">
         <MaTextarea
             v-model="inputText"
-            placeholder=""
             :rows="9"
             class="w-full max-w-full"
         />
