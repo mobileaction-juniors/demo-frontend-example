@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { cleanDescription } from "../../utils/CleanDescription";
 import { filterDescription } from "../../utils/FilterDescription";
 import KeywordsSection from "@/components/KeywordsSection.vue";
+import { MaTextarea } from "@mobileaction/action-kit";
 import MultiSelectButtons from "@/components/MultiSelectButtons.vue";
 import { nGramGenerater } from "../../utils/nGramGeneration";
 
@@ -41,14 +42,13 @@ const sections = computed(() =>
     </div>
 
     <div class="ma-text-area">
-      <textarea
-        v-model="description"
-        placeholder="Enter your description here..."
-        rows="8"
-      ></textarea>
+      <MaTextarea 
+        v-model="description" 
+        placeholder="Enter your description here...(I couldn't change color and size, it is MATextarea)">
+      </MaTextarea>
       <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
     </div>
-
+  
     <MultiSelectButtons :options="gramSizeOptions" v-model="selectedGramSizes" />
 
     <div class="ma-keywords-main-section">
