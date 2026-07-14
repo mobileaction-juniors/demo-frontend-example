@@ -3,6 +3,7 @@ import {computed, ref} from "vue";
 import {MaTextarea, MaButton} from "@mobileaction/action-kit";
 import {AgGridVue} from "ag-grid-vue3";
 import {useUserInputStore} from "@/stores/UserInput.js";
+import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
 
 const userInputStore = useUserInputStore()
 const inputText = computed(() => userInputStore.userInput)
@@ -21,16 +22,6 @@ const getKeywordsCount = () => {
   return Object.fromEntries(
       Object.entries(keywordsCount).sort((a, b) => b[1] - a[1])
   )
-}
-
-const getKeywordsDensity = (keywordsCount) => {
-  const totalCountOfKeywords = Object.values(keywordsCount).reduce((acc, curr) => acc + curr, 0)
-  if (!totalCountOfKeywords) return {}
-  const densityMap = {}
-  for (let keyword in keywordsCount) {
-    densityMap[keyword] = Math.round((keywordsCount[keyword] / totalCountOfKeywords) * 100)
-  }
-  return densityMap
 }
 
 const columnDefinitions = [
@@ -65,7 +56,7 @@ const rowData = ref([])
 
 const computeDensityAndCountOfKeywords = () => {
   const countMap = getKeywordsCount()
-  const densityMap = getKeywordsDensity(countMap)
+  const densityMap = computeKeywordDensities()
 
   rowData.value = Object.keys(countMap).map((keyword) => ({
     keyword,
