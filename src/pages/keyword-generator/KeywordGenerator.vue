@@ -1,14 +1,15 @@
 <script setup>
-import {computed, ref, watch} from "vue";
+import {computed, ref} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
 import {generateKeywords} from "@/utils/GenerateKeywords.js";
 import {useUserInputStore} from "@/stores/UserInput.js";
+import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 
 const ngramLimit = 10
 const userInputStore = useUserInputStore()
-const selectedNGrams = ref([]);
+const selectedNGramsStore = useSelectedNGramsStore()
 const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
 const generatedKeywords = ref({});
 
@@ -26,11 +27,6 @@ const nGramSelectOptions = computed(() => {
 const handleGenerate = () => {
   generatedKeywords.value = generateKeywords(cleanedInput.value, ngramLimit)
 }
-
-//to keep selected n-gram options sorted
-watch(selectedNGrams, (newVal) => {
-  selectedNGrams.value = newVal.sort();
-})
 
 </script>
 
@@ -65,7 +61,7 @@ watch(selectedNGrams, (newVal) => {
     <hr class="border-gray-200">
 
     <ma-select
-        v-model:value="selectedNGrams"
+        v-model:value="selectedNGramsStore.selectedNGrams"
         allowClear
         :options="nGramSelectOptions"
         dropdownMatchSelectWidth
@@ -76,7 +72,7 @@ watch(selectedNGrams, (newVal) => {
 
     <div class="mt-2 flex flex-col gap-3">
       <ul
-          v-for="nGram in selectedNGrams"
+          v-for="nGram in selectedNGramsStore.selectedNGrams"
           :key="nGram"
           class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
       >
