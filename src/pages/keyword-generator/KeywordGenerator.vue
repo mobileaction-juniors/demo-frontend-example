@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { cleanDescription } from '@/utils/CleanDescription';
 import { generateNGrams, MAX_N_GRAM } from '@/utils/GenerateNGrams';
-import { MaBadge, MaSelect, MaTextarea } from '@mobileaction/action-kit';
+import { MaBadge, MaSelect2, MaTextarea } from '@mobileaction/action-kit';
 
 const inputText = ref('');
 const selectedNGrams = ref([]);
@@ -49,11 +49,12 @@ const sortedSelectedNGrams = computed(() => {
             />
         </div>
         <div class="keywords-generator-select-section">
-            <MaSelect
+            <MaSelect2
                 v-model:value="selectedNGrams"
+                multiple
                 :options="nGramOptions"
-                mode="multiple"
                 placeholder="Select n-grams"
+                show-search
             />
         </div>
         <div
