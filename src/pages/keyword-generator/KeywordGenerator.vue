@@ -1,17 +1,17 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
-import {generateKeywords} from "@/utils/GenerateKeywords.js";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
+import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
 
 const ngramLimit = 10
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
+const generatedKeywordsStore = useGeneratedKeywordsStore()
 const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
-const generatedKeywords = ref({});
 const sampleInput = 'Quick brown fox jump over fox';
 
 //to select multiple n-gram options
@@ -26,11 +26,11 @@ const nGramSelectOptions = computed(() => {
 
 //generate keywords when button is clicked
 const handleGenerate = () => {
-  generatedKeywords.value = generateKeywords(cleanedInput.value, ngramLimit)
+  generatedKeywordsStore.generate();
 }
 
 const handleFillSampleInput = () => {
-  userInputStore.userInput = sampleInput
+  userInputStore.userInput = sampleInput;
 }
 
 </script>
@@ -94,7 +94,7 @@ const handleFillSampleInput = () => {
 
         <MaBadge
             variant="blue"
-            v-for="(keyword, keywordIndex) in generatedKeywords[nGram]"
+            v-for="(keyword, keywordIndex) in generatedKeywordsStore.generatedKeywords[nGram]"
             :key="keywordIndex"
         >
           {{ keyword }}
