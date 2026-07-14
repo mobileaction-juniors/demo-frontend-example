@@ -4,11 +4,12 @@ import {cleanInput} from "@/utils/CleanInput.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
 import {generateKeywords} from "@/utils/GenerateKeywords.js";
+import {useUserInputStore} from "@/stores/UserInput.js";
 
 const ngramLimit = 10
-const userInput = ref('');
+const userInputStore = useUserInputStore()
 const selectedNGrams = ref([]);
-const cleanedInput = computed(() => cleanInput(userInput.value))
+const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
 const generatedKeywords = ref({});
 
 //to select multiple n-gram options
@@ -45,7 +46,7 @@ watch(selectedNGrams, (newVal) => {
 
     <div class="flex flex-col gap-2">
       <MaTextInput
-          v-model="userInput"
+          v-model="userInputStore.userInput"
           placeholder="Enter text..."
           class="w-full"
       />
@@ -90,7 +91,7 @@ watch(selectedNGrams, (newVal) => {
         </MaBadge>
       </ul>
     </div>
-    <KeywordDensity :text="userInput"/>
+    <KeywordDensity :text="userInputStore.userInput"/>
   </div>
 
 </template>
