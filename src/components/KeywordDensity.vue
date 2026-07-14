@@ -1,23 +1,11 @@
 <script setup>
-import {ref, watch} from "vue";
+import {computed, ref} from "vue";
 import {MaTextarea, MaButton} from "@mobileaction/action-kit";
 import {AgGridVue} from "ag-grid-vue3";
+import {useUserInputStore} from "@/stores/UserInput.js";
 
-const props = defineProps({
-  text: {
-    type: String,
-    required: true
-  }
-})
-
-const inputText = ref(props.text)
-
-watch(
-    () => props.text,
-    (newText) => {
-      inputText.value = newText
-    }
-)
+const userInputStore = useUserInputStore()
+const inputText = computed(() => userInputStore.userInput)
 
 const getKeywordsCount = () => {
   if (!inputText.value) return {}

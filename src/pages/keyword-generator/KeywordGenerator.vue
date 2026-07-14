@@ -96,7 +96,7 @@ const handleFillSampleInput = () => {
         </MaBadge>
       </ul>
     </div>
-    <KeywordDensity :text="userInputStore.userInput"/>
+    <KeywordDensity/>
   </div>
 
 </template>
