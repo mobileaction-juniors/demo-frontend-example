@@ -7,10 +7,10 @@
 </template>
 
 <style>
-.ma-router-item {  
-  display: flex;  
-  flex-direction: row;  
-  justify-content: space-evenly;  
-  margin: 15px;  
+.ma-router-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin: 15px;
 }
 </style>
