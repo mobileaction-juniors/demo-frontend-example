@@ -91,7 +91,7 @@ watch(selectedNGrams, (newVal) => {
         </MaBadge>
       </ul>
     </div>
-    <KeywordDensity :text="cleanedInput"/>
+    <KeywordDensity :text="userInput"/>
   </div>
 
 </template>
