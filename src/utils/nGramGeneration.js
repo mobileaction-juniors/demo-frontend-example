@@ -1,3 +1,8 @@
+function removeDuplicateNGrams(ngrams) {
+  const uniqueNGrams = new Set(ngrams);
+  return [...uniqueNGrams];
+}
+
 export function nGramGenerater(cleanedDescription, n) {
   const descriptionArray = cleanedDescription.split(" ");
   if (descriptionArray.length < n) {
@@ -10,7 +15,4 @@ export function nGramGenerater(cleanedDescription, n) {
   return removeDuplicateNGrams(arrNGram);
 }
 
-function removeDuplicateNGrams(ngrams) {
-  const uniqueNGrams = new Set(ngrams);
-  return [...uniqueNGrams];
-}
+
