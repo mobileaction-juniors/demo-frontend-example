@@ -14,9 +14,8 @@ const generatedKeywords = ref({});
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
   const options = [];
-  let nGram;
   for (let i = 0; i < ngramLimit; i++) {
-    nGram = `${i + 1}-Gram`;
+    const nGram = `${i + 1}-Gram`;
     options.push({label: nGram, value: nGram})
   }
   return options;
