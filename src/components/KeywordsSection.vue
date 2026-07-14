@@ -17,3 +17,11 @@ defineProps({
     <p v-if="keywords.length > 0">{{ keywords.join(", ") }}</p>
   </div>
 </template>
+
+
+<style>
+.ma-keywords-section {
+  margin: 10px;
+  padding: 10px;
+}
+</style>

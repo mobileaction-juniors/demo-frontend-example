@@ -12,9 +12,13 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
   <div class="ma-keywords-generator">
 
     <div class="ma-header">
-      <span>Keyword Generator</span>
+      <span>
+        <h1>
+          Generator
+        </h1>
+      </span>
     </div>
-    
+
     <div class="ma-text-area">
       <textarea
         v-model="description"
@@ -24,7 +28,7 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
       <p v-if="description">Cleaned Description: {{ cleanedDescription }}</p>
     </div>
 
-    <div class="ma-keywords-section">
+    <div class="ma-keywords-main-section">
       <KeywordsSection
         :title="'1-Gram Keywords'"
         :keywords="nGramGenerater(cleanedDescription, 1)"
@@ -41,3 +45,5 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
 
   </div>
 </template>
+
+<style scoped src="./KeywordGenerator.css"></style>
