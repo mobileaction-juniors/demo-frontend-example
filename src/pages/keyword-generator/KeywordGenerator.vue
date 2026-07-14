@@ -2,12 +2,13 @@
 import { computed, ref } from "vue";
 
 import { cleanDescription } from "../../utils/CleanDescription";
+import { filterDescription } from "../../utils/FilterDescription";
 import KeywordsSection from "@/components/KeywordsSection.vue";
 import MultiSelectButtons from "@/components/MultiSelectButtons.vue";
 import { nGramGenerater } from "../../utils/nGramGeneration";
 
 const description = ref("");
-const cleanedDescription = computed(() => cleanDescription(description.value));
+const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
 
 const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
 const gramSizeOptions = gramSizeArray.map((n) => ({
@@ -23,7 +24,7 @@ const sections = computed(() =>
     .sort((a, b) => a - b)
     .map((n) => ({
       title: `${n}-Gram Keywords`,
-      keywords: nGramGenerater(cleanedDescription.value, n),
+      keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
     })),
 );
 
@@ -45,7 +46,7 @@ const sections = computed(() =>
         placeholder="Enter your description here..."
         rows="8"
       ></textarea>
-      <p v-if="description">Cleaned Description: {{ cleanedDescription }}</p>
+      <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
     </div>
 
     <MultiSelectButtons :options="gramSizeOptions" v-model="selectedGramSizes" />
