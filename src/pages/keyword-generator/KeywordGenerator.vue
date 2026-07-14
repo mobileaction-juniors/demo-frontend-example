@@ -6,8 +6,9 @@ import KeywordDensity from "@/components/KeywordDensity.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
+import {useNGramLimit} from "@/stores/NGramLimit.js";
 
-const ngramLimit = 10
+const ngramLimitStore = useNGramLimit()
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
 const generatedKeywordsStore = useGeneratedKeywordsStore()
@@ -17,7 +18,7 @@ const sampleInput = 'Quick brown fox jump over fox';
 //to select multiple n-gram options
 const nGramSelectOptions = computed(() => {
   const options = [];
-  for (let i = 0; i < ngramLimit; i++) {
+  for (let i = 0; i < ngramLimitStore.ngramLimit; i++) {
     const nGram = `${i + 1}-Gram`;
     options.push({label: nGram, value: nGram})
   }
