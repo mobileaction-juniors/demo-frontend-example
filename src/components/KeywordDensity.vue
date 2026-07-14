@@ -22,7 +22,7 @@ watch(
 const getKeywordsCount = () => {
   if (!inputText.value) return {}
   const keywordsCount = {}
-  const keywords = inputText.value.split(' ')
+  const keywords = inputText.value.trim().split(/\s+/)
   for (let i = 0; i < keywords.length; i++) {
     if (keywordsCount[keywords[i]]) {
       keywordsCount[keywords[i]]++
