@@ -6,24 +6,18 @@ import KeywordDensity from "@/components/KeywordDensity.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
-import {useNGramLimit} from "@/stores/NGramLimit.js";
 
-const ngramLimitStore = useNGramLimit()
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
 const generatedKeywordsStore = useGeneratedKeywordsStore()
 const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
+const selectedNGramsModel = computed(
+    {
+      get: () => selectedNGramsStore.selectedNGrams,
+      set: (value) => selectedNGramsStore.setSelectedNGrams(value),
+    }
+)
 const sampleInput = 'Quick brown fox jump over fox';
-
-//to select multiple n-gram options
-const nGramSelectOptions = computed(() => {
-  const options = [];
-  for (let i = 0; i < ngramLimitStore.ngramLimit; i++) {
-    const nGram = `${i + 1}-Gram`;
-    options.push({label: nGram, value: nGram})
-  }
-  return options;
-})
 
 //generate keywords when button is clicked
 const handleGenerate = () => {
@@ -76,9 +70,9 @@ const handleFillSampleInput = () => {
     <hr class="border-gray-200">
 
     <ma-select
-        v-model:value="selectedNGramsStore.selectedNGrams"
+        v-model:value="selectedNGramsModel"
         allowClear
-        :options="nGramSelectOptions"
+        :options="selectedNGramsStore.nGramSelectOptions"
         dropdownMatchSelectWidth
         mode="multiselect"
         placeholder="Select option..."
@@ -87,7 +81,7 @@ const handleFillSampleInput = () => {
 
     <div class="mt-2 flex flex-col gap-3">
       <ul
-          v-for="nGram in selectedNGramsStore.selectedNGrams"
+          v-for="nGram in selectedNGramsStore.formattedSelectedNGrams"
           :key="nGram"
           class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
       >

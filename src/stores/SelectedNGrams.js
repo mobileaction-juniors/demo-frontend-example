@@ -1,15 +1,33 @@
 import {defineStore} from "pinia";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {useNGramLimit} from "@/stores/NGramLimit.js";
 
 export const useSelectedNGramsStore = defineStore('selectedNGrams', () => {
     const selectedNGrams = ref([])
+    const ngramLimitStore = useNGramLimit()
+
+    const nGramSelectOptions = computed(() => {
+        const options = [];
+        for (let i = 0; i < ngramLimitStore.ngramLimit; i++) {
+            const nGram = `${i + 1}-Gram`;
+            options.push({label: nGram, value: i + 1})
+        }
+        return options;
+    })
 
     const setSelectedNGrams = (newValues) => {
-        selectedNGrams.value = [...newValues].sort()
+        newValues = [...newValues].sort((a, b) => a - b)
+        selectedNGrams.value = newValues
     }
+
+    const formattedSelectedNGrams = computed(() => {
+        return selectedNGrams.value.map(n => `${n}-Gram`)
+    })
 
     return {
         selectedNGrams,
+        nGramSelectOptions,
         setSelectedNGrams,
+        formattedSelectedNGrams,
     }
 })
