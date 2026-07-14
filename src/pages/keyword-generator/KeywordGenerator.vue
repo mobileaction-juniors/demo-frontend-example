@@ -46,4 +46,39 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
   </div>
 </template>
 
-<style scoped src="./KeywordGenerator.css"></style>
+<style scope>
+.ma-header {
+  color: #1bcf6c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ma-text-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ma-text-area textarea {
+  width: 100%;
+  max-width: 600px;
+  min-height: 200px;
+  font-size: 1rem;
+  background-color: #c9c7c7;
+  border: 3px solid #1bcf6c;
+}
+
+.ma-text-area textarea:focus {
+  outline: none;
+  border: 3px solid #1bcf6c;
+  box-shadow: 0 0 0 2px rgba(27, 207, 108, 0.3);
+}
+
+.ma-keywords-main-section {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-top: 5px;
+}
+</style>
