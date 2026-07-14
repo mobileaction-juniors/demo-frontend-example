@@ -4,25 +4,10 @@ import {MaTextarea, MaButton} from "@mobileaction/action-kit";
 import {AgGridVue} from "ag-grid-vue3";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
+import {computeKeywordCounts} from "@/utils/ComputeKeywordCounts.js";
 
 const userInputStore = useUserInputStore()
 const inputText = computed(() => userInputStore.userInput)
-
-const getKeywordsCount = () => {
-  if (!inputText.value) return {}
-  const keywordsCount = {}
-  const keywords = inputText.value.trim().split(/\s+/)
-  for (let i = 0; i < keywords.length; i++) {
-    if (keywordsCount[keywords[i]]) {
-      keywordsCount[keywords[i]]++
-    } else {
-      keywordsCount[keywords[i]] = 1
-    }
-  }
-  return Object.fromEntries(
-      Object.entries(keywordsCount).sort((a, b) => b[1] - a[1])
-  )
-}
 
 const columnDefinitions = [
   {
@@ -55,8 +40,8 @@ const defaultColDef = {
 const rowData = ref([])
 
 const computeDensityAndCountOfKeywords = () => {
-  const countMap = getKeywordsCount()
-  const densityMap = computeKeywordDensities()
+  const countMap = computeKeywordCounts(inputText.value)
+  const densityMap = computeKeywordDensities(countMap)
 
   rowData.value = Object.keys(countMap).map((keyword) => ({
     keyword,
