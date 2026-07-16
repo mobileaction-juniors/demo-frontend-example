@@ -14,7 +14,7 @@ describe('Keyword Generator', () => {
 
         cy.get('[data-cy="keyword-generator-select"]').click()
         cy.contains('1-Gram').should('be.visible').click()
-
+        // to close select options
         cy.get('body').click(0, 0)
 
         cy.contains('quick').should('be.visible')
@@ -35,6 +35,7 @@ describe('Keyword Generator', () => {
         cy.contains('1-Gram').should('be.visible').click()
         cy.contains('3-Gram').should('be.visible').click()
         cy.contains('5-Gram').should('be.visible').click()
+        // to close select options
         cy.get('body').click(0, 0)
 
         cy.get('[data-cy="keyword-generator-generate"]').click()
@@ -56,6 +57,8 @@ describe('Keyword Generator', () => {
 
         cy.get('[data-cy="keyword-generator-select"]').click()
         cy.contains('1-Gram').should('be.visible').click()
+
+        // to close select options
         cy.get('body').click(0, 0)
 
         cy.get('[data-cy="keyword-generator-generate"]').click()
