@@ -42,13 +42,16 @@ const handleFillSampleInput = () => {
     </div>
 
     <div class="flex flex-col gap-2">
-      <MaTextInput
-          v-model="userInputStore.userInput"
-          placeholder="Enter text..."
-          class="w-full"
-      />
+      <div data-cy="keyword-generator-input">
+        <MaTextInput
+            v-model="userInputStore.userInput"
+            placeholder="Enter text..."
+            class="w-full"
+        />
+      </div>
       <div class="flex flex-wrap gap-2">
         <MaButton
+            data-cy="keyword-generator-fill-example"
             @click="handleFillSampleInput"
             class="self-start"
             icon="download"
@@ -56,6 +59,7 @@ const handleFillSampleInput = () => {
           Fill Example
         </MaButton>
         <MaButton
+            data-cy="keyword-generator-generate"
             @click="handleGenerate"
             class="self-start"
             icon="tag-2"
@@ -71,6 +75,7 @@ const handleFillSampleInput = () => {
     <hr class="border-gray-200">
 
     <ma-select
+        data-cy="keyword-generator-select"
         v-model:value="selectedNGramsModel"
         allowClear
         :options="selectedNGramsStore.nGramSelectOptions"
