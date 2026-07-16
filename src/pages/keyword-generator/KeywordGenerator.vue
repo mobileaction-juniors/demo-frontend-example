@@ -6,29 +6,41 @@ import { MaBadge, MaButton, MaSelect2, MaTextarea } from '@mobileaction/action-k
 
 const inputText = ref('');
 const selectedNGrams = ref([]);
-const displayedKeywords = ref({});
+const displayedKeywords = ref([]);
 
 const nGramOptions = Array.from({ length: MAX_N_GRAM }, (_, index) => ({
     label: `${index + 1}-gram`,
     value: index + 1
 }));
 
-const sortedSelectedNGrams = computed(() => {
-    return [...selectedNGrams.value].sort((a, b) => a - b);
+const nGramGroups = computed(() => {
+    const sortedSelectedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
+
+    return sortedSelectedNGrams.map(n => {
+        const keywordGroup = displayedKeywords.value[n - 1];
+        const keywords = keywordGroup ? keywordGroup.keywords : [];
+        const hasKeywords = keywords.length > 0;
+
+        return {
+            n,
+            keywords,
+            hasKeywords
+        };
+    });
 });
 
 function generateKeywords() {
     const cleanedText = cleanDescription(inputText.value);
 
     if (!cleanedText) {
-        displayedKeywords.value = {};
+        displayedKeywords.value = [];
         return;
     }
 
     const wordsArray = cleanedText.split(' ').filter((word) => word.length > 0);
 
     if (wordsArray.length === 0) {
-        displayedKeywords.value = {};
+        displayedKeywords.value = [];
         return;
     }
 
@@ -41,7 +53,6 @@ function generateKeywords() {
         <div class="text-center">
             <h1 class="text-2xl font-semibold">Keyword Generator</h1>
         </div>
-        <!-- Text Area -->
         <div class="mt-5">
             <MaTextarea
                 v-model="inputText"
@@ -49,7 +60,6 @@ function generateKeywords() {
                 :rows="8"
             />
         </div>
-        <!-- Select Section -->
         <div class="mt-5 flex items-center gap-5">
             <label class="font-medium whitespace-nowrap">
                 N-grams to show:
@@ -63,7 +73,6 @@ function generateKeywords() {
                 class="flex-1 w-full"
             />
         </div>
-        <!-- Button -->
         <div class="mt-5">
             <MaButton
                 type="primary"
@@ -73,21 +82,20 @@ function generateKeywords() {
                 Generate Keywords
             </MaButton>
         </div>
-        <!-- Results Section -->
         <div
-            v-if="Object.keys(displayedKeywords).length > 0"
+            v-if="displayedKeywords.length > 0"
             class="mt-6"
         >
             <div
-                v-for="n in sortedSelectedNGrams"
-                :key="n"
+                v-for="group in nGramGroups"
+                :key="group.n"
                 class="mb-5"
             >
                 <h3 class="mb-2 font-semibold">
-                    {{ n }}-gram:
+                    {{ group.n }}-gram:
                 </h3>
                 <p
-                    v-if="!displayedKeywords[n] || displayedKeywords[n].length === 0"
+                    v-if="!group.hasKeywords"
                     class="mt-0"
                 >
                     None
@@ -97,7 +105,7 @@ function generateKeywords() {
                     class="flex flex-wrap gap-2"
                 >
                     <MaBadge
-                        v-for="keyword in displayedKeywords[n]"
+                        v-for="keyword in group.keywords"
                         :key="keyword"
                         class="w-fit"
                     >

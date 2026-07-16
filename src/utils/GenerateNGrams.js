@@ -28,10 +28,13 @@ export function generateNGrams(words = [], maxN = MAX_N_GRAM) {
         }
     }
 
-    const result = {};
+    const result = [];
     
     for (let n = 1; n <= maxN; n++) {
-        result[n] = Array.from(sets[n]);
+        result.push({
+            n,
+            keywords: Array.from(sets[n])
+        });
     }
 
     return result;
