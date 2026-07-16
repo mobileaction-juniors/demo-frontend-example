@@ -25,19 +25,19 @@ describe('Keyword Generator', () => {
     it('filters generated keywords by n-gram multi-select', () => {
         const inputText = 'Quick brown fox jump over fox'
 
-        cy.get('input[placeholder="Enter text..."]')
+        cy.get('[data-cy="keyword-generator-input"] input')
             .should('be.visible')
             .type(inputText)
 
-        cy.contains('Generate').click()
+        cy.get('[data-cy="keyword-generator-generate"]').click()
 
-        cy.contains('Select option...').click()
+        cy.get('[data-cy="keyword-generator-select"]').click()
         cy.contains('1-Gram').should('be.visible').click()
         cy.contains('3-Gram').should('be.visible').click()
         cy.contains('5-Gram').should('be.visible').click()
         cy.get('body').click(0, 0)
 
-        cy.contains('Generate').click()
+        cy.get('[data-cy="keyword-generator-generate"]').click()
 
         cy.contains('1-Gram:').should('be.visible')
         cy.contains('3-Gram:').should('be.visible')
