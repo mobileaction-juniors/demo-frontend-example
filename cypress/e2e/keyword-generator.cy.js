@@ -77,4 +77,25 @@ describe('Keyword Generator', () => {
             cy.contains(/^was$/).should('not.exist')
         })
     })
+    it('keyword counts and densities', () => {
+        const inputText = 'Quick brown fox jump over fox'
+
+        cy.get('input[placeholder="Enter text..."]')
+            .should('be.visible')
+            .type(inputText)
+
+        cy.contains('Submit').click()
+
+        cy.contains('Keyword Count & Density').should('be.visible')
+        cy.get('section').eq(1).should('contain.text', 'Keyword')
+        cy.get('section').eq(1).should('contain.text', 'Count')
+        cy.get('section').eq(1).should('contain.text', 'Density %')
+        cy.get('section').eq(1).should('contain.text', 'fox')
+        cy.get('section').eq(1).should('contain.text', '2')
+        cy.get('section').eq(1).should('contain.text', '33')
+        cy.get('section').eq(1).should('contain.text', 'Quick')
+        cy.get('section').eq(1).should('contain.text', 'brown')
+        cy.get('section').eq(1).should('contain.text', 'jump')
+        cy.get('section').eq(1).should('contain.text', 'over')
+    })
 })
