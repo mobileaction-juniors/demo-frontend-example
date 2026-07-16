@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {MaTextarea, MaButton} from "@mobileaction/action-kit";
 import {AgGridVue} from "ag-grid-vue3";
 import {useUserInputStore} from "@/stores/UserInput.js";
@@ -7,7 +7,6 @@ import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
 import {computeKeywordCounts} from "@/utils/ComputeKeywordCounts.js";
 
 const userInputStore = useUserInputStore()
-const inputText = computed(() => userInputStore.userInput)
 
 const columnDefinitions = [
   {
@@ -40,7 +39,7 @@ const defaultColDef = {
 const rowData = ref([])
 
 const computeDensityAndCountOfKeywords = () => {
-  const countMap = computeKeywordCounts(inputText.value)
+  const countMap = computeKeywordCounts(userInputStore.userInput)
   const densityMap = computeKeywordDensities(countMap)
 
   rowData.value = Object.keys(countMap).map((keyword) => ({
@@ -53,7 +52,10 @@ const computeDensityAndCountOfKeywords = () => {
 </script>
 
 <template>
-  <div class="mx-auto w-full min-w-0 max-w-6xl px-3 sm:px-4">
+  <div
+      data-cy="keyword-density"
+      class="mx-auto w-full min-w-0 max-w-6xl px-3 sm:px-4"
+  >
     <h1 class="mb-4 text-lg font-semibold text-gray-800 sm:text-xl">
       Keyword Count & Density
     </h1>
@@ -61,12 +63,15 @@ const computeDensityAndCountOfKeywords = () => {
     <div class="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-4">
       <section class="flex min-h-55 min-w-0 flex-col gap-3 rounded-lg border border-gray-200 p-4 sm:p-5">
         <MaTextarea
-            v-model="inputText"
+            id="keyword-density-textarea"
+            :wrapperProps="{ 'data-cy': 'keyword-density-textarea-wrapper' }"
+            v-model="userInputStore.userInput"
             :rows="9"
             class="w-full max-w-full"
         />
 
         <MaButton
+            data-cy="keyword-density-submit"
             @click="computeDensityAndCountOfKeywords"
             htmlType="button"
             class="self-start"
@@ -75,7 +80,7 @@ const computeDensityAndCountOfKeywords = () => {
         </MaButton>
       </section>
 
-      <section class="min-w-0 rounded-lg border border-gray-200 p-3 sm:p-4">
+      <section data-cy="keyword-density-grid-panel" class="min-w-0 rounded-lg border border-gray-200 p-3 sm:p-4">
         <div class="ag-theme-quartz h-75 w-full max-w-full sm:h-85 lg:h-105">
           <AgGridVue
               class="h-full w-full min-w-0"
