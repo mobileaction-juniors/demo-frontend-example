@@ -1,9 +1,8 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { MaTextarea } from "@mobileaction/action-kit";
+import { MaSelect, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
-import MultiSelectButtons from "@/components/MultiSelectButtons.vue";
 import { cleanDescription } from "@/utils/CleanDescription";
 import { filterDescription } from "@/utils/FilterDescription";
 import { nGramGenerater } from "@/utils/nGramGeneration";
@@ -28,7 +27,6 @@ const sections = computed(() =>
       keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
     })),
 );
-
 </script>
 <template>
   <div class="ma-keywords-generator">
@@ -44,13 +42,19 @@ const sections = computed(() =>
     <div class="ma-text-area">
       <MaTextarea 
         v-model="description" 
-        placeholder="Enter your description here...(I couldn't change color and size, it is MATextarea)">
+        placeholder="Enter your description here..."
+        rows="10">
       </MaTextarea>
       <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
     </div>
-  
-    <MultiSelectButtons :options="gramSizeOptions" v-model="selectedGramSizes" />
-
+    <MaSelect
+        v-model:value="selectedGramSizes"
+        mode="multiple"
+        :options="gramSizeOptions"
+        size="small"
+        placeholder="Select n-gram sizes"
+      >
+    </MaSelect>
     <div class="ma-keywords-main-section">
       <KeywordsSection
         v-for="section in sections"
@@ -59,7 +63,6 @@ const sections = computed(() =>
         :keywords="section.keywords"
       ></KeywordsSection>
     </div>
-
   </div>
 </template>
 
