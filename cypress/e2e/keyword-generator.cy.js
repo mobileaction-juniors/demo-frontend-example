@@ -48,17 +48,17 @@ describe('Keyword Generator', () => {
     it('remove stop words', () => {
         const inputText = 'Quick they brown fox a to jump this over fox it are hello was'
 
-        cy.get('input[placeholder="Enter text..."]')
+        cy.get('[data-cy="keyword-generator-input"] input')
             .should('be.visible')
             .type(inputText)
 
-        cy.contains('Generate').click()
+        cy.get('[data-cy="keyword-generator-generate"]').click()
 
-        cy.contains('Select option...').click()
+        cy.get('[data-cy="keyword-generator-select"]').click()
         cy.contains('1-Gram').should('be.visible').click()
         cy.get('body').click(0, 0)
 
-        cy.contains('Generate').click()
+        cy.get('[data-cy="keyword-generator-generate"]').click()
 
         cy.contains('1-Gram:').parent().within(() => {
             cy.contains('quick').should('be.visible')
