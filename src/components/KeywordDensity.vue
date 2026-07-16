@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
-import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, themeQuartz, ValidationModule } from 'ag-grid-community';
 import { MaButton, MaTextarea } from '@mobileaction/action-kit';
 import { cleanDescription } from '@/utils/CleanDescription';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(import.meta.env.DEV ? [ValidationModule] : [])
+]);
 
 const props = defineProps({
     text: {
