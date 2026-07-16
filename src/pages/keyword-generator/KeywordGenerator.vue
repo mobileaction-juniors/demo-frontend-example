@@ -1,12 +1,12 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { cleanDescription } from "../../utils/CleanDescription";
-import { filterDescription } from "../../utils/FilterDescription";
-import KeywordsSection from "@/components/KeywordsSection.vue";
 import { MaTextarea } from "@mobileaction/action-kit";
+import KeywordsSection from "@/components/KeywordsSection.vue";
 import MultiSelectButtons from "@/components/MultiSelectButtons.vue";
-import { nGramGenerater } from "../../utils/nGramGeneration";
+import { cleanDescription } from "@/utils/CleanDescription";
+import { filterDescription } from "@/utils/FilterDescription";
+import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const description = ref("");
 const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
