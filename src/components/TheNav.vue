@@ -1,16 +1,10 @@
 <template>
-    <nav class="ma-router-item">
-        <router-link to="/keyword-generator">
+    <nav class="m-4 flex flex-row justify-evenly bg-gray-200">
+        <router-link
+            to="/keyword-generator"
+            class="font-medium text-blue-600 transition-colors hover:text-blue-800"
+        >
             Keyword Generator
         </router-link>
     </nav>
 </template>
-
-<style>
-.ma-router-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  margin: 15px;
-}
-</style>
