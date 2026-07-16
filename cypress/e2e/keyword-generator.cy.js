@@ -6,13 +6,13 @@ describe('Keyword Generator', () => {
     it('enters text and generates keywords on button click', () => {
         const inputText = 'Quick brown fox jump over fox'
 
-        cy.get('input[placeholder="Enter text..."]')
+        cy.get('[data-cy="keyword-generator-input"] input')
             .should('be.visible')
             .type(inputText)
 
-        cy.contains('Generate').click()
+        cy.get('[data-cy="keyword-generator-generate"]').click()
 
-        cy.contains('Select option...').click()
+        cy.get('[data-cy="keyword-generator-select"]').click()
         cy.contains('1-Gram').should('be.visible').click()
 
         cy.get('body').click(0, 0)
