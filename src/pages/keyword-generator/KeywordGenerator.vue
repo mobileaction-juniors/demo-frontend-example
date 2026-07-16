@@ -1,16 +1,20 @@
 <script setup>
 import {computed} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
+import {computeKeywordCounts} from "@/utils/ComputeKeywordCounts.js";
+import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
+import {useInputHistoryStore} from "@/stores/InputHistory.js";
 import {SAMPLE_KEYWORD_INPUT} from "@/constants/KeywordGeneratorSamples.js";
 
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
 const generatedKeywordsStore = useGeneratedKeywordsStore()
+const inputHistoryStore = useInputHistoryStore()
 const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
 const selectedNGramsModel = computed(
     {
@@ -23,6 +27,22 @@ const sampleInput = SAMPLE_KEYWORD_INPUT;
 //generate keywords when button is clicked
 const handleGenerate = () => {
   generatedKeywordsStore.generate();
+
+  if (!userInputStore.userInput.trim()) return
+
+  const keywordCounts = computeKeywordCounts(userInputStore.userInput)
+  const keywordDensities = computeKeywordDensities(keywordCounts)
+
+  inputHistoryStore.addEntry({
+    input: userInputStore.userInput,
+    generatedKeywords: generatedKeywordsStore.generatedKeywords,
+    keywordCounts,
+    keywordDensities,
+  })
+}
+
+const handleSelectHistoryEntry = (entryId) => {
+  inputHistoryStore.selectEntry(entryId)
 }
 
 const handleFillSampleInput = () => {
@@ -70,6 +90,29 @@ const handleFillSampleInput = () => {
       <p class="text-sm text-gray-500 italic px-1">
         <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
       </p>
+    </div>
+
+    <div
+        v-if="inputHistoryStore.entries.length"
+        data-cy="input-history"
+        class="flex flex-col gap-2"
+    >
+      <span class="text-sm font-semibold text-gray-600">History</span>
+      <ul class="flex max-h-48 flex-col gap-1 overflow-y-auto">
+        <li v-for="entry in inputHistoryStore.entries" :key="entry.id">
+          <button
+              type="button"
+              data-cy="input-history-item"
+              @click="handleSelectHistoryEntry(entry.id)"
+              class="w-full truncate rounded-md border px-3 py-2 text-left text-sm transition-colors"
+              :class="entry.id === inputHistoryStore.activeEntry?.id
+                ? 'border-blue-300 bg-blue-50 text-blue-700'
+                : 'border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100'"
+          >
+            {{ entry.input }}
+          </button>
+        </li>
+      </ul>
     </div>
 
     <hr class="border-gray-200">
