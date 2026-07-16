@@ -1,12 +1,32 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { cleanDescription } from "../../utils/CleanDescription";
-import { nGramGenerater } from "../../utils/nGramGeneration";
+import { MaSelect, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
+import { cleanDescription } from "@/utils/CleanDescription";
+import { filterDescription } from "@/utils/FilterDescription";
+import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const description = ref("");
-const cleanedDescription = computed(() => cleanDescription(description.value));
+const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
+
+const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
+const gramSizeOptions = gramSizeArray.map((n) => ({
+  label: `${n}-Gram`,
+  value: n,
+}));
+
+const selectedGramSizes = ref([]);
+
+const sections = computed(() =>
+  selectedGramSizes.value
+    .slice()
+    .sort((a, b) => a - b)
+    .map((n) => ({
+      title: `${n}-Gram Keywords`,
+      keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
+    })),
+);
 </script>
 <template>
   <div class="ma-keywords-generator">
@@ -20,33 +40,33 @@ const cleanedDescription = computed(() => cleanDescription(description.value));
     </div>
 
     <div class="ma-text-area">
-      <textarea
-        v-model="description"
+      <MaTextarea 
+        v-model="description" 
         placeholder="Enter your description here..."
-        rows="8"
-      ></textarea>
-      <p v-if="description">Cleaned Description: {{ cleanedDescription }}</p>
+        rows="10">
+      </MaTextarea>
+      <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
     </div>
-
+    <MaSelect
+        v-model:value="selectedGramSizes"
+        mode="multiple"
+        :options="gramSizeOptions"
+        size="small"
+        placeholder="Select n-gram sizes"
+      >
+    </MaSelect>
     <div class="ma-keywords-main-section">
       <KeywordsSection
-        :title="'1-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 1)"
-      ></KeywordsSection>
-      <KeywordsSection
-        :title="'2-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 2)"
-      ></KeywordsSection>
-      <KeywordsSection
-        :title="'3-Gram Keywords'"
-        :keywords="nGramGenerater(cleanedDescription, 3)"
+        v-for="section in sections"
+        :key="section.title"
+        :title="section.title"
+        :keywords="section.keywords"
       ></KeywordsSection>
     </div>
-
   </div>
 </template>
 
-<style scope>
+<style scoped>
 .ma-header {
   color: #1bcf6c;
   display: flex;
