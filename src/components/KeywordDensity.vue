@@ -60,12 +60,12 @@ function submitText() {
 </script>
 
 <template>
-    <div class="mx-auto max-w-[1000px] p-6">
+    <div class="mx-auto w-full max-w-[1000px] p-6">
         <div class="text-center">
             <h1 class="text-2xl font-semibold">Keyword Count & Density</h1>
         </div>
-        <div class="mt-5 flex w-full flex-col gap-6 md:flex-row">
-            <div class="w-full min-w-0 md:w-1/2">
+        <div class="mt-5 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+            <div class="w-full min-w-0">
                 <MaTextarea
                     v-model="inputText"
                     placeholder="Paste an app description..."
@@ -80,7 +80,7 @@ function submitText() {
                     </MaButton>
                 </div>
             </div>
-            <div class="w-full min-w-0 overflow-x-auto md:w-1/2">
+            <div class="w-full min-w-0 overflow-x-auto">
                 <AgGridVue
                     :theme="themeQuartz"
                     :row-data="rowData"
