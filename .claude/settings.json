@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm test:e2e)",
+      "Bash(pnpm test:e2e:open)",
+      "Bash(git status)",
+      "Bash(git log)",
+      "Bash(git show)",
+      "Bash(git branch)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git branch -D:*)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}
