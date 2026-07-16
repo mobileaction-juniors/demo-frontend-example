@@ -46,7 +46,7 @@ describe('Keyword Generator', () => {
         cy.contains('4-Gram').should('not.be.visible')
     })
 
-    it('remove stop words', () => {
+    it('removes stop words', () => {
         const inputText = 'Quick they brown fox a to jump this over fox it are hello was'
 
         cy.get('[data-cy="keyword-generator-input"] input')
