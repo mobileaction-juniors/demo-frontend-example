@@ -6,6 +6,7 @@ import KeywordDensity from "@/components/KeywordDensity.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
+import {SAMPLE_KEYWORD_INPUT} from "@/constants/KeywordGeneratorSamples.js";
 
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
@@ -17,7 +18,7 @@ const selectedNGramsModel = computed(
       set: (value) => selectedNGramsStore.setSelectedNGrams(value),
     }
 )
-const sampleInput = 'Quick brown fox jump over fox';
+const sampleInput = SAMPLE_KEYWORD_INPUT;
 
 //generate keywords when button is clicked
 const handleGenerate = () => {
