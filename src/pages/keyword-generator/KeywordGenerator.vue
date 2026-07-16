@@ -1,35 +1,33 @@
 <script setup>
-import {computed, ref, watch} from "vue";
+import {computed} from "vue";
 import {cleanInput} from "@/utils/CleanInput.js";
 import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
-import {generateKeywords} from "@/utils/GenerateKeywords.js";
+import {useUserInputStore} from "@/stores/UserInput.js";
+import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
+import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
+import {SAMPLE_KEYWORD_INPUT} from "@/constants/KeywordGeneratorSamples.js";
 
-const ngramLimit = 10
-const userInput = ref('');
-const selectedNGrams = ref([]);
-const cleanedInput = computed(() => cleanInput(userInput.value))
-const generatedKeywords = ref({});
-
-//to select multiple n-gram options
-const nGramSelectOptions = computed(() => {
-  const options = [];
-  for (let i = 0; i < ngramLimit; i++) {
-    const nGram = `${i + 1}-Gram`;
-    options.push({label: nGram, value: nGram})
-  }
-  return options;
-})
+const userInputStore = useUserInputStore()
+const selectedNGramsStore = useSelectedNGramsStore()
+const generatedKeywordsStore = useGeneratedKeywordsStore()
+const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
+const selectedNGramsModel = computed(
+    {
+      get: () => selectedNGramsStore.selectedNGrams,
+      set: (value) => selectedNGramsStore.setSelectedNGrams(value),
+    }
+)
+const sampleInput = SAMPLE_KEYWORD_INPUT;
 
 //generate keywords when button is clicked
 const handleGenerate = () => {
-  generatedKeywords.value = generateKeywords(cleanedInput.value, ngramLimit)
+  generatedKeywordsStore.generate();
 }
 
-//to keep selected n-gram options sorted
-watch(selectedNGrams, (newVal) => {
-  selectedNGrams.value = newVal.sort();
-})
+const handleFillSampleInput = () => {
+  userInputStore.userInput = sampleInput;
+}
 
 </script>
 
@@ -45,17 +43,26 @@ watch(selectedNGrams, (newVal) => {
 
     <div class="flex flex-col gap-2">
       <MaTextInput
-          v-model="userInput"
+          v-model="userInputStore.userInput"
           placeholder="Enter text..."
           class="w-full"
       />
-      <MaButton
-          @click="handleGenerate"
-          class="self-start"
-          icon="tag-2"
-      >
-        Generate
-      </MaButton>
+      <div class="flex flex-wrap gap-2">
+        <MaButton
+            @click="handleFillSampleInput"
+            class="self-start"
+            icon="download"
+        >
+          Fill Example
+        </MaButton>
+        <MaButton
+            @click="handleGenerate"
+            class="self-start"
+            icon="tag-2"
+        >
+          Generate
+        </MaButton>
+      </div>
       <p class="text-sm text-gray-500 italic px-1">
         <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
       </p>
@@ -64,9 +71,9 @@ watch(selectedNGrams, (newVal) => {
     <hr class="border-gray-200">
 
     <ma-select
-        v-model:value="selectedNGrams"
+        v-model:value="selectedNGramsModel"
         allowClear
-        :options="nGramSelectOptions"
+        :options="selectedNGramsStore.nGramSelectOptions"
         dropdownMatchSelectWidth
         mode="multiselect"
         placeholder="Select option..."
@@ -75,7 +82,7 @@ watch(selectedNGrams, (newVal) => {
 
     <div class="mt-2 flex flex-col gap-3">
       <ul
-          v-for="nGram in selectedNGrams"
+          v-for="nGram in selectedNGramsStore.formattedSelectedNGrams"
           :key="nGram"
           class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
       >
@@ -83,14 +90,14 @@ watch(selectedNGrams, (newVal) => {
 
         <MaBadge
             variant="blue"
-            v-for="(keyword, keywordIndex) in generatedKeywords[nGram]"
+            v-for="(keyword, keywordIndex) in generatedKeywordsStore.generatedKeywords[nGram]"
             :key="keywordIndex"
         >
           {{ keyword }}
         </MaBadge>
       </ul>
     </div>
-    <KeywordDensity :text="userInput"/>
+    <KeywordDensity/>
   </div>
 
 </template>

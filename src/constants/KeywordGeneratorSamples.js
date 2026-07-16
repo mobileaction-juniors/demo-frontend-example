@@ -1,0 +1,1 @@
+export const SAMPLE_KEYWORD_INPUT = 'Quick brown fox jump over fox';
