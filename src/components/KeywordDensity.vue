@@ -55,8 +55,11 @@ const computeDensityAndCountOfKeywords = () => {
   rowData.value = buildRowData(countMap, densityMap)
 }
 
-// keep the density table in sync when a past input is selected from history
-watch(() => inputHistoryStore.activeEntry, (entry) => {
+// keep the density table in sync when a past input is (re-)selected from history;
+// watching selectionToken (not activeEntry) ensures this fires even when the same
+// entry is clicked twice in a row, since activeEntry's reference wouldn't change then
+watch(() => inputHistoryStore.selectionToken, () => {
+  const entry = inputHistoryStore.activeEntry
   if (!entry) return
   rowData.value = buildRowData(entry.keywordCounts, entry.keywordDensities)
 })

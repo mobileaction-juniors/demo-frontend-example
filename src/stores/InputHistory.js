@@ -11,6 +11,9 @@ export const useInputHistoryStore = defineStore('inputHistory', () => {
 
     const entries = ref([])
     const activeEntry = ref(null)
+    // increments on every selection so watchers can react even when the
+    // same entry is selected twice in a row (activeEntry's reference wouldn't change)
+    const selectionToken = ref(0)
 
     const addEntry = ({input, generatedKeywords, keywordCounts, keywordDensities}) => {
         const entry = {
@@ -25,6 +28,7 @@ export const useInputHistoryStore = defineStore('inputHistory', () => {
             entries.value.pop()
         }
         activeEntry.value = entry
+        selectionToken.value++
     }
 
     const selectEntry = (id) => {
@@ -34,11 +38,13 @@ export const useInputHistoryStore = defineStore('inputHistory', () => {
         userInputStore.userInput = entry.input
         generatedKeywordsStore.generatedKeywords = entry.generatedKeywords
         activeEntry.value = entry
+        selectionToken.value++
     }
 
     return {
         entries,
         activeEntry,
+        selectionToken,
         addEntry,
         selectEntry,
     }

@@ -41,10 +41,6 @@ const handleGenerate = () => {
   })
 }
 
-const handleSelectHistoryEntry = (entryId) => {
-  inputHistoryStore.selectEntry(entryId)
-}
-
 const handleFillSampleInput = () => {
   userInputStore.userInput = sampleInput;
 }
@@ -103,7 +99,7 @@ const handleFillSampleInput = () => {
           <button
               type="button"
               data-cy="input-history-item"
-              @click="handleSelectHistoryEntry(entry.id)"
+              @click="inputHistoryStore.selectEntry(entry.id)"
               class="w-full truncate rounded-md border px-3 py-2 text-left text-sm transition-colors"
               :class="entry.id === inputHistoryStore.activeEntry?.id
                 ? 'border-blue-300 bg-blue-50 text-blue-700'
