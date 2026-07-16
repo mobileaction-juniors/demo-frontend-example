@@ -44,9 +44,13 @@ Plugins are registered globally in `src/main.js` in this order: Pinia → Action
   `formattedSelectedNGrams` getters
 - `GeneratedKeywords` — holds the last-generated keyword map and exposes a `generate()` action that
   pulls from `UserInput`/`NGramLimit`, cleans the input, and calls the `utils/` generation functions
+- `InputHistory` — keeps a capped list (20) of past generated inputs, each snapshotting its n-gram
+  keywords plus count/density data; `selectEntry()` writes a past snapshot back into `UserInput` and
+  `GeneratedKeywords` so the generator page and density table re-render without recomputing
 
 Stores compose each other directly (e.g. `SelectedNGrams` reads `NGramLimit`; `GeneratedKeywords`
-reads `UserInput` and `NGramLimit`) rather than components wiring stores together. Generation is
+reads `UserInput` and `NGramLimit`; `InputHistory` reads/writes both `UserInput` and
+`GeneratedKeywords`) rather than components wiring stores together. Generation is
 explicit/on-demand — a button click calls a store action; nothing regenerates automatically on
 keystroke.
 
