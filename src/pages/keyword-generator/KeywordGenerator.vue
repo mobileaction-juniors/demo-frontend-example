@@ -2,7 +2,6 @@
 import {computed} from "vue";
 import {MaBadge, MaSelect, MaButton, MaTextarea} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
-import InputHistory from "@/components/InputHistory.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
@@ -97,8 +96,6 @@ const handleFillSampleInput = () => {
         <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ userInputStore.cleanedUserInput }}
       </p>
     </div>
-
-    <InputHistory/>
 
     <hr class="border-gray-200">
 

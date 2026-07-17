@@ -6,12 +6,14 @@ const inputHistoryStore = useInputHistoryStore()
 
 <template>
   <div
-      v-if="inputHistoryStore.entries.length"
       data-cy="input-history"
       class="flex flex-col gap-2"
   >
     <span class="text-sm font-semibold text-gray-600">History</span>
-    <ul class="flex max-h-48 flex-col gap-1 overflow-y-auto">
+    <p v-if="!inputHistoryStore.entries.length" data-cy="input-history-empty" class="text-sm text-gray-500">
+      No history yet. Generate keywords from the Keyword Generator page to see past inputs here.
+    </p>
+    <ul v-else class="flex max-h-48 flex-col gap-1 overflow-y-auto">
       <li v-for="entry in inputHistoryStore.entries" :key="entry.id">
         <button
             type="button"

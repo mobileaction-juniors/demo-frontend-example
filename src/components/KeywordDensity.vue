@@ -1,10 +1,6 @@
 <script setup>
-import {watch} from "vue";
 import {AgGridVue} from "ag-grid-vue3";
-import {useInputHistoryStore} from "@/stores/InputHistory.js";
 import {useCountDensityRowDataStore} from "@/stores/CountDensityRowData.js";
-
-const inputHistoryStore = useInputHistoryStore()
 
 const columnDefinitions = [
   {
@@ -35,15 +31,6 @@ const defaultColDef = {
 }
 
 const rowDataStore = useCountDensityRowDataStore();
-
-// keep the density table in sync when a past input is (re-)selected from history;
-// watching selectionToken (not activeEntry) ensures this fires even when the same
-// entry is clicked twice in a row, since activeEntry's reference wouldn't change then
-watch(() => inputHistoryStore.selectionToken, () => {
-  const entry = inputHistoryStore.activeEntry;
-  if (!entry) return
-  rowDataStore.updateRowData()
-})
 
 </script>
 
