@@ -1,21 +1,20 @@
 <script setup>
 import {computed} from "vue";
-import {cleanInput} from "@/utils/CleanInput.js";
-import {computeKeywordCounts} from "@/utils/ComputeKeywordCounts.js";
-import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
-import {MaTextInput, MaBadge, MaSelect, MaButton} from "@mobileaction/action-kit";
+import {MaBadge, MaSelect, MaButton, MaTextarea} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
 import {useInputHistoryStore} from "@/stores/InputHistory.js";
+import {useCountDensityRowDataStore} from "@/stores/CountDensityRowData.js";
 import {SAMPLE_KEYWORD_INPUT} from "@/constants/KeywordGeneratorSamples.js";
+import {computeKeywordCounts, computeKeywordDensities} from "@/utils/KeywordsAnalyzer.js";
 
 const userInputStore = useUserInputStore()
 const selectedNGramsStore = useSelectedNGramsStore()
 const generatedKeywordsStore = useGeneratedKeywordsStore()
 const inputHistoryStore = useInputHistoryStore()
-const cleanedInput = computed(() => cleanInput(userInputStore.userInput))
+const countDensityRowDataStore = useCountDensityRowDataStore()
 const selectedNGramsModel = computed(
     {
       get: () => selectedNGramsStore.selectedNGrams,
@@ -59,10 +58,12 @@ const handleFillSampleInput = () => {
 
     <div class="flex flex-col gap-2">
       <div data-cy="keyword-generator-input">
-        <MaTextInput
+        <MaTextarea
+            id="keyword-density-textarea"
+            :wrapperProps="{ 'data-cy': 'keyword-density-textarea-wrapper' }"
             v-model="userInputStore.userInput"
-            placeholder="Enter text..."
-            class="w-full"
+            :rows="9"
+            class="w-full max-w-full"
         />
       </div>
       <div class="flex flex-wrap gap-2">
@@ -82,9 +83,17 @@ const handleFillSampleInput = () => {
         >
           Generate
         </MaButton>
+        <MaButton
+            data-cy="keyword-density-submit"
+            @click="countDensityRowDataStore.updateRowData"
+            htmlType="button"
+            class="self-start"
+        >
+          Submit
+        </MaButton>
       </div>
       <p class="text-sm text-gray-500 italic px-1">
-        <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ cleanedInput }}
+        <span class="font-medium text-gray-600">Cleaned User Input:</span> {{ userInputStore.cleanedUserInput }}
       </p>
     </div>
 
@@ -113,35 +122,40 @@ const handleFillSampleInput = () => {
 
     <hr class="border-gray-200">
 
-    <ma-select
-        data-cy="keyword-generator-select"
-        v-model:value="selectedNGramsModel"
-        allowClear
-        :options="selectedNGramsStore.nGramSelectOptions"
-        dropdownMatchSelectWidth
-        mode="multiselect"
-        placeholder="Select option..."
-        class="w-full"
-    />
+    <div class="flex flex-col gap-4">
+      <KeywordDensity/>
+      <div class="flex flex-col gap-2">
+        <ma-select
+            data-cy="keyword-generator-select"
+            v-model:value="selectedNGramsModel"
+            allowClear
+            :options="selectedNGramsStore.nGramSelectOptions"
+            dropdownMatchSelectWidth
+            mode="multiselect"
+            placeholder="Select option..."
+            class="w-full"
+        />
+        <div class="mt-2 flex flex-col gap-3">
+          <ul
+              v-for="nGram in selectedNGramsStore.formattedSelectedNGrams"
+              :key="nGram"
+              class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
+          >
+            <span class="font-semibold text-gray-700 min-w-10">{{ nGram }}:</span>
 
-    <div class="mt-2 flex flex-col gap-3">
-      <ul
-          v-for="nGram in selectedNGramsStore.formattedSelectedNGrams"
-          :key="nGram"
-          class="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100"
-      >
-        <span class="font-semibold text-gray-700 min-w-10">{{ nGram }}:</span>
-
-        <MaBadge
-            variant="blue"
-            v-for="(keyword, keywordIndex) in generatedKeywordsStore.generatedKeywords[nGram]"
-            :key="keywordIndex"
-        >
-          {{ keyword }}
-        </MaBadge>
-      </ul>
+            <MaBadge
+                variant="blue"
+                v-for="(keyword, keywordIndex) in generatedKeywordsStore.generatedKeywords[nGram]"
+                :key="keywordIndex"
+            >
+              {{ keyword }}
+            </MaBadge>
+          </ul>
+        </div>
+      </div>
     </div>
-    <KeywordDensity/>
+
+
   </div>
 
 </template>
