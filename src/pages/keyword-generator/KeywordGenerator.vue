@@ -2,6 +2,7 @@
 import {computed} from "vue";
 import {MaBadge, MaSelect, MaButton, MaTextarea} from "@mobileaction/action-kit";
 import KeywordDensity from "@/components/KeywordDensity.vue";
+import InputHistory from "@/components/InputHistory.vue";
 import {useUserInputStore} from "@/stores/UserInput.js";
 import {useSelectedNGramsStore} from "@/stores/SelectedNGrams.js";
 import {useGeneratedKeywordsStore} from "@/stores/GeneratedKeywords.js";
@@ -97,28 +98,7 @@ const handleFillSampleInput = () => {
       </p>
     </div>
 
-    <div
-        v-if="inputHistoryStore.entries.length"
-        data-cy="input-history"
-        class="flex flex-col gap-2"
-    >
-      <span class="text-sm font-semibold text-gray-600">History</span>
-      <ul class="flex max-h-48 flex-col gap-1 overflow-y-auto">
-        <li v-for="entry in inputHistoryStore.entries" :key="entry.id">
-          <button
-              type="button"
-              data-cy="input-history-item"
-              @click="inputHistoryStore.selectEntry(entry.id)"
-              class="w-full truncate rounded-md border px-3 py-2 text-left text-sm transition-colors"
-              :class="entry.id === inputHistoryStore.activeEntry?.id
-                ? 'border-blue-300 bg-blue-50 text-blue-700'
-                : 'border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100'"
-          >
-            {{ entry.input }}
-          </button>
-        </li>
-      </ul>
-    </div>
+    <InputHistory/>
 
     <hr class="border-gray-200">
 
