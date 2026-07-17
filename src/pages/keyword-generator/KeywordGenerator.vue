@@ -29,33 +29,35 @@ const sections = computed(() =>
 );
 </script>
 <template>
-  <div class="ma-keywords-generator">
-
-    <div class="ma-header">
-      <span>
-        <h1>
-          Generator
-        </h1>
-      </span>
+  <div>
+    <div class="p-4 m-4 text-3xl text-[#1bcf6c] font-bold flex justify-center items-center">
+      <h1>
+        Generator
+      </h1>
     </div>
-
-    <div class="ma-text-area">
-      <MaTextarea 
-        v-model="description" 
-        placeholder="Enter your description here..."
-        rows="10">
-      </MaTextarea>
-      <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
+    <div class="flex justify-center">
+      <div class="p-4 m-4 flex flex-col items-center">
+        <MaTextarea
+          v-model="description"
+          placeholder="Enter your description here..."
+          rows="10"
+          class="w-96">
+        </MaTextarea>
+        <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
+      </div>
+      <div class="p-4 m-4 flex flex-col items-center">
+        <MaSelect
+            v-model:value="selectedGramSizes"
+            mode="multiple"
+            :options="gramSizeOptions"
+            size="large"
+            placeholder="Select n-gram sizes"
+            class="w-64"
+          >
+        </MaSelect>
+      </div>
     </div>
-    <MaSelect
-        v-model:value="selectedGramSizes"
-        mode="multiple"
-        :options="gramSizeOptions"
-        size="small"
-        placeholder="Select n-gram sizes"
-      >
-    </MaSelect>
-    <div class="ma-keywords-main-section">
+    <div class="p-4 m-4 flex flex-col items-center">
       <KeywordsSection
         v-for="section in sections"
         :key="section.title"
@@ -66,39 +68,3 @@ const sections = computed(() =>
   </div>
 </template>
 
-<style scoped>
-.ma-header {
-  color: #1bcf6c;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ma-text-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.ma-text-area textarea {
-  width: 100%;
-  max-width: 600px;
-  min-height: 200px;
-  font-size: 1rem;
-  background-color: #c9c7c7;
-  border: 3px solid #1bcf6c;
-}
-
-.ma-text-area textarea:focus {
-  outline: none;
-  border: 3px solid #1bcf6c;
-  box-shadow: 0 0 0 2px rgba(27, 207, 108, 0.3);
-}
-
-.ma-keywords-main-section {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  margin-top: 5px;
-}
-</style>
