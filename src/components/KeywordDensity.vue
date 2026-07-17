@@ -1,12 +1,14 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {MaTextarea, MaButton} from "@mobileaction/action-kit";
 import {AgGridVue} from "ag-grid-vue3";
 import {useUserInputStore} from "@/stores/UserInput.js";
+import {useInputHistoryStore} from "@/stores/InputHistory.js";
 import {computeKeywordDensities} from "@/utils/ComputeDensity.js";
 import {computeKeywordCounts} from "@/utils/ComputeKeywordCounts.js";
 
 const userInputStore = useUserInputStore()
+const inputHistoryStore = useInputHistoryStore()
 
 const columnDefinitions = [
   {
@@ -38,16 +40,29 @@ const defaultColDef = {
 
 const rowData = ref([])
 
-const computeDensityAndCountOfKeywords = () => {
-  const countMap = computeKeywordCounts(userInputStore.userInput)
-  const densityMap = computeKeywordDensities(countMap)
-
-  rowData.value = Object.keys(countMap).map((keyword) => ({
+const buildRowData = (countMap, densityMap) => {
+  return Object.keys(countMap).map((keyword) => ({
     keyword,
     count: countMap[keyword],
     density: densityMap[keyword],
   }))
 }
+
+const computeDensityAndCountOfKeywords = () => {
+  const countMap = computeKeywordCounts(userInputStore.userInput)
+  const densityMap = computeKeywordDensities(countMap)
+
+  rowData.value = buildRowData(countMap, densityMap)
+}
+
+// keep the density table in sync when a past input is (re-)selected from history;
+// watching selectionToken (not activeEntry) ensures this fires even when the same
+// entry is clicked twice in a row, since activeEntry's reference wouldn't change then
+watch(() => inputHistoryStore.selectionToken, () => {
+  const entry = inputHistoryStore.activeEntry
+  if (!entry) return
+  rowData.value = buildRowData(entry.keywordCounts, entry.keywordDensities)
+})
 
 </script>
 
