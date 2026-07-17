@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { MaSelect, MaTextarea } from "@mobileaction/action-kit";
+import { MaButton, MaSelect, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
 import { cleanDescription } from "@/utils/CleanDescription";
 import { filterDescription } from "@/utils/FilterDescription";
@@ -16,6 +16,7 @@ const gramSizeOptions = gramSizeArray.map((n) => ({
   value: n,
 }));
 
+const buttonCLicked = ref(false);
 const selectedGramSizes = ref([]);
 
 const sections = computed(() =>
@@ -35,7 +36,7 @@ const sections = computed(() =>
         Generator
       </h1>
     </div>
-    <div class="flex justify-center">
+    <div class="flex flex-col justify-center">
       <div class="p-4 m-4 flex flex-col items-center">
         <MaTextarea
           v-model="description"
@@ -43,7 +44,7 @@ const sections = computed(() =>
           rows="10"
           class="w-96">
         </MaTextarea>
-        <p v-if="description">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
+        <p v-if="buttonCLicked">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
       </div>
       <div class="p-4 m-4 flex flex-col items-center">
         <MaSelect
@@ -58,12 +59,21 @@ const sections = computed(() =>
       </div>
     </div>
     <div class="p-4 m-4 flex flex-col items-center">
-      <KeywordsSection
-        v-for="section in sections"
-        :key="section.title"
-        :title="section.title"
-        :keywords="section.keywords"
-      ></KeywordsSection>
+      <MaButton
+        color="green"
+        icon="coffee-bulk"
+        @click="buttonCLicked = !buttonCLicked"
+      >
+      {{ buttonCLicked ? "Hide" : "Generate" }}
+      </MaButton>
+      <div v-if="buttonCLicked">
+        <KeywordsSection
+          v-for="section in sections"
+          :key="section.title"
+          :title="section.title"
+          :keywords="section.keywords"
+        ></KeywordsSection>        
+      </div>
     </div>
   </div>
 </template>
