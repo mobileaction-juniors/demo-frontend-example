@@ -17,6 +17,11 @@ const router = createRouter({
       path: '/input-history',
       name: 'InputHistory',
       component: () => import('../pages/input-history/InputHistory.vue')
+    },
+    {
+      path: '/stop-words',
+      name: 'StopWords',
+      component: () => import('../pages/stop-words/StopWords.vue')
     }
   ]
 })

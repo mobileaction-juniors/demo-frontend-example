@@ -12,5 +12,11 @@
         >
             Input History
         </router-link>
+        <router-link
+            to="/stop-words"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800 aria-[current=page]:bg-blue-50 aria-[current=page]:text-blue-700"
+        >
+            Stop Words
+        </router-link>
     </div>
 </template>
