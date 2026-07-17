@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { MaButton, MaSelect, MaTextarea } from "@mobileaction/action-kit";
+import { MaButton, MaSelect as MaSelect2, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
 import { cleanDescription } from "@/utils/CleanDescription";
 import { filterDescription } from "@/utils/FilterDescription";
@@ -47,7 +47,7 @@ const sections = computed(() =>
         <p v-if="buttonCLicked">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
       </div>
       <div class="p-4 m-4 flex flex-col items-center">
-        <MaSelect
+        <MaSelect2
             v-model:value="selectedGramSizes"
             mode="multiple"
             :options="gramSizeOptions"
@@ -55,7 +55,7 @@ const sections = computed(() =>
             placeholder="Select n-gram sizes"
             class="w-64"
           >
-        </MaSelect>
+        </MaSelect2>
       </div>
     </div>
     <div class="p-4 m-4 flex flex-col items-center">
