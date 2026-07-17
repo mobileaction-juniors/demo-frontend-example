@@ -26,8 +26,9 @@ const sampleInput = SAMPLE_KEYWORD_INPUT;
 //generate keywords when button is clicked
 const handleGenerate = () => {
   generatedKeywordsStore.generate();
-
   if (!userInputStore.userInput.trim()) return
+
+  countDensityRowDataStore.updateRowData()
 
   const keywordCounts = computeKeywordCounts(userInputStore.userInput)
   const keywordDensities = computeKeywordDensities(keywordCounts)
@@ -81,15 +82,7 @@ const handleFillSampleInput = () => {
             class="self-start"
             icon="tag-2"
         >
-          Generate
-        </MaButton>
-        <MaButton
-            data-cy="keyword-density-submit"
-            @click="countDensityRowDataStore.updateRowData"
-            htmlType="button"
-            class="self-start"
-        >
-          Submit
+          SUBMIT
         </MaButton>
       </div>
       <p class="text-sm text-gray-500 italic px-1">
