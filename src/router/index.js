@@ -12,6 +12,16 @@ const router = createRouter({
       path: '/keyword-generator',
       name: 'KeywordGenerator',
       component: () => import('../pages/keyword-generator/KeywordGenerator.vue')
+    },
+    {
+      path: '/input-history',
+      name: 'InputHistory',
+      component: () => import('../pages/input-history/InputHistory.vue')
+    },
+    {
+      path: '/stop-words',
+      name: 'StopWords',
+      component: () => import('../pages/stop-words/StopWords.vue')
     }
   ]
 })
