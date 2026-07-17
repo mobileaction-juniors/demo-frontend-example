@@ -1,14 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
-import { ClientSideRowModelModule, ModuleRegistry, themeQuartz, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MaButton, MaTextarea } from '@mobileaction/action-kit';
 import { cleanDescription } from '@/utils/CleanDescription';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(import.meta.env.DEV ? [ValidationModule] : [])
-]);
+const modules = [
+    ClientSideRowModelModule
+];
 
 const props = defineProps({
     text: {
@@ -23,11 +22,10 @@ const rowData = ref([]);
 const colDefs = ref([
     { field: "keyword", headerName: "Keyword" },
     { field: "count", headerName: "Count" },
-    { field: "density", headerName: "%" }
+    { field: "density", headerName: "%", valueFormatter: (params) => `${params.value}%` }
 ]);
 
 const defaultColDef = {
-    sortable: true,
     flex: 1,
     minWidth: 100
 };
@@ -63,11 +61,11 @@ function submitText() {
 </script>
 
 <template>
-    <div class="mx-auto w-full max-w-[1000px] p-6">
+    <div class="mx-auto w-full max-w-[1200px] p-6">
         <div class="text-center">
             <h1 class="text-2xl font-semibold">Keyword Count & Density</h1>
         </div>
-        <div class="mt-5 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="mt-5 grid w-full grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
             <div class="w-full min-w-0">
                 <MaTextarea
                     v-model="inputText"
@@ -85,11 +83,11 @@ function submitText() {
             </div>
             <div class="w-full min-w-0 overflow-x-auto">
                 <AgGridVue
-                    :theme="themeQuartz"
+                    :modules="modules"
                     :row-data="rowData"
                     :column-defs="colDefs"
                     :default-col-def="defaultColDef"
-                    class="h-[400px] w-full min-w-[300px]"    
+                    class="ag-theme-ma ag-theme-ma--secondary h-[400px] w-full min-w-[420px]"   
                 />
             </div>
         </div>
