@@ -36,9 +36,6 @@ importers:
       tailwindcss:
         specifier: ^4.3.2
         version: 4.3.2
-      terser:
-        specifier: ^5.49.0
-        version: 5.49.0
       vite:
         specifier: ^5.3.1
         version: 5.3.2(lightningcss@1.32.0)(terser@5.49.0)

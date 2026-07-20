@@ -36,7 +36,7 @@ const sections = computed(() =>
         Generator
       </h1>
     </div>
-    <div class="flex flex-col justify-center">
+    <div class="flex flex-col justify-center items-center">
       <div class="p-4 m-4 flex flex-col items-center">
         <MaTextarea
           v-model="description"
@@ -46,7 +46,14 @@ const sections = computed(() =>
         </MaTextarea>
         <p v-if="buttonCLicked">Cleaned and Filtered Description: {{ cleanedAndFilteredDescription }}</p>
       </div>
-      <div class="p-4 m-4 flex flex-col items-center">
+      <div class="p-4 m-4 flex flex-row items-center gap-4">
+        <MaButton
+          color="green"
+          icon="coffee-bulk"
+          @click="buttonCLicked = !buttonCLicked"      
+        >
+          {{ buttonCLicked ? "Hide" : "Generate" }}
+        </MaButton>
         <MaSelect2
             v-model:value="selectedGramSizes"
             mode="multiple"
@@ -59,13 +66,6 @@ const sections = computed(() =>
       </div>
     </div>
     <div class="p-4 m-4 flex flex-col items-center">
-      <MaButton
-        color="green"
-        icon="coffee-bulk"
-        @click="buttonCLicked = !buttonCLicked"
-      >
-      {{ buttonCLicked ? "Hide" : "Generate" }}
-      </MaButton>
       <div v-if="buttonCLicked">
         <KeywordsSection
           v-for="section in sections"
