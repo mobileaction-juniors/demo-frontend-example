@@ -1,11 +1,15 @@
 <script setup>
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 
 import { MaButton, MaSelect as MaSelect2, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
+import { keywordDescription } from "@/router";
 import { cleanDescription } from "@/utils/CleanDescription";
 import { filterDescription } from "@/utils/FilterDescription";
 import { nGramGenerater } from "@/utils/nGramGeneration";
+
+const router = useRouter();
 
 const description = ref("");
 const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
@@ -28,13 +32,26 @@ const sections = computed(() =>
       keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
     })),
 );
+
+function goToKeywordCountDensity() {
+  keywordDescription.value = description.value;
+  router.push({ name: "KeywordCountDensity" });
+}
 </script>
 <template>
   <div>
-    <div class="p-2 m-2 text-3xl text-[#1bcf6c] font-bold flex justify-center items-center">
+    <div class="relative p-2 m-2 text-3xl text-[#1bcf6c] font-bold flex justify-center items-center">
       <h1>
         Generator
       </h1>
+      <div class="absolute inset-y-0 right-4 flex items-center">
+        <MaButton
+          color="green"
+          icon="coffee-bulk"
+          @click="goToKeywordCountDensity">
+          Keyword Count Density
+        </MaButton>
+      </div>
     </div>
     <div class="flex flex-col justify-center items-center">
       <div class="p-2 m-2 flex flex-col items-center">
@@ -52,7 +69,7 @@ const sections = computed(() =>
         <MaButton
           color="green"
           icon="coffee-bulk"
-          @click="buttonCLicked = !buttonCLicked"      
+          @click="buttonCLicked = !buttonCLicked"
         >
           {{ buttonCLicked ? "Hide" : "Generate" }}
         </MaButton>
