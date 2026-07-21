@@ -10,5 +10,19 @@ module.exports = {
   },
   rules: {
     'vue/multi-word-component-names': 'off',
-  }
+  },
+  overrides: [
+    {
+      files: [
+        'cypress/e2e/**/*.cy.js'
+      ],
+      env: {
+        mocha: true
+      },
+      globals: {
+        cy: 'readonly',
+        Cypress: 'readonly'
+      }
+    }
+  ]
 }
