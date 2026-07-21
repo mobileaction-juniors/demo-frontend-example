@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mobileaction/action-kit": "^1.58.20",
+    "ag-grid-vue3": "^36.0.1",
     "vue": "^3.5.39",
     "vue-router": "^4.3.3"
   },
