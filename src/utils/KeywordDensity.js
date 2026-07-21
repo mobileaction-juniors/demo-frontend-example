@@ -9,6 +9,6 @@ export function calculateKeywordDensity(text){
     //wordsMap Includes all words and their counts
     const total = words.length;
     const densityArray = Array.from(wordsMap, ([word, count]) => 
-        ({ word, count, density: count / total }));
+        ({ word, count, density: (count / total).toFixed(2) }));
     return densityArray;
 }
