@@ -11,6 +11,9 @@ importers:
       '@mobileaction/action-kit':
         specifier: ^1.58.20
         version: 1.58.20
+      ag-grid-community:
+        specifier: ^36.0.1
+        version: 36.0.1
       ag-grid-vue3:
         specifier: ^36.0.1
         version: 36.0.1(vue@3.5.39)
