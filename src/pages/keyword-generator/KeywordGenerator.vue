@@ -1,61 +1,36 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { cleanDescription } from '@/utils/CleanDescription';
-import { generateNGrams, MAX_N_GRAM } from '@/utils/GenerateNGrams';
+import { useKeywordStore } from '@/stores/keyword';
+import { storeToRefs } from 'pinia';
+import { MAX_N_GRAM } from '@/utils/GenerateNGrams';
 import { MaBadge, MaButton, MaSelect2, MaTextarea } from '@mobileaction/action-kit';
 
-const inputText = ref('');
-const selectedNGrams = ref([]);
-const displayedKeywords = ref([]);
+const keywordStore = useKeywordStore();
+
+const {
+    generatorInputText,
+    selectedNGrams,
+    generatedKeywords,
+    nGramGroups
+} = storeToRefs(keywordStore);
+
+const { generateKeywords } = keywordStore;
 
 const nGramOptions = Array.from({ length: MAX_N_GRAM }, (_, index) => ({
     label: `${index + 1}-gram`,
     value: index + 1
 }));
-
-const nGramGroups = computed(() => {
-    const sortedSelectedNGrams = [...selectedNGrams.value].sort((a, b) => a - b);
-
-    return sortedSelectedNGrams.map(n => {
-        const keywordGroup = displayedKeywords.value[n - 1];
-        const keywords = keywordGroup ? keywordGroup.keywords : [];
-        const hasKeywords = keywords.length > 0;
-
-        return {
-            n,
-            keywords,
-            hasKeywords
-        };
-    });
-});
-
-function generateKeywords() {
-    const cleanedText = cleanDescription(inputText.value);
-
-    if (!cleanedText) {
-        displayedKeywords.value = [];
-        return;
-    }
-
-    const wordsArray = cleanedText.split(' ').filter((word) => word.length > 0);
-
-    if (wordsArray.length === 0) {
-        displayedKeywords.value = [];
-        return;
-    }
-
-    displayedKeywords.value = generateNGrams(wordsArray, MAX_N_GRAM);
-}
 </script>
 
 <template>
     <div class="mx-auto max-w-[800px] p-6">
         <div class="text-center">
-            <h1 class="text-2xl font-semibold">Keyword Generator</h1>
+            <h1 class="text-2xl font-semibold">
+                Keyword Generator
+            </h1>
         </div>
         <div class="mt-5">
             <MaTextarea
-                v-model="inputText"
+                v-model="generatorInputText"
                 placeholder="Paste an app description..."
                 :rows="8"
             />
@@ -83,7 +58,7 @@ function generateKeywords() {
             </MaButton>
         </div>
         <div
-            v-if="displayedKeywords.length > 0"
+            v-if="generatedKeywords.length > 0"
             class="mt-6"
         >
             <div
