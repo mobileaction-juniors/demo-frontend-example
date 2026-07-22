@@ -1,20 +1,15 @@
 <script setup>
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { MaButton, MaSelect as MaSelect2, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
 import { useKeywordStore } from "@/stores/KeywordStore.js";
-import { cleanDescription } from "@/utils/CleanDescription";
-import { filterDescription } from "@/utils/FilterDescription";
-import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const router = useRouter();
 const keywordStore = useKeywordStore();
-const { description, selectedNGrams } = storeToRefs(keywordStore);
-
-const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
+const { description, selectedNGrams, cleanedAndFilteredDescription, sections } = storeToRefs(keywordStore);
 
 const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
 const gramSizeOptions = gramSizeArray.map((n) => ({
@@ -23,16 +18,6 @@ const gramSizeOptions = gramSizeArray.map((n) => ({
 }));
 
 const buttonCLicked = ref(false);
-
-const sections = computed(() =>
-  selectedNGrams.value
-    .slice()
-    .sort((a, b) => a - b)
-    .map((n) => ({
-      title: `${n}-Gram Keywords`,
-      keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
-    })),
-);
 
 function goToKeywordCountDensity() {
   router.push({ name: "KeywordCountDensity" });
