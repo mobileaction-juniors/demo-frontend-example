@@ -4,12 +4,13 @@ import { useRouter } from "vue-router";
 
 import { MaButton, MaSelect as MaSelect2, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
-import { keywordDescription } from "@/router";
+import { useKeywordStore } from "@/stores/KeywordStore.js";
 import { cleanDescription } from "@/utils/CleanDescription";
 import { filterDescription } from "@/utils/FilterDescription";
 import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const router = useRouter();
+const keywordStore = useKeywordStore();
 
 const description = ref("");
 const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
@@ -34,7 +35,7 @@ const sections = computed(() =>
 );
 
 function goToKeywordCountDensity() {
-  keywordDescription.value = description.value;
+  keywordStore.setDescription(description.value);
   router.push({ name: "KeywordCountDensity" });
 }
 </script>
@@ -94,8 +95,5 @@ function goToKeywordCountDensity() {
       </div>
     </div>
   </div>
-    <!-- <div class="p-4 m-4 flex flex-col items-center"> -->
-
-  <!-- </div> -->
 </template>
 
