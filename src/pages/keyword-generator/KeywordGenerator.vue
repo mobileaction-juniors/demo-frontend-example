@@ -1,4 +1,5 @@
 <script setup>
+import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -11,6 +12,7 @@ import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const router = useRouter();
 const keywordStore = useKeywordStore();
+const { selectedNGrams } = storeToRefs(keywordStore);
 
 const description = ref("");
 const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
@@ -22,10 +24,9 @@ const gramSizeOptions = gramSizeArray.map((n) => ({
 }));
 
 const buttonCLicked = ref(false);
-const selectedGramSizes = ref([]);
 
 const sections = computed(() =>
-  selectedGramSizes.value
+  selectedNGrams.value
     .slice()
     .sort((a, b) => a - b)
     .map((n) => ({
@@ -75,7 +76,7 @@ function goToKeywordCountDensity() {
           {{ buttonCLicked ? "Hide" : "Generate" }}
         </MaButton>
         <MaSelect2
-            v-model:value="selectedGramSizes"
+            v-model:value="selectedNGrams"
             mode="multiple"
             :options="gramSizeOptions"
             size="small"
