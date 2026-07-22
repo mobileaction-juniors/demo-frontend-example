@@ -12,9 +12,8 @@ import { nGramGenerater } from "@/utils/nGramGeneration";
 
 const router = useRouter();
 const keywordStore = useKeywordStore();
-const { selectedNGrams } = storeToRefs(keywordStore);
+const { description, selectedNGrams } = storeToRefs(keywordStore);
 
-const description = ref("");
 const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
 
 const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
@@ -36,7 +35,6 @@ const sections = computed(() =>
 );
 
 function goToKeywordCountDensity() {
-  keywordStore.setDescription(description.value);
   router.push({ name: "KeywordCountDensity" });
 }
 </script>
