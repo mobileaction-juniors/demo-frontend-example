@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { ref } from 'vue'
+
+export const keywordDescription = ref('')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +15,12 @@ const router = createRouter({
       path: '/keyword-generator',
       name: 'KeywordGenerator',
       component: () => import('../pages/keyword-generator/KeywordGenerator.vue')
+    },
+    {
+      path: '/keyword-count-density',
+      name: 'KeywordCountDensity',
+      component: () => import('../pages/keyword-count-density/KeywordCountDensity.vue'),
+      props: () => ({ text: keywordDescription.value })
     }
   ]
 })
