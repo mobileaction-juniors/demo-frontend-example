@@ -1,6 +1,5 @@
 <script setup>
 
-import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import {AgGridVue} from "ag-grid-vue3";
 import {MaButton, MaTextarea} from "@mobileaction/action-kit";
 import { ref } from "vue";
@@ -8,8 +7,6 @@ import { ref } from "vue";
 import { useKeywordStore } from "@/stores/KeywordStore.js";
 import { calculateKeywordDensity } from "@/utils/KeywordDensity.js";
 
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 const keywordStore = useKeywordStore();
 
 function putRowData(text){

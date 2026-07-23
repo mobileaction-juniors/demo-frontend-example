@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@mobileaction/action-kit": "^1.58.20",
-    "ag-grid-community": "^36.0.1",
     "ag-grid-vue3": "^36.0.1",
     "pinia": "^4.0.2",
     "vue": "^3.5.39",
