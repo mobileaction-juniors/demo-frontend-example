@@ -1,7 +1,7 @@
 <script setup>
 
-import {AgGridVue} from "ag-grid-vue3";
-import {MaButton, MaTextarea} from "@mobileaction/action-kit";
+import { AgGridVue } from "ag-grid-vue3";
+import { MaButton, MaTextarea } from "@mobileaction/action-kit";
 import { ref } from "vue";
 
 import { useKeywordStore } from "@/stores/KeywordStore.js";
