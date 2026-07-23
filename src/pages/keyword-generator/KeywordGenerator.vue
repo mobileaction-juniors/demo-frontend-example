@@ -1,18 +1,15 @@
 <script setup>
-import { computed, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { MaButton, MaSelect as MaSelect2, MaTextarea } from "@mobileaction/action-kit";
 import KeywordsSection from "@/components/KeywordsSection.vue";
-import { keywordDescription } from "@/router";
-import { cleanDescription } from "@/utils/CleanDescription";
-import { filterDescription } from "@/utils/FilterDescription";
-import { nGramGenerater } from "@/utils/nGramGeneration";
+import { useKeywordStore } from "@/stores/KeywordStore.js";
 
 const router = useRouter();
-
-const description = ref("");
-const cleanedAndFilteredDescription = computed(() => filterDescription(cleanDescription(description.value)));
+const keywordStore = useKeywordStore();
+const { description, selectedNGrams, cleanedAndFilteredDescription, sections } = storeToRefs(keywordStore);
 
 const gramSizeArray = [1,2,3,4,5,6,7,8,9,10];
 const gramSizeOptions = gramSizeArray.map((n) => ({
@@ -21,20 +18,8 @@ const gramSizeOptions = gramSizeArray.map((n) => ({
 }));
 
 const buttonCLicked = ref(false);
-const selectedGramSizes = ref([]);
-
-const sections = computed(() =>
-  selectedGramSizes.value
-    .slice()
-    .sort((a, b) => a - b)
-    .map((n) => ({
-      title: `${n}-Gram Keywords`,
-      keywords: nGramGenerater(cleanedAndFilteredDescription.value, n),
-    })),
-);
 
 function goToKeywordCountDensity() {
-  keywordDescription.value = description.value;
   router.push({ name: "KeywordCountDensity" });
 }
 </script>
@@ -74,7 +59,7 @@ function goToKeywordCountDensity() {
           {{ buttonCLicked ? "Hide" : "Generate" }}
         </MaButton>
         <MaSelect2
-            v-model:value="selectedGramSizes"
+            v-model:value="selectedNGrams"
             mode="multiple"
             :options="gramSizeOptions"
             size="small"
@@ -94,8 +79,5 @@ function goToKeywordCountDensity() {
       </div>
     </div>
   </div>
-    <!-- <div class="p-4 m-4 flex flex-col items-center"> -->
-
-  <!-- </div> -->
 </template>
 

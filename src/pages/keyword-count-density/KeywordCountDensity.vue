@@ -4,14 +4,10 @@ import { AgGridVue } from "ag-grid-vue3";
 import { MaButton, MaTextarea } from "@mobileaction/action-kit";
 import { ref } from "vue";
 
+import { useKeywordStore } from "@/stores/KeywordStore.js";
 import { calculateKeywordDensity } from "@/utils/KeywordDensity.js";
 
-const props = defineProps({
-  text: {
-    type: String,
-    required: true,
-  },
-});
+const keywordStore = useKeywordStore();
 
 function putRowData(text){
   const rowData = [];
@@ -32,10 +28,9 @@ const colData = [
   {field: "density", flex : 1}
 ];
 
-const rowData = ref(putRowData(props.text));
+const rowData = ref(putRowData(keywordStore.description));
 
-const newText = ref(props.text);
-
+const newText = ref(keywordStore.description);
 </script>
 <template>
 <div class="p-4 m-4 flex flex-row justify-center items-center h-[500px]">
