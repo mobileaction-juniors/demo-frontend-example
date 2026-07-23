@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
   },
   "dependencies": {
     "@mobileaction/action-kit": "^1.58.20",
@@ -22,6 +24,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "@vitejs/plugin-legacy": "^5.4.3",
     "@vitejs/plugin-vue": "^5.0.5",
+    "cypress": "^15.19.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "tailwindcss": "^4.3.2",
