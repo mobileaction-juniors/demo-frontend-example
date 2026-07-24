@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia'
-import {computed, ref} from 'vue'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 import { cleanDescription } from '@/utils/CleanDescription'
 import { filterDescription } from '@/utils/FilterDescription'
