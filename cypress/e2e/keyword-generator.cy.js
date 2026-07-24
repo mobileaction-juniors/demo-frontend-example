@@ -40,5 +40,17 @@ describe("Keyword Generator", () => {
       .and("contain", "keyword generator")
       .and("not.contain", "myself");
   });
-  //multi-select test will be added
+
+  it("selects an n-gram size and generates keywords", () => {
+    cy.get("textarea").type("hello world hello");
+    cy.contains("Select n-gram sizes").click();
+    cy.get('.antd-select-item-option').contains("1-Gram").click();
+    cy.get("body").type("{esc}");
+    cy.contains("button", "Generate").click();
+    cy.contains("h3", "1-Gram Keywords")
+      .should("be.visible")
+      .parent()
+      .should("contain", "hello")
+      .and("contain", "world");
+  });
 });
