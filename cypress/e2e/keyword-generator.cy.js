@@ -40,4 +40,5 @@ describe("Keyword Generator", () => {
       .and("contain", "keyword generator")
       .and("not.contain", "myself");
   });
+  //multi-select test will be added
 });
