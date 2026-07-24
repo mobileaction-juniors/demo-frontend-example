@@ -34,8 +34,30 @@ The app is two routed pages sharing one Pinia store. There are no API calls — 
 
 - Composition API with `<script setup>` throughout. Setup-store syntax for Pinia (function returning members), not options syntax.
 - `@/` aliases `src/` (configured in `jsconfig.json` and `vite.config.js`).
-- Conventional Commits, scoped by feature, e.g. `feat(keyword-count-density): add grid`.
 - Styling is TailwindCSS (v4, via `@tailwindcss/vite`; no `tailwind.config.js` — config is CSS-first in `src/style.css`). Prefer Tailwind utility classes over inline `style`.
+
+## Commit messages (Conventional Commits)
+
+Every commit uses the [Conventional Commits](https://www.conventionalcommits.org/) format, scoped by feature area:
+
+```
+type(scope): summary
+```
+
+- **type** — `feat` (new user-facing capability), `fix` (bug fix), `chore` (tooling/config/deps), `docs`, `test`, `refactor`, `style`, `perf`.
+- **scope** — the feature or area touched, e.g. `keyword-generator`, `keyword-count-density`, `e2e`, `claude`. Omit only when a change is genuinely repo-wide.
+- **summary** — imperative mood, lower-case, no trailing period (`add grid`, not `Added grid.`).
+
+Examples:
+
+```
+feat(keyword-count-density): add density grid
+fix(keyword-generator): reset selectedNGrams on clear
+chore(claude): tighten Bash permission allowlist
+test(e2e): add multi n-gram display spec
+```
+
+Keep the subject line ≤ ~72 chars; put rationale in the body when the change isn't self-explanatory.
 
 ## AG Grid (ag-grid-vue3 / ag-grid-community v36)
 
