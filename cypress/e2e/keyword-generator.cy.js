@@ -53,4 +53,50 @@ describe("Keyword Generator", () => {
       .should("contain", "hello")
       .and("contain", "world");
   });
+
+  it("selects n-gram sizes 1 through 5 and displays all sections at once", () => {
+    // 10 words: the 5-word sequence repeated, so duplicate n-grams get deduped.
+    cy.get("textarea").type("apple orange banana grape mango apple orange banana grape mango");
+
+    cy.contains("Select n-gram sizes").click();
+    cy.get(".antd-select-item-option").contains("1-Gram").click();
+    cy.get(".antd-select-item-option").contains("2-Gram").click();
+    cy.get(".antd-select-item-option").contains("3-Gram").click();
+    cy.get(".antd-select-item-option").contains("4-Gram").click();
+    cy.get(".antd-select-item-option").contains("5-Gram").click();
+    cy.get("body").type("{esc}");
+
+    cy.contains("button", "Generate").click();
+
+    // All five n-gram sections render at the same time.
+    cy.contains("h3", "1-Gram Keywords").should("be.visible");
+    cy.contains("h3", "2-Gram Keywords").should("be.visible");
+    cy.contains("h3", "3-Gram Keywords").should("be.visible");
+    cy.contains("h3", "4-Gram Keywords").should("be.visible");
+    cy.contains("h3", "5-Gram Keywords").should("be.visible");
+
+    cy.contains("h3", "1-Gram Keywords")
+      .parent()
+      .should("contain", "apple")
+      .and("contain", "mango");
+
+    cy.contains("h3", "2-Gram Keywords")
+      .parent()
+      .should("contain", "apple orange")
+      .and("contain", "mango apple");
+
+    cy.contains("h3", "3-Gram Keywords")
+      .parent()
+      .should("contain", "apple orange banana")
+      .and("contain", "banana grape mango");
+
+    cy.contains("h3", "4-Gram Keywords")
+      .parent()
+      .should("contain", "apple orange banana grape")
+      .and("contain", "orange banana grape mango");
+
+    cy.contains("h3", "5-Gram Keywords")
+      .parent()
+      .should("contain", "apple orange banana grape mango");
+  });
 });
